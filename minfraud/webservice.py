@@ -9,7 +9,6 @@ from minfraud.validation import transaction_validator
 
 
 class Client(object):
-
     def __init__(self, user_id, license_key,
                  host='minfraud.maxmind.com',
                  locales=None,
@@ -34,7 +33,8 @@ class Client(object):
             try:
                 transaction_validator(request)
             except MultipleInvalid as e:
-                raise InvalidRequestError("Invalid transaction data: {}".format(e))
+                raise InvalidRequestError(
+                    "Invalid transaction data: {}".format(e))
         uri = '/'.join([self._base_uri, path])
         response = requests.post(
             uri,
@@ -59,10 +59,9 @@ class Client(object):
         try:
             return response.json()
         except ValueError as ex:
-            raise MinFraudError('Received a 200 response for %(uri)s'
+            raise MinFraudError('Received a 200 response'
                                 ' but could not decode the response as '
-                                'JSON: ' % locals() + ', '.join(ex.args), 200,
-                                uri)
+                                'JSON: {}'.format(response.content), 200, uri)
 
     def _handle_error(self, response, uri):
         status = response.status_code
@@ -76,27 +75,29 @@ class Client(object):
 
     def _handle_4xx_status(self, response, status, uri):
         if not response.content:
-            raise HTTPError('Received a %(status)i error for %(uri)s '
-                            'with no body.' % locals(), status, uri)
-        elif response.headers['Content-Type'].find('json') == -1:
-            raise HTTPError('Received a %i for %s with the following '
-                            'body: %s' % (status, uri, response.content),
+            raise HTTPError('Received a {} error with no body'.format(status),
+                            status, uri)
+        elif response.headers.get('Content-Type', '').find('json') == -1:
+            raise HTTPError('Received a {} with the following '
+                            'body: {}'.format(status, response.content),
                             status, uri)
         try:
             body = response.json()
         except ValueError as ex:
             raise HTTPError(
-                'Received a %(status)i error for %(uri)s but it did'
-                ' not include the expected JSON body: ' % locals() + ', '.join(
-                    ex.args), status, uri)
+                'Received a {status:d} error but it did not include'
+                ' the expected JSON body: {content}'
+                .format(status=status,
+                        uri=uri,
+                        content=response.content), status, uri)
         else:
             if 'code' in body and 'error' in body:
                 self._handle_web_service_error(body.get('error'),
                                                body.get('code'), status, uri)
             else:
                 raise HTTPError(
-                    'Response contains JSON but it does not specify '
-                    'code or error keys', status, uri)
+                    'Error response contains JSON but it does not specify code'
+                    ' or error keys: {}'.format(response.content), status, uri)
 
     def _handle_web_service_error(self, message, code, status, uri):
         if code in ('IP_ADDRESS_NOT_FOUND', 'IP_ADDRESS_RESERVED'):
@@ -104,7 +105,7 @@ class Client(object):
         elif code in ('AUTHORIZATION_INVALID', 'LICENSE_KEY_REQUIRED',
                       'USER_ID_REQUIRED'):
             raise AuthenticationError(message)
-        elif code == 'OUT_OF_QUERIES':
+        elif code == 'INSUFFICIENT_FUNDS':
             raise InsufficientFundsError(message)
 
         raise InvalidRequestError(message, code, status, uri)
@@ -114,6 +115,5 @@ class Client(object):
                         u'{1}'.format(status, uri), status, uri)
 
     def _handle_non_200_status(self, status, uri):
-        raise HTTPError(u'Received an expected HTTP status '
-                        u'({0}) for {1}'.format(status, uri),
-                        status, uri)
+        raise HTTPError(u'Received an unexpected HTTP status '
+                        u'({0}) for {1}'.format(status, uri), status, uri)

@@ -24,9 +24,9 @@ md5 = All(str, Match('^[0-9A-Fa-f]{32}$'))
 
 country_code = All(str, Match('^[A-Z]{2}$'))
 
-telephone_country_code = All(str, Match('^[0-9]{1,4}\z'))
+telephone_country_code = All(str, Match('^[0-9]{1,4}$'))
 
-subdivision_iso_code = All(str, Match('^[0-9A-Z]{1,4}\z'))
+subdivision_iso_code = All(str, Match('^[A-Z]{2}$'))
 
 
 def ip_address(s):
@@ -37,7 +37,7 @@ def ip_address(s):
 
 
 def email_or_md5(s):
-    if validate_email(s) or re.match('^ [0 - 9A - Fa - f]{32}$', s):
+    if validate_email(s) or re.match('^[0-9A-Fa-f]{32}$', s):
         return s
     raise ValueError
 
@@ -144,7 +144,7 @@ payment_processor = In(processors)
 
 single_char = All(str, Length(min=1, max=1))
 
-iin = Match('^[0-9]{6}\z')
+iin = Match('^[0-9]{6}$')
 
 credit_card_last_4 = Match('^[0-9]{4}$')
 
@@ -164,7 +164,7 @@ event_types = ['account_creation',
 
 event_type = In(event_types)
 
-currency_code = Match('^[A-Z]{3}\z')
+currency_code = Match('^[A-Z]{3}$')
 
 price = All(Any(float, int), Range(min=0))
 
@@ -190,7 +190,7 @@ transaction_validator = Schema({
         'bank_phone_country_code': telephone_country_code,
         'bank_phone_number': str,
         'cvv_result': single_char,
-        'issuer_id_number': 4,
+        'issuer_id_number': iin,
         'last_4_digits': credit_card_last_4,
     },
     Required('device'): {

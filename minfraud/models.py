@@ -3,17 +3,17 @@ from functools import update_wrapper
 import geoip2.models
 import geoip2.records
 
+
 class _InflateToNamedtuple(object):
     def __init__(self, cls):
         keys = sorted(cls._fields.keys())
         self.fields = cls._fields
-        nt = namedtuple(cls.__name__, keys)
-        nt.__name__ = cls.__name__ + 'NamedTuple'
-        nt.__new__.__defaults__ = (None,) * len(keys)
-        new_dict = cls.__dict__.copy()
-        del new_dict['_fields']
-        new_dict['__slots__'] = ()
-        self.cls = type(cls.__name__, (nt, ), new_dict)
+        name = cls.__name__
+        cls.__name__ += 'Super'
+        nt = namedtuple(name, keys)
+        nt.__name__ = name + 'NamedTuple'
+        nt.__new__.__defaults__ = (None, ) * len(keys)
+        self.cls = type(name, (nt, cls), {'__slots__': ()})
         update_wrapper(self, cls)
 
     def __call__(self, *args, **kwargs):
@@ -33,6 +33,7 @@ class _InflateToNamedtuple(object):
 
     def __repr__(self):
         return repr(self.cls)
+
 
 inflate_to_namedtuple = _InflateToNamedtuple
 
@@ -79,16 +80,20 @@ def create_warnings(warnings):
 
 
 class GeoIP2Location(geoip2.records.Location):
-    _valid_attributes = geoip2.records.Location._valid_attributes.union(set(['local_time']))
+    _valid_attributes = geoip2.records.Location._valid_attributes.union(
+        set(['local_time']))
 
 
 class GeoIP2Country(geoip2.records.Country):
-    _valid_attributes = geoip2.records.Country._valid_attributes.union(set(['is_high_risk']))
+    _valid_attributes = geoip2.records.Country._valid_attributes.union(
+        set(['is_high_risk']))
 
 
 # fill in missing data
 class IPLocation(geoip2.models.Insights):
     def __init__(self, raw_response, locales=None):
+        if raw_response is None:
+            raw_response = {}
         super(IPLocation, self).__init__(raw_response, locales)
         self.city = GeoIP2Country(locales, **raw_response.get('city', {}))
         self.location = GeoIP2Location(**raw_response.get('location', {}))
@@ -157,7 +162,6 @@ class Insights(object):
     }
 
 
-
 @inflate_to_namedtuple
 class Score(object):
     _fields = {
@@ -166,4 +170,3 @@ class Score(object):
         'warnings': create_warnings,
         'credits_remaining': None,
     }
-
