@@ -52,3 +52,15 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# Local
+*~
+*.egg
+.idea
+build
+.coverage
+docs/html
+MANIFEST
+pylint.txt
+*.swp
+violations.pyflakes.txt

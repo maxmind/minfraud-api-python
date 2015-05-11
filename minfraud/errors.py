@@ -1,0 +1,36 @@
+class MinFraudError(RuntimeError):
+    """There was a non-specific error in GeoIP2.
+
+    This class represents a generic error. It extends :py:exc:`RuntimeError`
+    and does not add any additional attributes.
+    """
+
+
+class AddressNotFoundError(MinFraudError):
+    """The address you were looking up was not found."""
+
+
+class AuthenticationError(MinFraudError):
+    """There was a problem authenticating the request."""
+
+
+class HTTPError(MinFraudError):
+    """There was an error when making your HTTP request.
+    This class represents an HTTP transport error. It extends
+    :py:exc:`MinFraudError` and adds attributes of its own.
+    :ivar http_status: The HTTP status code returned
+    :ivar uri: The URI queried
+    """
+
+    def __init__(self, message, http_status=None, uri=None):
+        super(HTTPError, self).__init__(message)
+        self.http_status = http_status
+        self.uri = uri
+
+
+class InvalidRequestError(MinFraudError):
+    """The request was invalid."""
+
+
+class InsufficientFundsError(MinFraudError):
+    """Your account is out of funds for the service queried."""

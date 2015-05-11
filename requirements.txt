@@ -1,0 +1,6 @@
+requests>=2.7
+strict-rfc3339
+voluptuous
+validate_email
+geoip2
+rfc3987
