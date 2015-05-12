@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 import sys
 
-import simplejson as json
+import json
 import requests_mock
 from minfraud.errors import HTTPError, InvalidRequestError, AuthenticationError, InsufficientFundsError, MinFraudError
 from minfraud.models import Insights, Score

@@ -17,7 +17,6 @@ def inflate_to_namedtuple(orig_cls):
     nt = namedtuple(name, keys)
     nt.__name__ = name + 'NamedTuple'
     nt.__new__.__defaults__ = (None, ) * len(keys)
-    print(orig_cls.__dict__)
     cls = type(name, (nt, orig_cls), {'__slots__': ()})
     update_wrapper(inflate_to_namedtuple, cls)
     orig_new = cls.__new__

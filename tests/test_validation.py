@@ -1,5 +1,5 @@
 from __future__ import unicode_literals
-from _decimal import Decimal
+from decimal import Decimal
 import sys
 from voluptuous import MultipleInvalid
 
