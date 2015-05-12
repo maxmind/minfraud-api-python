@@ -11,6 +11,22 @@ else:
 
 
 class TestModels(unittest.TestCase):
+    def test_model_immutability(self):
+        """This tests some level of _shallow_ immutability for these classes"""
+        T = namedtuple('T', ['obj', 'attr'], {})
+        models = [T(GeoIP2Country(), 'iso_code'),
+                  T(GeoIP2Location(), 'latitude'), T(Issuer(), 'name'),
+                  T(CreditCard(), 'country'), T(BillingAddress(), 'latitude'),
+                  T(ShippingAddress(), 'latitude'), T(Warning(), 'code'),
+                  T(Insights(), 'id'), T(Score(), 'id'),
+                  T(IPLocation({}), 'city')]
+        for model in models:
+            for attr in (model.attr, 'does_not_exist'):
+                with self.assertRaises(
+                    AttributeError,
+                    msg='{!s} - {}'.format(model.obj, attr)):
+                    setattr(model.obj, attr, 5)
+
     def test_billing_address(self):
         address = BillingAddress(self.address_dict)
         self.check_address(address)
@@ -76,6 +92,17 @@ class TestModels(unittest.TestCase):
         self.assertEqual(time, loc.location.local_time)
         self.assertEqual(True, loc.country.is_high_risk)
 
+    def test_ip_location_locales(self):
+
+        loc = IPLocation({
+            'locales': ['fr'],
+            'country': {'names': {'fr': 'Country'}},
+            'city': {'names': {'fr': 'City'}},
+        })
+
+        self.assertEqual('City', loc.city.name)
+        self.assertEqual('Country', loc.country.name)
+
     def test_insights(self):
         id = "b643d445-18b2-4b9d-bad4-c9c4366e402a"
         insights = Insights({
@@ -97,6 +124,8 @@ class TestModels(unittest.TestCase):
         self.assertEqual(123, insights.credits_remaining)
         self.assertEqual(0.01, insights.risk_score)
         self.assertEqual("INVALID_INPUT", insights.warnings[0].code)
+        self.assertIsInstance(insights.warnings, tuple,
+                              'warnings is a tuple, not a dict')
 
     def test_issuer(self):
         phone = '132-342-2131'

@@ -1,76 +1,44 @@
 from collections import namedtuple
-from functools import update_wrapper
+from functools import update_wrapper, wraps
 import geoip2.models
 import geoip2.records
 
 
-class _InflateToNamedtuple(object):
-    def __init__(self, cls):
-        keys = sorted(cls._fields.keys())
-        self.fields = cls._fields
-        name = cls.__name__
-        cls.__name__ += 'Super'
-        nt = namedtuple(name, keys)
-        nt.__name__ = name + 'NamedTuple'
-        nt.__new__.__defaults__ = (None, ) * len(keys)
-        self.cls = type(name, (nt, cls), {'__slots__': ()})
-        update_wrapper(self, cls)
+# Using a factory decorator rather than a metaclass as supporting
+# metaclasses on Python 2 and 3 is more painful (although we could use
+# six, I suppose). Using a closure rather than a class-based decorator as
+# class based decorators don't work right with `update_wrapper`,
+# causing help(class) to not work correctly.
+def inflate_to_namedtuple(orig_cls):
+    keys = sorted(orig_cls._fields.keys())
+    fields = orig_cls._fields
+    name = orig_cls.__name__
+    orig_cls.__name__ += 'Super'
+    nt = namedtuple(name, keys)
+    nt.__name__ = name + 'NamedTuple'
+    nt.__new__.__defaults__ = (None, ) * len(keys)
+    print(orig_cls.__dict__)
+    cls = type(name, (nt, orig_cls), {'__slots__': ()})
+    update_wrapper(inflate_to_namedtuple, cls)
+    orig_new = cls.__new__
 
-    def __call__(self, *args, **kwargs):
+    def new(cls, *args, **kwargs):
         if (args and kwargs) or len(args) > 1:
             raise ValueError('Only provide a single (dict) positional argument'
                              ' or use keyword arguments. Do not use both.')
         if args:
             values = args[0] if args[0] else {}
 
-            for field, default in self.fields.items():
+            for field, default in fields.items():
                 if callable(default):
                     kwargs[field] = default(values.get(field))
                 else:
                     kwargs[field] = values.get(field, default)
 
-        return self.cls(**kwargs)
+        return orig_new(cls, **kwargs)
 
-    def __repr__(self):
-        return repr(self.cls)
-
-
-inflate_to_namedtuple = _InflateToNamedtuple
-
-# Using a class factory decorator rather than a metaclass as supporting
-# metaclasses on Python 2 and 3 is more painful (although we could use
-# six, I suppose).
-# def inflate_to_namedtuple(orig_cls):
-#     fields = orig_cls._fields
-#     keys = sorted(orig_cls._fields.keys())
-#     nt = namedtuple(orig_cls.__name__, keys)
-#     nt.__name__ = orig_cls.__name__ + 'NamedTuple'
-#     nt.__new__.__defaults__ = (None,) * len(keys)
-#     new_dict = orig_cls.__dict__.copy()
-#     del new_dict['_fields']
-#     new_dict['__slots__'] = ()
-#     cls = type(orig_cls.__name__, (nt, ), new_dict)
-#
-#     update_wrapper(inflate_to_namedtuple, cls)
-#     orig_new = cls.__new__
-#
-#     def new(self, *args, **kwargs):
-#         if (args and kwargs) or len(args) > 1:
-#             raise ValueError('Only provide a single (dict) positional argument'
-#                              ' or use keyword arguments. Do not use both.')
-#         if args:
-#             values = args[0] if args[0] else {}
-#
-#             for field, default in fields.items():
-#                 if callable(default):
-#                     kwargs[field] = default(values.get(field))
-#                 else:
-#                     kwargs[field] = values.get(field, default)
-#
-#         return orig_new(cls, **kwargs)
-#
-#     cls.__new__ = new
-#     return cls
+    cls.__new__ = new
+    return cls
 
 
 def create_warnings(warnings):
@@ -89,19 +57,27 @@ class GeoIP2Country(geoip2.records.Country):
         set(['is_high_risk']))
 
 
-# XXX - handle locales
 class IPLocation(geoip2.models.Insights):
-    def __init__(self, raw_response, locales=None):
-        if raw_response is None:
-            raw_response = {}
-        super(IPLocation, self).__init__(raw_response, locales)
-        self.country = GeoIP2Country(locales,
-                                     **raw_response.get('country', {}))
-        self.location = GeoIP2Location(**raw_response.get('location', {}))
+    def __init__(self, ip_location):
+        if ip_location is None:
+            ip_location = {}
+        locales = ip_location.get('locales')
+        super(IPLocation, self).__init__(ip_location, locales=locales)
+        self.country = GeoIP2Country(locales, **ip_location.get('country', {}))
+        self.location = GeoIP2Location(**ip_location.get('location', {}))
+        self._finalized = True
+
+    # Unfortunately the GeoIP2 models are not immutable, only the records. This
+    # corrects that for minFraud
+    def __setattr__(self, name, value):
+        if hasattr(self, '_finalized') and self._finalized:
+            raise AttributeError("can't set attribute")
+        super(IPLocation, self).__setattr__(name, value)
 
 
 @inflate_to_namedtuple
 class Issuer(object):
+    __slots__ = ()
     _fields = {
         'name': None,
         'matches_provided_name': None,
@@ -112,6 +88,7 @@ class Issuer(object):
 
 @inflate_to_namedtuple
 class CreditCard(object):
+    __slots__ = ()
     _fields = {
         'issuer': Issuer,
         'country': None,
@@ -122,6 +99,7 @@ class CreditCard(object):
 
 @inflate_to_namedtuple
 class BillingAddress(object):
+    __slots__ = ()
     _fields = {
         'is_postal_in_city': None,
         'latitude': None,
@@ -133,6 +111,7 @@ class BillingAddress(object):
 
 @inflate_to_namedtuple
 class ShippingAddress(object):
+    __slots__ = ()
     _fields = {
         'is_postal_in_city': None,
         'latitude': None,
@@ -146,11 +125,13 @@ class ShippingAddress(object):
 
 @inflate_to_namedtuple
 class Warning(object):
+    __slots__ = ()
     _fields = {'code': None, 'warning': None, 'input': None}
 
 
 @inflate_to_namedtuple
 class Insights(object):
+    __slots__ = ()
     _fields = {
         'id': None,
         'risk_score': None,
@@ -165,6 +146,7 @@ class Insights(object):
 
 @inflate_to_namedtuple
 class Score(object):
+    __slots__ = ()
     _fields = {
         'id': None,
         'risk_score': None,

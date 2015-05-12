@@ -45,9 +45,7 @@ class Client(object):
              'User-Agent': self._user_agent()},
             timeout=self._timeout)
         if response.status_code == 200:
-            body = self._handle_success(response, uri)
-            body['locales'] = self._locales
-            return model_class(body)
+            return self._handle_success(response, uri, model_class)
         else:
             self._handle_error(response, uri)
 
@@ -55,13 +53,16 @@ class Client(object):
         return 'minFraud-API/%s %s' % (minfraud.__version__,
                                        default_user_agent())
 
-    def _handle_success(self, response, uri):
+    def _handle_success(self, response, uri, model_class):
         try:
-            return response.json()
+            body = response.json()
         except ValueError as ex:
             raise MinFraudError('Received a 200 response'
                                 ' but could not decode the response as '
                                 'JSON: {}'.format(response.content), 200, uri)
+        if 'ip_location' in body:
+            body['locales'] = self._locales
+        return model_class(body)
 
     def _handle_error(self, response, uri):
         status = response.status_code
