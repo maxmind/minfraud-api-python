@@ -89,13 +89,14 @@ class GeoIP2Country(geoip2.records.Country):
         set(['is_high_risk']))
 
 
-# fill in missing data
+# XXX - handle locales
 class IPLocation(geoip2.models.Insights):
     def __init__(self, raw_response, locales=None):
         if raw_response is None:
             raw_response = {}
         super(IPLocation, self).__init__(raw_response, locales)
-        self.city = GeoIP2Country(locales, **raw_response.get('city', {}))
+        self.country = GeoIP2Country(locales,
+                                     **raw_response.get('country', {}))
         self.location = GeoIP2Location(**raw_response.get('location', {}))
 
 

@@ -1,5 +1,6 @@
 import re
 import sys
+from decimal import Decimal
 
 from strict_rfc3339 import validate_rfc3339
 from validate_email import validate_email
@@ -24,9 +25,11 @@ md5 = All(str, Match('^[0-9A-Fa-f]{32}$'))
 
 country_code = All(str, Match('^[A-Z]{2}$'))
 
-telephone_country_code = All(str, Match('^[0-9]{1,4}$'))
+telephone_country_code = Any(All(str, Match('^[0-9]{1,4}$')),
+                             All(int, Range(min=1,
+                                            max=9999)))
 
-subdivision_iso_code = All(str, Match('^[A-Z]{2}$'))
+subdivision_iso_code = All(str, Match('^[0-9A-Z]{1,4}$'))
 
 
 def ip_address(s):
@@ -166,7 +169,7 @@ event_type = In(event_types)
 
 currency_code = Match('^[A-Z]{3}$')
 
-price = All(Any(float, int), Range(min=0))
+price = All(Any(float, int, Decimal), Range(min=0, min_included=False))
 
 
 def uri(s):
@@ -175,7 +178,7 @@ def uri(s):
     raise ValueError
 
 
-transaction_validator = Schema({
+validate_transaction = Schema({
     'account': {'user_id': str,
                 'username_md5': md5, },
     'billing': address,
@@ -219,6 +222,6 @@ transaction_validator = Schema({
         'category': str,
         'item_id': str,
         'price': price,
-        'quantity': All(int, Range(min=0)),
+        'quantity': All(int, Range(min=1)),
     }, ],
 }, )

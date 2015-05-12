@@ -5,7 +5,7 @@ import minfraud
 from minfraud.errors import MinFraudError, HTTPError, AddressNotFoundError, AuthenticationError, InsufficientFundsError, \
     InvalidRequestError
 from minfraud.models import Insights, Score
-from minfraud.validation import transaction_validator
+from minfraud.validation import validate_transaction
 
 
 class Client(object):
@@ -31,7 +31,7 @@ class Client(object):
     def _response_for(self, path, model_class, request, validate):
         if validate:
             try:
-                transaction_validator(request)
+                validate_transaction(request)
             except MultipleInvalid as e:
                 raise InvalidRequestError(
                     "Invalid transaction data: {}".format(e))
