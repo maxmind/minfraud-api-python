@@ -1,6 +1,7 @@
 import requests
 from requests.utils import default_user_agent
 from voluptuous import MultipleInvalid
+
 import minfraud
 from minfraud.errors import MinFraudError, HTTPError, AddressNotFoundError, AuthenticationError, InsufficientFundsError, \
     InvalidRequestError

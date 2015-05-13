@@ -1,7 +1,9 @@
 from collections import namedtuple
-from functools import update_wrapper, wraps
+from functools import update_wrapper
+
 import geoip2.models
 import geoip2.records
+
 
 
 # Using a factory decorator rather than a metaclass as supporting
@@ -9,7 +11,7 @@ import geoip2.records
 # six, I suppose). Using a closure rather than a class-based decorator as
 # class based decorators don't work right with `update_wrapper`,
 # causing help(class) to not work correctly.
-def inflate_to_namedtuple(orig_cls):
+def _inflate_to_namedtuple(orig_cls):
     keys = sorted(orig_cls._fields.keys())
     fields = orig_cls._fields
     name = orig_cls.__name__
@@ -18,7 +20,7 @@ def inflate_to_namedtuple(orig_cls):
     nt.__name__ = name + 'NamedTuple'
     nt.__new__.__defaults__ = (None, ) * len(keys)
     cls = type(name, (nt, orig_cls), {'__slots__': ()})
-    update_wrapper(inflate_to_namedtuple, cls)
+    update_wrapper(_inflate_to_namedtuple, cls)
     orig_new = cls.__new__
 
     def new(cls, *args, **kwargs):
@@ -40,7 +42,7 @@ def inflate_to_namedtuple(orig_cls):
     return cls
 
 
-def create_warnings(warnings):
+def _create_warnings(warnings):
     if not warnings:
         return ()
     return tuple([Warning(x) for x in warnings])
@@ -74,7 +76,7 @@ class IPLocation(geoip2.models.Insights):
         super(IPLocation, self).__setattr__(name, value)
 
 
-@inflate_to_namedtuple
+@_inflate_to_namedtuple
 class Issuer(object):
     __slots__ = ()
     _fields = {
@@ -85,7 +87,7 @@ class Issuer(object):
     }
 
 
-@inflate_to_namedtuple
+@_inflate_to_namedtuple
 class CreditCard(object):
     __slots__ = ()
     _fields = {
@@ -96,7 +98,7 @@ class CreditCard(object):
     }
 
 
-@inflate_to_namedtuple
+@_inflate_to_namedtuple
 class BillingAddress(object):
     __slots__ = ()
     _fields = {
@@ -108,7 +110,7 @@ class BillingAddress(object):
     }
 
 
-@inflate_to_namedtuple
+@_inflate_to_namedtuple
 class ShippingAddress(object):
     __slots__ = ()
     _fields = {
@@ -122,19 +124,19 @@ class ShippingAddress(object):
     }
 
 
-@inflate_to_namedtuple
+@_inflate_to_namedtuple
 class Warning(object):
     __slots__ = ()
     _fields = {'code': None, 'warning': None, 'input': None}
 
 
-@inflate_to_namedtuple
+@_inflate_to_namedtuple
 class Insights(object):
     __slots__ = ()
     _fields = {
         'id': None,
         'risk_score': None,
-        'warnings': create_warnings,
+        'warnings': _create_warnings,
         'credits_remaining': None,
         'ip_location': IPLocation,
         'credit_card': CreditCard,
@@ -143,12 +145,12 @@ class Insights(object):
     }
 
 
-@inflate_to_namedtuple
+@_inflate_to_namedtuple
 class Score(object):
     __slots__ = ()
     _fields = {
         'id': None,
         'risk_score': None,
-        'warnings': create_warnings,
+        'warnings': _create_warnings,
         'credits_remaining': None,
     }
