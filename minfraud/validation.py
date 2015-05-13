@@ -11,30 +11,32 @@ is_PY3 = sys.version_info[0] == 3
 
 if is_PY3:
     import ipaddress  # pylint:disable=F0401
+
+    unicode_or_printable_ascii = str
 else:
     import ipaddr as ipaddress  # pylint:disable=F0401
 
     ipaddress.ip_address = ipaddress.IPAddress
 
-if is_PY3:
-    string_types = str
-else:
-    string_types = basestring
+    unicode_or_printable_ascii = Any(unicode, Match('^[\x20-\x7E]*$'))
 
-md5 = All(str, Match('^[0-9A-Fa-f]{32}$'))
+any_string = Any(unicode_or_printable_ascii, str)
 
-country_code = All(str, Match('^[A-Z]{2}$'))
+md5 = All(any_string, Match('^[0-9A-Fa-f]{32}$'))
 
-telephone_country_code = Any(All(str, Match('^[0-9]{1,4}$')),
+country_code = All(any_string, Match('^[A-Z]{2}$'))
+
+telephone_country_code = Any(All(any_string, Match('^[0-9]{1,4}$')),
                              All(int, Range(min=1,
                                             max=9999)))
 
-subdivision_iso_code = All(str, Match('^[0-9A-Z]{1,4}$'))
+subdivision_iso_code = All(any_string, Match('^[0-9A-Z]{1,4}$'))
 
 
 def ip_address(s):
     # ipaddress accepts numeric IPs, which we don't want.
-    if isinstance(s, str) and not re.match('^\d+$', s):
+    if (isinstance(s, str) or isinstance(s, unicode)) \
+            and not re.match('^\d+$', s):
         return str(ipaddress.ip_address(s))
     raise ValueError
 
@@ -59,16 +61,16 @@ def hostname(hostname):
 delivery_speed = In(['same_day', 'overnight', 'expedited', 'standard'])
 
 address = {
-    'address': str,
-    'address_2': str,
-    'city': str,
-    'company': str,
+    'address': unicode_or_printable_ascii,
+    'address_2': unicode_or_printable_ascii,
+    'city': unicode_or_printable_ascii,
+    'company': unicode_or_printable_ascii,
     'country': country_code,
-    'first_name': str,
-    'last_name': str,
+    'first_name': unicode_or_printable_ascii,
+    'last_name': unicode_or_printable_ascii,
     'phone_country_code': telephone_country_code,
-    'phone_number': str,
-    'postal': str,
+    'phone_number': unicode_or_printable_ascii,
+    'postal': unicode_or_printable_ascii,
     'region': subdivision_iso_code,
 }
 
@@ -145,7 +147,7 @@ processors = ['adyen',
 
 payment_processor = In(processors)
 
-single_char = All(str, Length(min=1, max=1))
+single_char = Match('^[A-Za-z0-9]$')
 
 iin = Match('^[0-9]{6}$')
 
@@ -179,48 +181,48 @@ def uri(s):
 
 
 validate_transaction = Schema({
-    'account': {'user_id': str,
+    'account': {'user_id': unicode_or_printable_ascii,
                 'username_md5': md5, },
     'billing': address,
     'payment': {
         'processor': payment_processor,
         'was_authorized': bool,
-        'decline_code': str,
+        'decline_code': unicode_or_printable_ascii,
     },
     'credit_card': {
         'avs_result': single_char,
-        'bank_name': str,
+        'bank_name': unicode_or_printable_ascii,
         'bank_phone_country_code': telephone_country_code,
-        'bank_phone_number': str,
+        'bank_phone_number': unicode_or_printable_ascii,
         'cvv_result': single_char,
         'issuer_id_number': iin,
         'last_4_digits': credit_card_last_4,
     },
     Required('device'): {
-        'accept_language': str,
+        'accept_language': unicode_or_printable_ascii,
         Required('ip_address'): ip_address,
-        'user_agent': str
+        'user_agent': unicode_or_printable_ascii
     },
     'email': {'address': email_or_md5,
               'domain': hostname, },
     'event': {
-        'shop_id': str,
+        'shop_id': unicode_or_printable_ascii,
         'time': rfc3339_datetime,
         'type': event_type,
-        'transaction_id': str,
+        'transaction_id': unicode_or_printable_ascii,
     },
     'order': {
-        'affiliate_id': str,
+        'affiliate_id': unicode_or_printable_ascii,
         'amount': price,
         'currency': currency_code,
-        'discount_code': str,
+        'discount_code': unicode_or_printable_ascii,
         'referrer_uri': uri,
-        'subaffiliate_id': str,
+        'subaffiliate_id': unicode_or_printable_ascii,
     },
     'shipping': shipping_address,
     'shopping_cart': [{
-        'category': str,
-        'item_id': str,
+        'category': unicode_or_printable_ascii,
+        'item_id': unicode_or_printable_ascii,
         'price': price,
         'quantity': All(int, Range(min=1)),
     }, ],

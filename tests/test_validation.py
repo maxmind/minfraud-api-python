@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 from decimal import Decimal
 import sys
 from voluptuous import MultipleInvalid
@@ -9,6 +8,10 @@ if sys.version_info[:2] == (2, 6):
     import unittest2 as unittest
 else:
     import unittest
+
+if sys.version_info[0] == 2:
+    unittest.TestCase.assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
+    unittest.TestCase.assertRegex = unittest.TestCase.assertRegexpMatches
 
 
 class ValidationBase(object):
@@ -22,7 +25,7 @@ class ValidationBase(object):
     def check_invalid_transaction(self, transaction):
         self.setup_transaction(transaction)
         with self.assertRaises(MultipleInvalid,
-                               msg='{!s} is invalid'.format(transaction)):
+                               msg='{0!s} is invalid'.format(transaction)):
             validate_transaction(transaction)
 
     def check_transaction(self, transaction):
@@ -30,7 +33,7 @@ class ValidationBase(object):
         try:
             validate_transaction(transaction)
         except MultipleInvalid as e:
-            self.fail('MultipleInvalid {} thrown for {}'.format(e.msg,
+            self.fail('MultipleInvalid {0} thrown for {1}'.format(e.msg,
                                                                 transaction))
 
     def check_str_type(self, object, key):
@@ -38,7 +41,7 @@ class ValidationBase(object):
         self.check_invalid_transaction({object: {key: 12}})
 
     def check_positive_number(self, f):
-        for good in (1, 1.1, Decimal(1.1)):
+        for good in (1, 1.1, Decimal('1.1')):
             self.check_transaction(f(good))
         for bad in ('1.2', '1', -1, -1.1, 0):
             self.check_invalid_transaction(f(bad))

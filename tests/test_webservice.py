@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import sys
 
 import json
@@ -13,6 +11,10 @@ if sys.version_info[:2] == (2, 6):
 else:
     import unittest
 
+if sys.version_info[0] == 2:
+    unittest.TestCase.assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
+    unittest.TestCase.assertRegex = unittest.TestCase.assertRegexpMatches
+
 
 class BaseTest(object):
     def setUp(self):
@@ -20,7 +22,7 @@ class BaseTest(object):
         with open('tests/data/full-request.json', 'r') as file:
             content = file.read()
         self.full_request = json.loads(content)
-        with open('tests/data/{}-response.json'.format(self.type),
+        with open('tests/data/{0}-response.json'.format(self.type),
                   'r') as file:
             self.response = file.read()
 
@@ -33,13 +35,13 @@ class BaseTest(object):
     def test_200_with_no_body(self):
         with self.assertRaisesRegex(
             MinFraudError,
-            "Received a 200 response but could not decode the response as JSON: b''"):
+            "Received a 200 response but could not decode the response as JSON: b?'?'?"):
             self.create_success(text='')
 
     def test_200_with_invalid_json(self):
         with self.assertRaisesRegex(
             MinFraudError,
-            "Received a 200 response but could not decode the response as JSON: b'{'"):
+            "Received a 200 response but could not decode the response as JSON: b?'?{'?"):
             self.create_success(text='{')
 
     def test_insufficient_funds(self):
@@ -63,7 +65,7 @@ class BaseTest(object):
     def test_400_with_invalid_json(self):
         with self.assertRaisesRegex(
             HTTPError,
-            "Received a 400 error but it did not include the expected JSON body: b?'{blah}'"):
+            "Received a 400 error but it did not include the expected JSON body: b?'?{blah}'?"):
             self.create_error(text='{blah}')
 
     def test_400_with_no_body(self):
@@ -74,20 +76,20 @@ class BaseTest(object):
     def test_400_with_unexpected_content_type(self):
         with self.assertRaisesRegex(
             HTTPError,
-            "Received a 400 error but it did not include the expected JSON body: b?'plain'"):
+            "Received a 400 error but it did not include the expected JSON body: b?'?plain'?"):
             self.create_error(headers={'Content-Type': 'text/plain'},
                               text='plain')
 
     def test_400_with_unexpected_content_type(self):
         with self.assertRaisesRegex(
             HTTPError,
-            "Received a 400 error but it did not include the expected JSON body: b?'plain'"):
+            "Received a 400 error but it did not include the expected JSON body: b?'?plain'?"):
             self.create_error(text='plain')
 
     def test_400_with_unexpected_json(self):
         with self.assertRaisesRegex(
             HTTPError,
-            'Error response contains JSON but it does not specify code or error keys: b?\'{"not":"expected"}\''):
+            'Error response contains JSON but it does not specify code or error keys: b?\'?{"not":"expected"}\'?'):
             self.create_error(text='{"not":"expected"}')
 
     def test_300_error(self):
@@ -118,7 +120,7 @@ class BaseTest(object):
         if headers is None:
             headers = {
                 'Content-Type':
-                'application/vnd.maxmind.com-minfraud-{}+json; charset=UTF-8; version=2.0'.format(
+                'application/vnd.maxmind.com-minfraud-{0}+json; charset=UTF-8; version=2.0'.format(
                     self.type)
             }
         if text is None:

@@ -36,7 +36,7 @@ def inflate_to_namedtuple(orig_cls):
 
         return orig_new(cls, **kwargs)
 
-    cls.__new__ = new
+    cls.__new__ = staticmethod(new)
     return cls
 
 

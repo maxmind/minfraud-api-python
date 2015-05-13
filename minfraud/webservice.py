@@ -34,7 +34,7 @@ class Client(object):
                 validate_transaction(request)
             except MultipleInvalid as e:
                 raise InvalidRequestError(
-                    "Invalid transaction data: {}".format(e))
+                    "Invalid transaction data: {0}".format(e))
         uri = '/'.join([self._base_uri, path])
         response = requests.post(
             uri,
@@ -59,7 +59,7 @@ class Client(object):
         except ValueError as ex:
             raise MinFraudError('Received a 200 response'
                                 ' but could not decode the response as '
-                                'JSON: {}'.format(response.content), 200, uri)
+                                'JSON: {0}'.format(response.content), 200, uri)
         if 'ip_location' in body:
             body['locales'] = self._locales
         return model_class(body)
@@ -76,11 +76,11 @@ class Client(object):
 
     def _handle_4xx_status(self, response, status, uri):
         if not response.content:
-            raise HTTPError('Received a {} error with no body'.format(status),
+            raise HTTPError('Received a {0} error with no body'.format(status),
                             status, uri)
         elif response.headers.get('Content-Type', '').find('json') == -1:
-            raise HTTPError('Received a {} with the following '
-                            'body: {}'.format(status, response.content),
+            raise HTTPError('Received a {0} with the following '
+                            'body: {1}'.format(status, response.content),
                             status, uri)
         try:
             body = response.json()
@@ -98,7 +98,7 @@ class Client(object):
             else:
                 raise HTTPError(
                     'Error response contains JSON but it does not specify code'
-                    ' or error keys: {}'.format(response.content), status, uri)
+                    ' or error keys: {0}'.format(response.content), status, uri)
 
     def _handle_web_service_error(self, message, code, status, uri):
         if code in ('IP_ADDRESS_NOT_FOUND', 'IP_ADDRESS_RESERVED'):

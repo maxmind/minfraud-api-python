@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import sys
 
 from minfraud.models import *
@@ -8,6 +6,10 @@ if sys.version_info[:2] == (2, 6):
     import unittest2 as unittest
 else:
     import unittest
+
+if sys.version_info[0] == 2:
+    unittest.TestCase.assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
+    unittest.TestCase.assertRegex = unittest.TestCase.assertRegexpMatches
 
 
 class TestModels(unittest.TestCase):
@@ -24,7 +26,7 @@ class TestModels(unittest.TestCase):
             for attr in (model.attr, 'does_not_exist'):
                 with self.assertRaises(
                     AttributeError,
-                    msg='{!s} - {}'.format(model.obj, attr)):
+                    msg='{0!s} - {0}'.format(model.obj, attr)):
                     setattr(model.obj, attr, 5)
 
     def test_billing_address(self):
