@@ -3,8 +3,8 @@ from requests.utils import default_user_agent
 from voluptuous import MultipleInvalid
 
 import minfraud
-from minfraud.errors import MinFraudError, HTTPError, AddressNotFoundError, AuthenticationError, InsufficientFundsError, \
-    InvalidRequestError
+from minfraud.errors import MinFraudError, HTTPError, AddressNotFoundError, \
+    AuthenticationError, InsufficientFundsError, InvalidRequestError
 from minfraud.models import Insights, Score
 from minfraud.validation import validate_transaction
 
@@ -41,9 +41,8 @@ class Client(object):
             uri,
             json=request,
             auth=(self._user_id, self._license_key),
-            headers=
-            {'Accept': 'application/json',
-             'User-Agent': self._user_agent()},
+            headers={'Accept': 'application/json',
+                     'User-Agent': self._user_agent()},
             timeout=self._timeout)
         if response.status_code == 200:
             return self._handle_success(response, uri, model_class)
@@ -99,7 +98,8 @@ class Client(object):
             else:
                 raise HTTPError(
                     'Error response contains JSON but it does not specify code'
-                    ' or error keys: {0}'.format(response.content), status, uri)
+                    ' or error keys: {0}'.format(response.content), status,
+                    uri)
 
     def _handle_web_service_error(self, message, code, status, uri):
         if code in ('IP_ADDRESS_NOT_FOUND', 'IP_ADDRESS_RESERVED'):

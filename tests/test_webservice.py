@@ -1,8 +1,10 @@
+import os
 import sys
 
 import json
 import requests_mock
-from minfraud.errors import HTTPError, InvalidRequestError, AuthenticationError, InsufficientFundsError, MinFraudError
+from minfraud.errors import HTTPError, InvalidRequestError, \
+    AuthenticationError, InsufficientFundsError, MinFraudError
 from minfraud.models import Insights, Score
 from minfraud.webservice import Client
 
@@ -19,11 +21,13 @@ if sys.version_info[0] == 2:
 class BaseTest(object):
     def setUp(self):
         self.client = Client(42, 'abcdef123456')
-        with open('tests/data/full-request.json', 'r') as file:
+        test_dir = os.path.join(os.path.dirname(__file__), 'data')
+        with open(os.path.join(test_dir, 'full-request.json'), 'r') as file:
             content = file.read()
         self.full_request = json.loads(content)
-        with open('tests/data/{0}-response.json'.format(self.type),
-                  'r') as file:
+        with open(
+                os.path.join(test_dir, '{0}-response.json'.format(self.type)),
+                'r') as file:
             self.response = file.read()
 
     base_uri = 'https://minfraud.maxmind.com/minfraud/v2.0/'
@@ -34,14 +38,16 @@ class BaseTest(object):
 
     def test_200_with_no_body(self):
         with self.assertRaisesRegex(
-            MinFraudError,
-            "Received a 200 response but could not decode the response as JSON: b?'?'?"):
+                MinFraudError,
+                "Received a 200 response but could not decode the response as"
+                " JSON: b?'?'?"):
             self.create_success(text='')
 
     def test_200_with_invalid_json(self):
         with self.assertRaisesRegex(
-            MinFraudError,
-            "Received a 200 response but could not decode the response as JSON: b?'?{'?"):
+                MinFraudError,
+                "Received a 200 response but could not decode the response as"
+                " JSON: b?'?{'?"):
             self.create_success(text='{')
 
     def test_insufficient_funds(self):
@@ -54,8 +60,8 @@ class BaseTest(object):
                       'USER_ID_REQUIRED'):
             with self.assertRaisesRegex(AuthenticationError, 'Invalid auth'):
                 self.create_error(
-                    text=
-                    u'{{"code":"{0:s}","error":"Invalid auth"}}'.format(error))
+                    text=u'{{"code":"{0:s}","error":"Invalid auth"}}'.format(
+                        error))
 
     def test_invalid_request(self):
         with self.assertRaisesRegex(InvalidRequestError, 'IP invalid'):
@@ -64,8 +70,9 @@ class BaseTest(object):
 
     def test_400_with_invalid_json(self):
         with self.assertRaisesRegex(
-            HTTPError,
-            "Received a 400 error but it did not include the expected JSON body: b?'?{blah}'?"):
+                HTTPError,
+                "Received a 400 error but it did not include the expected JSON"
+                " body: b?'?{blah}'?"):
             self.create_error(text='{blah}')
 
     def test_400_with_no_body(self):
@@ -75,26 +82,29 @@ class BaseTest(object):
 
     def test_400_with_unexpected_content_type(self):
         with self.assertRaisesRegex(
-            HTTPError,
-            "Received a 400 error but it did not include the expected JSON body: b?'?plain'?"):
+                HTTPError,
+                "Received a 400 error but it did not include the expected JSON"
+                " body: b?'?plain'?"):
             self.create_error(headers={'Content-Type': 'text/plain'},
                               text='plain')
 
     def test_400_with_unexpected_content_type(self):
         with self.assertRaisesRegex(
-            HTTPError,
-            "Received a 400 error but it did not include the expected JSON body: b?'?plain'?"):
+                HTTPError,
+                "Received a 400 error but it did not include the expected JSON"
+                " body: b?'?plain'?"):
             self.create_error(text='plain')
 
     def test_400_with_unexpected_json(self):
         with self.assertRaisesRegex(
-            HTTPError,
-            'Error response contains JSON but it does not specify code or error keys: b?\'?{"not":"expected"}\'?'):
+                HTTPError,
+                'Error response contains JSON but it does not specify code or'
+                ' error keys: b?\'?{"not":"expected"}\'?'):
             self.create_error(text='{"not":"expected"}')
 
     def test_300_error(self):
         with self.assertRaisesRegex(
-            HTTPError, 'Received an unexpected HTTP status \(300\) for'):
+                HTTPError, 'Received an unexpected HTTP status \(300\) for'):
             self.create_error(status_code=300)
 
     def test_500_error(self):
@@ -107,7 +117,8 @@ class BaseTest(object):
         if headers is None:
             headers = {
                 'Content-Type':
-                'application/vnd.maxmind.com-error+json; charset=UTF-8; version=2.0'
+                    'application/vnd.maxmind.com-error+json; charset=UTF-8;'
+                    ' version=2.0'
             }
         mock.post(self.base_uri + self.type,
                   status_code=status_code,
@@ -120,8 +131,9 @@ class BaseTest(object):
         if headers is None:
             headers = {
                 'Content-Type':
-                'application/vnd.maxmind.com-minfraud-{0}+json; charset=UTF-8; version=2.0'.format(
-                    self.type)
+                    'application/vnd.maxmind.com-minfraud-{0}+json;'
+                    ' charset=UTF-8; version=2.0'.format(
+                        self.type)
             }
         if text is None:
             text = self.response

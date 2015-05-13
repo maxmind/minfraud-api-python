@@ -34,7 +34,7 @@ class ValidationBase(object):
             validate_transaction(transaction)
         except MultipleInvalid as e:
             self.fail('MultipleInvalid {0} thrown for {1}'.format(e.msg,
-                                                                transaction))
+                                                                  transaction))
 
     def check_str_type(self, object, key):
         self.check_transaction({object: {key: 'string'}})

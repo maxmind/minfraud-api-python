@@ -5,7 +5,6 @@ import geoip2.models
 import geoip2.records
 
 
-
 # Using a factory decorator rather than a metaclass as supporting
 # metaclasses on Python 2 and 3 is more painful (although we could use
 # six, I suppose). Using a closure rather than a class-based decorator as
