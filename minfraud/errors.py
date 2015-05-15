@@ -1,5 +1,5 @@
 class MinFraudError(RuntimeError):
-    """There was a non-specific error in GeoIP2.
+    """There was a non-specific error in minFraud.
 
     This class represents a generic error. It extends :py:exc:`RuntimeError`
     and does not add any additional attributes.
