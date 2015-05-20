@@ -33,8 +33,25 @@ class BaseTest(object):
     base_uri = 'https://minfraud.maxmind.com/minfraud/v2.0/'
 
     def test_200(self):
-        self.assertEqual(self.cls(json.loads(self.response)),
-                         self.create_success())
+        model = self.create_success()
+        response = json.loads(self.response)
+        if self.type == 'insights':
+            response['ip_location']['_locales'] = ('en',)
+        self.assertEqual(self.cls(response), model)
+        if self.type == 'insights':
+            self.assertEqual('United Kingdom', model.ip_location.country.name)
+
+    def test_200_with_locales(self):
+        locales=('fr',)
+        client = Client(42, 'abcdef123456', locales=locales)
+        model = self.create_success(client=client)
+        response = json.loads(self.response)
+        if self.type == 'insights':
+            response['ip_location']['_locales'] = locales
+        self.assertEqual(self.cls(response), model)
+        if self.type == 'insights':
+            self.assertEqual('Royaume-Uni', model.ip_location.country.name)
+            self.assertEqual('Londres', model.ip_location.city.name)
 
     def test_200_with_no_body(self):
         with self.assertRaisesRegex(
@@ -127,7 +144,7 @@ class BaseTest(object):
         return getattr(self.client, self.type)(self.full_request)
 
     @requests_mock.mock()
-    def create_success(self, mock, text=None, headers=None):
+    def create_success(self, mock, text=None, headers=None, client=None):
         if headers is None:
             headers = {
                 'Content-Type':
@@ -141,7 +158,9 @@ class BaseTest(object):
                   status_code=200,
                   text=text,
                   headers=headers)
-        return getattr(self.client, self.type)(self.full_request)
+        if client is None:
+            client = self.client
+        return getattr(client, self.type)(self.full_request)
 
 
 class TestInsights(BaseTest, unittest.TestCase):

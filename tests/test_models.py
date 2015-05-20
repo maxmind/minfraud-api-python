@@ -97,7 +97,7 @@ class TestModels(unittest.TestCase):
     def test_ip_location_locales(self):
 
         loc = IPLocation({
-            'locales': ['fr'],
+            '_locales': ['fr'],
             'country': {'names': {'fr': 'Country'}},
             'city': {'names': {'fr': 'City'}},
         })

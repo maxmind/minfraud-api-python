@@ -61,7 +61,9 @@ class IPLocation(geoip2.models.Insights):
     def __init__(self, ip_location):
         if ip_location is None:
             ip_location = {}
-        locales = ip_location.get('locales')
+        locales = ip_location.get('_locales')
+        if '_locales' in ip_location:
+            del ip_location['_locales']
         super(IPLocation, self).__init__(ip_location, locales=locales)
         self.country = GeoIP2Country(locales, **ip_location.get('country', {}))
         self.location = GeoIP2Location(**ip_location.get('location', {}))

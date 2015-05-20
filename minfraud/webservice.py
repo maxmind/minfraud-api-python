@@ -12,11 +12,9 @@ from minfraud.validation import validate_transaction
 class Client(object):
     def __init__(self, user_id, license_key,
                  host='minfraud.maxmind.com',
-                 locales=None,
+                 locales=('en',),
                  timeout=None):
         # pylint: disable=too-many-arguments
-        if locales is None:
-            locales = ['en']
         self._locales = locales
         self._user_id = user_id
         self._license_key = license_key
@@ -61,7 +59,7 @@ class Client(object):
                                 ' but could not decode the response as '
                                 'JSON: {0}'.format(response.content), 200, uri)
         if 'ip_location' in body:
-            body['locales'] = self._locales
+            body['ip_location']['_locales'] = self._locales
         return model_class(body)
 
     def _handle_error(self, response, uri):
