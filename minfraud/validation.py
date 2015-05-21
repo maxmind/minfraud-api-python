@@ -7,6 +7,14 @@ from validate_email import validate_email
 from voluptuous import All, Any, In, Match, Range, Required, Schema
 import rfc3987
 
+"""
+Internal code for validating the transaction dictionary.
+
+This code is only intended for internal use and is subject to change in ways
+that may break any direct use of it.
+
+"""
+
 if sys.version_info[0] == 3:
     import ipaddress  # pylint:disable=F0401
 

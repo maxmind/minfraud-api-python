@@ -169,4 +169,4 @@ class TestModels(unittest.TestCase):
 
         self.assertEqual(code, warning.code)
         self.assertEqual(msg, warning.warning)
-        self.assertEqual(['first', 'second'], warning.input)
+        self.assertEqual(('first', 'second'), warning.input)

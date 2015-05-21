@@ -1,13 +1,17 @@
+"""
+minfraud.errors
+~~~~~~~~~~~~~~~
+
+This module contains errors that are raised by this package.
+
+"""
+
 class MinFraudError(RuntimeError):
     """There was a non-specific error in minFraud.
 
     This class represents a generic error. It extends :py:exc:`RuntimeError`
     and does not add any additional attributes.
     """
-
-
-class AddressNotFoundError(MinFraudError):
-    """The address you were looking up was not found."""
 
 
 class AuthenticationError(MinFraudError):

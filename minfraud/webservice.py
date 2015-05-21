@@ -1,19 +1,46 @@
+"""
+minfraud.webservice
+~~~~~~~~~~~~~~~
+
+This module contains the webservice client class.
+
+"""
+
 import requests
 from requests.utils import default_user_agent
 from voluptuous import MultipleInvalid
 
 import minfraud
-from minfraud.errors import MinFraudError, HTTPError, AddressNotFoundError, \
+from minfraud.errors import MinFraudError, HTTPError, \
     AuthenticationError, InsufficientFundsError, InvalidRequestError
 from minfraud.models import Insights, Score
 from minfraud.validation import validate_transaction
 
 
 class Client(object):
+    """
+    Client for accessing the minFraud Score and Insights web services
+    """
     def __init__(self, user_id, license_key,
                  host='minfraud.maxmind.com',
                  locales=('en',),
                  timeout=None):
+        """
+        Constructor for Client
+
+        :param user_id: Your MaxMind user ID
+        :type user_id: int
+        :param license_key: Your MaxMind license key
+        :type license_key: str
+        :param host: The host to use when connecting to the web service.
+        :type host: str
+        :param locales: A tuple of locale codes to use in name property
+        :type locales: tuple[str]
+        :param timeout: The timeout to use for the request.
+        :type timeout: float
+        :return: Client object
+        :rtype: Client
+        """
         # pylint: disable=too-many-arguments
         self._locales = locales
         self._user_id = user_id
@@ -22,9 +49,45 @@ class Client(object):
         self._timeout = timeout
 
     def insights(self, transaction, validate=True):
+        """
+        Query Insights endpoint with transaction data
+
+        :param transaction: A dictionary containing the transaction to be
+          sent to the minFraud Insights web service as specified in the `REST
+          API documentation
+          <http://dev.maxmind.com/minfraud-score-and-insights-api-documentation/#Request_Body>`_.
+        :type transaction: dict
+        :param validate: If set to false, validation of the transaction
+          dictionary will be disabled. This validation helps ensure that your
+          request is correct before sending it to MaxMind. Validation raises an
+          InvalidRequestError.
+        :type validate: bool
+        :return: An Insights model object
+        :rtype: Insights
+        :raises: AuthenticationError, InsufficientFundsError,
+          InvalidRequestError, HTTPError, MinFraudError,
+        """
         return self._response_for('insights', Insights, transaction, validate)
 
     def score(self, transaction, validate=True):
+        """
+        Query Score endpoint with transaction data
+
+        :param transaction: A dictionary containing the transaction to be
+          sent to the minFraud Score web service as specified in the `REST API
+          documentation
+          <http://dev.maxmind.com/minfraud-score-and-insights-api-documentation/#Request_Body>`_.
+        :type transaction: dict
+        :param validate: If set to false, validation of the transaction
+          dictionary will be disabled. This validation helps ensure that your
+          request is correct before sending it to MaxMind. Validation raises an
+          InvalidRequestError.
+        :type validate: bool
+        :return: An Score model object
+        :rtype: Score
+        :raises: AuthenticationError, InsufficientFundsError,
+          InvalidRequestError, HTTPError, MinFraudError,
+        """
         return self._response_for('score', Score, transaction, validate)
 
     def _response_for(self, path, model_class, request, validate):
@@ -82,7 +145,7 @@ class Client(object):
                             status, uri)
         try:
             body = response.json()
-        except ValueError as ex:
+        except ValueError:
             raise HTTPError(
                 'Received a {status:d} error but it did not include'
                 ' the expected JSON body: {content}'
@@ -100,9 +163,7 @@ class Client(object):
                     uri)
 
     def _handle_web_service_error(self, message, code, status, uri):
-        if code in ('IP_ADDRESS_NOT_FOUND', 'IP_ADDRESS_RESERVED'):
-            raise AddressNotFoundError(message)
-        elif code in ('AUTHORIZATION_INVALID', 'LICENSE_KEY_REQUIRED',
+        if code in ('AUTHORIZATION_INVALID', 'LICENSE_KEY_REQUIRED',
                       'USER_ID_REQUIRED'):
             raise AuthenticationError(message)
         elif code == 'INSUFFICIENT_FUNDS':
