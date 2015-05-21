@@ -1,6 +1,6 @@
 """
 minfraud.webservice
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 This module contains the webservice client class.
 
