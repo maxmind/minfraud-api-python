@@ -24,10 +24,10 @@ def _inflate_to_namedtuple(orig_cls):
     orig_cls.__name__ += 'Super'
     nt = namedtuple(name, keys)
     nt.__name__ = name + 'NamedTuple'
-    nt.__new__.__defaults__ = (None, ) * len(keys)
-    cls = type(name, (nt, orig_cls), {'__slots__': ()})
+    nt.__new__.__defaults__ = (None,) * len(keys)
+    cls = type(name, (nt, orig_cls),
+               {'__slots__': (), '__doc__': orig_cls.__doc__})
     update_wrapper(_inflate_to_namedtuple, cls)
-    cls.__doc__ = orig_cls.__doc__
     orig_new = cls.__new__
 
     def new(cls, *args, **kwargs):
