@@ -9,15 +9,19 @@ Modules
 
 .. automodule:: minfraud
     :members:
+    :undoc-members:
 
 .. automodule:: minfraud.webservice
     :members:
+    :undoc-members:
 
 .. automodule:: minfraud.models
     :members:
+    :undoc-members:
 
 .. automodule:: minfraud.errors
     :members:
+    :undoc-members:
 
 ==================
 Indices and tables

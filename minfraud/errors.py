@@ -6,7 +6,9 @@ This module contains errors that are raised by this package.
 
 """
 
+
 class MinFraudError(RuntimeError):
+
     """There was a non-specific error in minFraud.
 
     This class represents a generic error. It extends :py:exc:`RuntimeError`
@@ -15,15 +17,27 @@ class MinFraudError(RuntimeError):
 
 
 class AuthenticationError(MinFraudError):
+
     """There was a problem authenticating the request."""
 
 
 class HTTPError(MinFraudError):
+
     """There was an error when making your HTTP request.
     This class represents an HTTP transport error. It extends
     :py:exc:`MinFraudError` and adds attributes of its own.
-    :ivar http_status: The HTTP status code returned
-    :ivar uri: The URI queried
+
+    .. attribute:: http_status:
+      The HTTP status code returned
+
+      :type: int
+
+    .. attribute:: uri:
+
+      The URI queried
+
+      :type: str
+
     """
 
     def __init__(self, message, http_status=None, uri=None):
@@ -33,8 +47,10 @@ class HTTPError(MinFraudError):
 
 
 class InvalidRequestError(MinFraudError):
+
     """The request was invalid."""
 
 
 class InsufficientFundsError(MinFraudError):
+
     """Your account is out of funds for the service queried."""

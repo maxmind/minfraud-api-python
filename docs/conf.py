@@ -245,4 +245,10 @@ texinfo_documents = [
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'http://docs.python.org/': None}
+intersphinx_mapping = {
+    'python': ('http://python.readthedocs.org/en/latest/', None),
+    'geoip2': ('http://geoip2.readthedocs.org/en/latest/', None)
+}
+
+
+autoclass_content = 'both'

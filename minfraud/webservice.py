@@ -18,9 +18,11 @@ from minfraud.validation import validate_transaction
 
 
 class Client(object):
+
     """
-    Client for accessing the minFraud Score and Insights web services
+    Client for accessing the minFraud Score and Insights web services.
     """
+
     def __init__(self, user_id, license_key,
                  host='minfraud.maxmind.com',
                  locales=('en',),
@@ -164,7 +166,7 @@ class Client(object):
 
     def _handle_web_service_error(self, message, code, status, uri):
         if code in ('AUTHORIZATION_INVALID', 'LICENSE_KEY_REQUIRED',
-                      'USER_ID_REQUIRED'):
+                    'USER_ID_REQUIRED'):
             raise AuthenticationError(message)
         elif code == 'INSUFFICIENT_FUNDS':
             raise InsufficientFundsError(message)
