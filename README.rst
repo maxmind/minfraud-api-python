@@ -35,7 +35,7 @@ the Score web service is called with the ``score(transaction)``. Each of
 these methods takes a dictionary representing the transaction to be sent
 to the web service. The structure of this dictionary should be in `the format
 specified in the REST API documentation
-<http://dev.maxmind.com/minfraud-score-and-insights-api-documentation/#Request_Body>_`
+<http://dev.maxmind.com/minfraud-score-and-insights-api-documentation/#Request_Body>`_.
 
 Assuming validation has not been disabled, before sending the request to
 the web service, the transaction dictionary's structure and content will be
@@ -49,7 +49,7 @@ If the request fails, one of the errors listed below will be raised.
 Errors
 ------
 
-The possible errorss are:
+The possible errors are:
 
 * :class:`minfraud.AuthenticationError` - This will be raised when the server
   is unable to authenticate the request, e.g., if the license key or user ID

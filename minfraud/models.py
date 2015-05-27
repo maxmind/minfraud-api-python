@@ -303,7 +303,7 @@ class BillingAddress(object):
       This property is ``True`` if the address is in the
       IP country. The property is ``False`` when the address is not in the IP
       country. If the address could not be parsed or was not provided or if the
-      IP address could not be geo-located, the property will be ``None``.
+      IP address could not be geolocated, the property will be ``None``.
 
       :type: bool | None
 
@@ -357,7 +357,7 @@ class ShippingAddress(object):
       This property is ``True`` if the address is in the
       IP country. The property is ``False`` when the address is not in the IP
       country. If the address could not be parsed or was not provided or if the
-      IP address could not be geo-located, the property will be ``None``.
+      IP address could not be geolocated, the property will be ``None``.
 
       :type: bool | None
 
@@ -387,7 +387,7 @@ class ShippingAddress(object):
       This property is ``True`` if the shipping address is in
       the IP country. The property is ``false`` when the address is not in the
       IP country. If the shipping address could not be parsed or was not
-      provided or the IP address could not be geo-located, then the property is
+      provided or the IP address could not be geolocated, then the property is
       ``None``.
 
       :type: bool | None
@@ -503,7 +503,7 @@ class Insights(object):
     .. attribute:: ip_location
 
       A :class:`.IPLocation` object containing GeoIP2 and
-      minFraud Insights information about the geo-located IP address.
+      minFraud Insights information about the geolocated IP address.
 
       :type: IPLocation
 

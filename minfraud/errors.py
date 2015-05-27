@@ -28,6 +28,7 @@ class HTTPError(MinFraudError):
     :py:exc:`MinFraudError` and adds attributes of its own.
 
     .. attribute:: http_status:
+
       The HTTP status code returned
 
       :type: int

@@ -85,7 +85,7 @@ class Client(object):
           request is correct before sending it to MaxMind. Validation raises an
           InvalidRequestError.
         :type validate: bool
-        :return: An Score model object
+        :return: A Score model object
         :rtype: Score
         :raises: AuthenticationError, InsufficientFundsError,
           InvalidRequestError, HTTPError, MinFraudError,
