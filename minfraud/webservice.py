@@ -28,7 +28,7 @@ class Client(object):
                  locales=('en',),
                  timeout=None):
         """
-        Constructor for Client
+        Constructor for Client.
 
         :param user_id: Your MaxMind user ID
         :type user_id: int
@@ -52,7 +52,7 @@ class Client(object):
 
     def insights(self, transaction, validate=True):
         """
-        Query Insights endpoint with transaction data
+        Query Insights endpoint with transaction data.
 
         :param transaction: A dictionary containing the transaction to be
           sent to the minFraud Insights web service as specified in the `REST

@@ -28,17 +28,33 @@ Usage
 -----
 
 To use this API, create a new ``minfraud.Client`` object. The constructor
-takes your MaxMind user ID and license key.
+takes your MaxMind user ID and license key:
 
-The Insights service is called with the ``insights(transaction)`` method and
-the Score web service is called with the ``score(transaction)``. Each of
-these methods takes a dictionary representing the transaction to be sent
+.. code-block:: pycon
+
+    >>> client = Client(42, 'licensekey')
+
+The Insights service is called with the ``insights()`` method:
+
+.. code-block:: pycon
+
+    >>> insights = client.insights({'device': {'ip_address': '81.2.69.160'}})
+
+The Score web service is called with the ``score()`` method:
+
+.. code-block:: pycon
+
+    >>> insights = client.insights({'device': {'ip_address': '81.2.69.160'}})
+
+Each of these methods takes a dictionary representing the transaction to be sent
 to the web service. The structure of this dictionary should be in `the format
 specified in the REST API documentation
 <http://dev.maxmind.com/minfraud-score-and-insights-api-documentation/#Request_Body>`_.
+The ``ip_address`` in the ``device`` sub-dictionary is required. All other
+fields are optional.
 
-Assuming validation has not been disabled, before sending the request to
-the web service, the transaction dictionary's structure and content will be
+Assuming validation has not been disabled, before sending the transaction to
+the web service, the transaction dictionary structure and content will be
 validated. If validation fails, a :class:`minfraud.InvalidRequestError`
 will be raised.
 
@@ -54,8 +70,8 @@ The possible errors are:
 * :class:`minfraud.AuthenticationError` - This will be raised when the server
   is unable to authenticate the request, e.g., if the license key or user ID
   is invalid.
-* :class:`minfraud.InsufficientFundsError` - This will be raised when your
-  account is out of funds.
+* :class:`minfraud.InsufficientFundsError` - This will be raised when `your
+  account <https://www.maxmind.com/en/account>`_ is out of funds.
 * :class:`minfraud.InvalidRequestError` - This will be raised when the server
   rejects the request as invalid for another reason, such as a missing or
   reserved IP address. It is also raised if validation of the request before
@@ -178,7 +194,7 @@ Support
 -------
 
 Please report all issues with this code using the `GitHub issue tracker
-<https://github.com/maxmind/minfraud-api-python/issues>`_
+<https://github.com/maxmind/minfraud-api-python/issues>`_.
 
 If you are having an issue with a MaxMind service that is not specific to the
 client API, please contact `MaxMind support <http://www.maxmind.com/en/support>`_
