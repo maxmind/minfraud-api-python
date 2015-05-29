@@ -1,19 +1,101 @@
+===================
 minfraud-api-python
 ===================
 
+Description
+-----------
+
+This package provides an API for the `MaxMind minFraud Score and Insights
+web services <http://dev.maxmind.com/minfraud-score-and-insights-api-documentation>`_.
+
+Installation
+------------
+
+To install the ``minfraud`` module, type:
+
+.. code-block:: bash
+
+    $ pip install minfraud
+
+If you are not able to use pip, you may also use easy_install from the
+source directory:
+
+.. code-block:: bash
+
+    $ easy_install .
+
+Usage
+-----
+
+To use this API, create a new ``minfraud.Client`` object. The constructor
+takes your MaxMind user ID and license key:
 
 .. code-block:: pycon
 
-    >>> from minfraud.webservice import Client
+    >>> client = Client(42, 'licensekey')
+
+The Insights service is called with the ``insights()`` method:
+
+.. code-block:: pycon
+
+    >>> insights = client.insights({'device': {'ip_address': '81.2.69.160'}})
+
+The Score web service is called with the ``score()`` method:
+
+.. code-block:: pycon
+
+    >>> insights = client.insights({'device': {'ip_address': '81.2.69.160'}})
+
+Each of these methods takes a dictionary representing the transaction to be sent
+to the web service. The structure of this dictionary should be in `the format
+specified in the REST API documentation
+<http://dev.maxmind.com/minfraud-score-and-insights-api-documentation/#Request_Body>`_.
+The ``ip_address`` in the ``device`` sub-dictionary is required. All other
+fields are optional.
+
+Assuming validation has not been disabled, before sending the transaction to
+the web service, the transaction dictionary structure and content will be
+validated. If validation fails, a :class:`minfraud.InvalidRequestError`
+will be raised.
+
+If the dictionary is valid, a request will be made to the web service. If the
+request succeeds, a model object for the service response will be returned.
+If the request fails, one of the errors listed below will be raised.
+
+Errors
+------
+
+The possible errors are:
+
+* :class:`minfraud.AuthenticationError` - This will be raised when the server
+  is unable to authenticate the request, e.g., if the license key or user ID
+  is invalid.
+* :class:`minfraud.InsufficientFundsError` - This will be raised when `your
+  account <https://www.maxmind.com/en/account>`_ is out of funds.
+* :class:`minfraud.InvalidRequestError` - This will be raised when the server
+  rejects the request as invalid for another reason, such as a missing or
+  reserved IP address. It is also raised if validation of the request before
+  it is sent to the server fails.
+* :class:`minfraud.HttpError` - This will be raised when an unexpected HTTP
+  error occurs such as a firewall interfering with the request to the server.
+* :class:`minfraud.MinFraudError` - This will be raised when some other error
+  occurs such as unexpected content from the server. This also serves as the
+  base class for the above errors.
+
+Example
+-------
+
+.. code-block:: pycon
+
+    >>> from minfraud import Client
     >>>
     >>> client = Client(42, 'licensekey')
     >>>
     >>> request = {
     >>>     'device': {
-    >>>         'accept_language': 'en-US,en;q=0.8',
     >>>         'ip_address': '81.2.69.160',
-    >>>         'user_agent':
-    >>>         'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.89 Safari/537.36'
+    >>>         'accept_language': 'en-US,en;q=0.8',
+    >>>         'user_agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.89 Safari/537.36'
     >>>     },
     >>>     'event': {
     >>>         'shop_id': 's2123',
@@ -30,31 +112,31 @@ minfraud-api-python
     >>>         'domain': 'maxmind.com'
     >>>     },
     >>>     'billing': {
-    >>>         'address_2': 'Unit 5',
-    >>>         'region': 'CT',
+    >>>         'first_name': 'Jane'
+    >>>         'last_name': 'Doe',
     >>>         'company': 'Company',
+    >>>         'address': '101 Address Rd.',
+    >>>         'address_2': 'Unit 5',
+    >>>         'city': 'Hamden',
+    >>>         'region': 'CT',
+    >>>         'country': 'US',
+    >>>         'postal': '06510',
     >>>         'phone_country_code': '1',
     >>>         'phone_number': '323-123-4321',
-    >>>         'address': '101 Address Rd.',
-    >>>         'last_name': 'Last',
-    >>>         'country': 'US',
-    >>>         'city': 'City of Thorns',
-    >>>         'postal': '06510',
-    >>>         'first_name': 'First'
     >>>     },
     >>>     'shipping': {
-    >>>         'city': 'Nowhere',
-    >>>         'postal': '73003',
-    >>>         'last_name': 'ShipLast',
-    >>>         'country': 'US',
-    >>>         'phone_number': '403-321-2323',
-    >>>         'delivery_speed': 'same_day',
-    >>>         'address_2': 'St. 43',
-    >>>         'phone_country_code': '1',
+    >>>         'first_name': 'John'
+    >>>         'last_name': 'Doe',
     >>>         'company': 'ShipCo',
     >>>         'address': '322 Ship Addr. Ln.',
-    >>>         'region': 'OK',
-    >>>         'first_name': 'ShipFirst'
+    >>>         'address_2': 'St. 43',
+    >>>         'city': 'New Haven',
+    >>>         'region': 'CT',
+    >>>         'country': 'US',
+    >>>         'postal': '06510',
+    >>>         'phone_country_code': '1',
+    >>>         'phone_number': '403-321-2323',
+    >>>         'delivery_speed': 'same_day',
     >>>     },
     >>>     'credit_card': {
     >>>         'bank_phone_country_code': '1',
@@ -74,12 +156,12 @@ minfraud-api-python
     >>>         'category': 'pets',
     >>>         'quantity': 2,
     >>>         'price': 20.43,
-    >>>         'item_id': 'ad23232'
+    >>>         'item_id': 'lsh12'
     >>>     }, {
     >>>         'category': 'beauty',
     >>>         'quantity': 1,
     >>>         'price': 100.0,
-    >>>         'item_id': 'bst112'
+    >>>         'item_id': 'ms12'
     >>>     }],
     >>>     'order': {
     >>>         'affiliate_id': 'af12',
@@ -97,7 +179,6 @@ minfraud-api-python
     >>> client.insights(request)
     Insights(...)
 
-
 Requirements
 ------------
 
@@ -109,9 +190,19 @@ Versioning
 
 The minFraud Python API uses `Semantic Versioning <http://semver.org/>`_.
 
+Support
+-------
+
+Please report all issues with this code using the `GitHub issue tracker
+<https://github.com/maxmind/minfraud-api-python/issues>`_.
+
+If you are having an issue with a MaxMind service that is not specific to the
+client API, please contact `MaxMind support <http://www.maxmind.com/en/support>`_
+for assistance.
+
 Copyright and License
 ---------------------
 
-This software is Copyright (c) 2015 by MaxMind, Inc.
+This software is Copyright © 2015 by MaxMind, Inc.
 
 This is free software, licensed under the Apache License, Version 2.0.
