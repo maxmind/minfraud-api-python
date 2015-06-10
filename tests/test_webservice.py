@@ -36,10 +36,10 @@ class BaseTest(object):
         model = self.create_success()
         response = json.loads(self.response)
         if self.type == 'insights':
-            response['ip_location']['_locales'] = ('en',)
+            response['ip_address']['_locales'] = ('en',)
         self.assertEqual(self.cls(response), model)
         if self.type == 'insights':
-            self.assertEqual('United Kingdom', model.ip_location.country.name)
+            self.assertEqual('United Kingdom', model.ip_address.country.name)
 
     def test_200_with_locales(self):
         locales=('fr',)
@@ -47,11 +47,11 @@ class BaseTest(object):
         model = self.create_success(client=client)
         response = json.loads(self.response)
         if self.type == 'insights':
-            response['ip_location']['_locales'] = locales
+            response['ip_address']['_locales'] = locales
         self.assertEqual(self.cls(response), model)
         if self.type == 'insights':
-            self.assertEqual('Royaume-Uni', model.ip_location.country.name)
-            self.assertEqual('Londres', model.ip_location.city.name)
+            self.assertEqual('Royaume-Uni', model.ip_address.country.name)
+            self.assertEqual('Londres', model.ip_address.city.name)
 
     def test_200_with_no_body(self):
         with self.assertRaisesRegex(

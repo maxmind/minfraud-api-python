@@ -123,8 +123,8 @@ class Client(object):
             raise MinFraudError('Received a 200 response'
                                 ' but could not decode the response as '
                                 'JSON: {0}'.format(response.content), 200, uri)
-        if 'ip_location' in body:
-            body['ip_location']['_locales'] = self._locales
+        if 'ip_address' in body:
+            body['ip_address']['_locales'] = self._locales
         return model_class(body)
 
     def _handle_error(self, response, uri):

@@ -108,10 +108,17 @@ class GeoIP2Country(geoip2.records.Country):
         set(['is_high_risk']))
 
 
-class IPLocation(geoip2.models.Insights):
+class IPAddress(geoip2.models.Insights):
 
     """
-    Model for minFraud GeoIP2 Insights data
+    Model for minFraud and GeoIP2 data about the IP address
+
+    .. attribute:: risk
+
+      This field contains the risk associated with the IP address. The value
+      ranges from 0.01 to 99. A higher score indicates a higher risk.
+
+      :type: float | None
 
     .. attribute:: city
 
@@ -173,15 +180,16 @@ class IPLocation(geoip2.models.Insights):
 
     """
 
-    def __init__(self, ip_location):
-        if ip_location is None:
-            ip_location = {}
-        locales = ip_location.get('_locales')
-        if '_locales' in ip_location:
-            del ip_location['_locales']
-        super(IPLocation, self).__init__(ip_location, locales=locales)
-        self.country = GeoIP2Country(locales, **ip_location.get('country', {}))
-        self.location = GeoIP2Location(**ip_location.get('location', {}))
+    def __init__(self, ip_address):
+        if ip_address is None:
+            ip_address = {}
+        locales = ip_address.get('_locales')
+        if '_locales' in ip_address:
+            del ip_address['_locales']
+        super(IPAddress, self).__init__(ip_address, locales=locales)
+        self.country = GeoIP2Country(locales, **ip_address.get('country', {}))
+        self.location = GeoIP2Location(**ip_address.get('location', {}))
+        self.risk = ip_address.get('risk', None)
         self._finalized = True
 
     # Unfortunately the GeoIP2 models are not immutable, only the records. This
@@ -189,7 +197,7 @@ class IPLocation(geoip2.models.Insights):
     def __setattr__(self, name, value):
         if hasattr(self, '_finalized') and self._finalized:
             raise AttributeError("can't set attribute")
-        super(IPLocation, self).__setattr__(name, value)
+        super(IPAddress, self).__setattr__(name, value)
 
 
 @_inflate_to_namedtuple
@@ -500,12 +508,12 @@ class Insights(object):
 
       :type: CreditCard
 
-    .. attribute:: ip_location
+    .. attribute:: ip_address
 
-      A :class:`.IPLocation` object containing GeoIP2 and
-      minFraud Insights information about the geolocated IP address.
+      A :class:`.IPAddress` object containing GeoIP2 and
+      minFraud Insights information about the IP address.
 
-      :type: IPLocation
+      :type: IPAddress
 
     .. attribute:: billing_address
 
@@ -525,7 +533,7 @@ class Insights(object):
         'risk_score': None,
         'warnings': _create_warnings,
         'credits_remaining': None,
-        'ip_location': IPLocation,
+        'ip_address': IPAddress,
         'credit_card': CreditCard,
         'shipping_address': ShippingAddress,
         'billing_address': BillingAddress

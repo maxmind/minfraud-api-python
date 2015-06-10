@@ -13,6 +13,7 @@ if sys.version_info[0] == 2:
 
 
 class TestModels(unittest.TestCase):
+
     def test_model_immutability(self):
         """This tests some level of _shallow_ immutability for these classes"""
         T = namedtuple('T', ['obj', 'attr'], {})
@@ -21,7 +22,7 @@ class TestModels(unittest.TestCase):
                   T(CreditCard(), 'country'), T(BillingAddress(), 'latitude'),
                   T(ShippingAddress(), 'latitude'), T(Warning(), 'code'),
                   T(Insights(), 'id'), T(Score(), 'id'),
-                  T(IPLocation({}), 'city')]
+                  T(IPAddress({}), 'city')]
         for model in models:
             for attr in (model.attr, 'does_not_exist'):
                 with self.assertRaises(
@@ -84,19 +85,21 @@ class TestModels(unittest.TestCase):
         self.assertEqual(time, location.local_time)
         self.assertEqual(5, location.latitude)
 
-    def test_ip_location(self):
+    def test_ip_address(self):
         time = "2015-04-19T12:59:23-01:00"
-        loc = IPLocation({
+        address = IPAddress({
             'country': {'is_high_risk': True},
-            'location': {'local_time': time}
+            'location': {'local_time': time},
+            'risk': 99,
         })
 
-        self.assertEqual(time, loc.location.local_time)
-        self.assertEqual(True, loc.country.is_high_risk)
+        self.assertEqual(time, address.location.local_time)
+        self.assertEqual(True, address.country.is_high_risk)
+        self.assertEqual(99, address.risk)
 
-    def test_ip_location_locales(self):
+    def test_ip_address_locales(self):
 
-        loc = IPLocation({
+        loc = IPAddress({
             '_locales': ['fr'],
             'country': {'names': {'fr': 'Country'}},
             'city': {'names': {'fr': 'City'}},
@@ -109,7 +112,7 @@ class TestModels(unittest.TestCase):
         id = "b643d445-18b2-4b9d-bad4-c9c4366e402a"
         insights = Insights({
             'id': id,
-            'ip_location': {'country': {'iso_code': 'US'}},
+            'ip_address': {'country': {'iso_code': 'US'}},
             'credit_card': {'is_prepaid': True},
             'shipping_address': {'is_in_ip_country': True},
             'billing_address': {'is_in_ip_country': True},
@@ -118,7 +121,7 @@ class TestModels(unittest.TestCase):
             'warnings': [{"code": "INVALID_INPUT"}]
         })
 
-        self.assertEqual('US', insights.ip_location.country.iso_code)
+        self.assertEqual('US', insights.ip_address.country.iso_code)
         self.assertEqual(True, insights.credit_card.is_prepaid)
         self.assertEqual(True, insights.shipping_address.is_in_ip_country)
         self.assertEqual(True, insights.billing_address.is_in_ip_country)
