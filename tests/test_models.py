@@ -13,7 +13,6 @@ if sys.version_info[0] == 2:
 
 
 class TestModels(unittest.TestCase):
-
     def test_model_immutability(self):
         """This tests some level of _shallow_ immutability for these classes"""
         T = namedtuple('T', ['obj', 'attr'], {})
@@ -26,8 +25,8 @@ class TestModels(unittest.TestCase):
         for model in models:
             for attr in (model.attr, 'does_not_exist'):
                 with self.assertRaises(
-                        AttributeError,
-                        msg='{0!s} - {0}'.format(model.obj, attr)):
+                    AttributeError,
+                    msg='{0!s} - {0}'.format(model.obj, attr)):
                     setattr(model.obj, attr, 5)
 
     def test_billing_address(self):

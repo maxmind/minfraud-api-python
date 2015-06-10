@@ -24,11 +24,12 @@ def _inflate_to_namedtuple(orig_cls):
     orig_cls.__name__ += 'Super'
     nt = namedtuple(name, keys)
     nt.__name__ = name + 'NamedTuple'
-    nt.__new__.__defaults__ = (None,) * len(keys)
-    cls = type(name, (nt, orig_cls),
-               {'__slots__': (), '__doc__': orig_cls.__doc__})
-    update_wrapper(_inflate_to_namedtuple, cls)
-    orig_new = cls.__new__
+    nt.__new__.__defaults__ = (None, ) * len(keys)
+    new_cls = type(name, (nt, orig_cls),
+                   {'__slots__': (),
+                    '__doc__': orig_cls.__doc__})
+    update_wrapper(_inflate_to_namedtuple, new_cls)
+    orig_new = new_cls.__new__
 
     # wipe out original namedtuple field docs as they aren't useful
     # for attr in fields:
@@ -49,8 +50,8 @@ def _inflate_to_namedtuple(orig_cls):
 
         return orig_new(cls, **kwargs)
 
-    cls.__new__ = staticmethod(new)
-    return cls
+    new_cls.__new__ = staticmethod(new)
+    return new_cls
 
 
 def _create_warnings(warnings):
@@ -60,7 +61,6 @@ def _create_warnings(warnings):
 
 
 class GeoIP2Location(geoip2.records.Location):
-
     """
     Location information for the IP address
 
@@ -86,7 +86,6 @@ class GeoIP2Location(geoip2.records.Location):
 
 
 class GeoIP2Country(geoip2.records.Country):
-
     """
     Country information for the IP address
 
@@ -109,7 +108,6 @@ class GeoIP2Country(geoip2.records.Country):
 
 
 class IPAddress(geoip2.models.Insights):
-
     """
     Model for minFraud and GeoIP2 data about the IP address
 
@@ -202,7 +200,6 @@ class IPAddress(geoip2.models.Insights):
 
 @_inflate_to_namedtuple
 class Issuer(object):
-
     """
     Information about the credit card issuer.
 
@@ -251,7 +248,6 @@ class Issuer(object):
 
 @_inflate_to_namedtuple
 class CreditCard(object):
-
     """
     Information about the credit card based on the issuer ID number
 
@@ -295,7 +291,6 @@ class CreditCard(object):
 
 @_inflate_to_namedtuple
 class BillingAddress(object):
-
     """
     Information about the billing address
 
@@ -349,7 +344,6 @@ class BillingAddress(object):
 
 @_inflate_to_namedtuple
 class ShippingAddress(object):
-
     """
     Information about the shipping address
 
@@ -422,7 +416,6 @@ class ShippingAddress(object):
 
 @_inflate_to_namedtuple
 class Warning(object):
-
     """
     Warning from the web service
 
@@ -463,7 +456,6 @@ class Warning(object):
 
 @_inflate_to_namedtuple
 class Insights(object):
-
     """
     Model for Insights response
 
@@ -542,15 +534,14 @@ class Insights(object):
 
 @_inflate_to_namedtuple
 class Score(object):
-
     """
     Model for Score response
 
     .. attribute:: id
 
       This is a UUID that identifies the minFraud request. Please use
-      this ID in bug reports or support requests to MaxMind so that we can easily
-      identify a particular request.
+      this ID in bug reports or support requests to MaxMind so that we can
+      easily identify a particular request.
 
       :type: str
 
@@ -564,9 +555,9 @@ class Score(object):
     .. attribute:: warnings
 
       This tuple contains :class:`.Warning` objects detailing
-      issues with the request that was sent such as invalid or unknown inputs. It
-      is highly recommended that you check this array for issues when integrating
-      the web service.
+      issues with the request that was sent such as invalid or unknown inputs.
+      It is highly recommended that you check this array for issues when
+      integrating the web service.
 
       :type: tuple[Warning]
 
