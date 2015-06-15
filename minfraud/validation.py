@@ -6,7 +6,6 @@ from strict_rfc3339 import validate_rfc3339
 from validate_email import validate_email
 from voluptuous import All, Any, In, Match, Range, Required, Schema
 import rfc3987
-
 """
 Internal code for validating the transaction dictionary.
 
@@ -203,9 +202,8 @@ validate_transaction = Schema({
         'last_4_digits': _credit_card_last_4,
     },
     Required('device'): {
-        'accept_language': _unicode_or_printable_ascii,
-        Required('ip_address'): _ip_address,
-        'user_agent': _unicode_or_printable_ascii
+        'accept_language': _unicode_or_printable_ascii, Required('ip_address'):
+        _ip_address, 'user_agent': _unicode_or_printable_ascii
     },
     'email': {'address': _email_or_md5,
               'domain': _hostname, },
@@ -228,6 +226,6 @@ validate_transaction = Schema({
         'category': _unicode_or_printable_ascii,
         'item_id': _unicode_or_printable_ascii,
         'price': _price,
-        'quantity': All(int, Range(min=1)),
+        'quantity': All(int, Range(min = 1)),
     }, ],
 }, )

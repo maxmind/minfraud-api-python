@@ -24,11 +24,12 @@ def _inflate_to_namedtuple(orig_cls):
     orig_cls.__name__ += 'Super'
     nt = namedtuple(name, keys)
     nt.__name__ = name + 'NamedTuple'
-    nt.__new__.__defaults__ = (None,) * len(keys)
-    cls = type(name, (nt, orig_cls),
-               {'__slots__': (), '__doc__': orig_cls.__doc__})
-    update_wrapper(_inflate_to_namedtuple, cls)
-    orig_new = cls.__new__
+    nt.__new__.__defaults__ = (None, ) * len(keys)
+    new_cls = type(name, (nt, orig_cls),
+                   {'__slots__': (),
+                    '__doc__': orig_cls.__doc__})
+    update_wrapper(_inflate_to_namedtuple, new_cls)
+    orig_new = new_cls.__new__
 
     # wipe out original namedtuple field docs as they aren't useful
     # for attr in fields:
@@ -49,8 +50,8 @@ def _inflate_to_namedtuple(orig_cls):
 
         return orig_new(cls, **kwargs)
 
-    cls.__new__ = staticmethod(new)
-    return cls
+    new_cls.__new__ = staticmethod(new)
+    return new_cls
 
 
 def _create_warnings(warnings):
@@ -60,7 +61,6 @@ def _create_warnings(warnings):
 
 
 class GeoIP2Location(geoip2.records.Location):
-
     """
     Location information for the IP address
 
@@ -86,7 +86,6 @@ class GeoIP2Location(geoip2.records.Location):
 
 
 class GeoIP2Country(geoip2.records.Country):
-
     """
     Country information for the IP address
 
@@ -108,10 +107,16 @@ class GeoIP2Country(geoip2.records.Country):
         set(['is_high_risk']))
 
 
-class IPLocation(geoip2.models.Insights):
-
+class IPAddress(geoip2.models.Insights):
     """
-    Model for minFraud GeoIP2 Insights data
+    Model for minFraud and GeoIP2 data about the IP address
+
+    .. attribute:: risk
+
+      This field contains the risk associated with the IP address. The value
+      ranges from 0.01 to 99. A higher score indicates a higher risk.
+
+      :type: float | None
 
     .. attribute:: city
 
@@ -173,15 +178,16 @@ class IPLocation(geoip2.models.Insights):
 
     """
 
-    def __init__(self, ip_location):
-        if ip_location is None:
-            ip_location = {}
-        locales = ip_location.get('_locales')
-        if '_locales' in ip_location:
-            del ip_location['_locales']
-        super(IPLocation, self).__init__(ip_location, locales=locales)
-        self.country = GeoIP2Country(locales, **ip_location.get('country', {}))
-        self.location = GeoIP2Location(**ip_location.get('location', {}))
+    def __init__(self, ip_address):
+        if ip_address is None:
+            ip_address = {}
+        locales = ip_address.get('_locales')
+        if '_locales' in ip_address:
+            del ip_address['_locales']
+        super(IPAddress, self).__init__(ip_address, locales=locales)
+        self.country = GeoIP2Country(locales, **ip_address.get('country', {}))
+        self.location = GeoIP2Location(**ip_address.get('location', {}))
+        self.risk = ip_address.get('risk', None)
         self._finalized = True
 
     # Unfortunately the GeoIP2 models are not immutable, only the records. This
@@ -189,12 +195,11 @@ class IPLocation(geoip2.models.Insights):
     def __setattr__(self, name, value):
         if hasattr(self, '_finalized') and self._finalized:
             raise AttributeError("can't set attribute")
-        super(IPLocation, self).__setattr__(name, value)
+        super(IPAddress, self).__setattr__(name, value)
 
 
 @_inflate_to_namedtuple
 class Issuer(object):
-
     """
     Information about the credit card issuer.
 
@@ -243,7 +248,6 @@ class Issuer(object):
 
 @_inflate_to_namedtuple
 class CreditCard(object):
-
     """
     Information about the credit card based on the issuer ID number
 
@@ -287,7 +291,6 @@ class CreditCard(object):
 
 @_inflate_to_namedtuple
 class BillingAddress(object):
-
     """
     Information about the billing address
 
@@ -341,7 +344,6 @@ class BillingAddress(object):
 
 @_inflate_to_namedtuple
 class ShippingAddress(object):
-
     """
     Information about the shipping address
 
@@ -414,7 +416,6 @@ class ShippingAddress(object):
 
 @_inflate_to_namedtuple
 class Warning(object):
-
     """
     Warning from the web service
 
@@ -455,7 +456,6 @@ class Warning(object):
 
 @_inflate_to_namedtuple
 class Insights(object):
-
     """
     Model for Insights response
 
@@ -500,12 +500,12 @@ class Insights(object):
 
       :type: CreditCard
 
-    .. attribute:: ip_location
+    .. attribute:: ip_address
 
-      A :class:`.IPLocation` object containing GeoIP2 and
-      minFraud Insights information about the geolocated IP address.
+      A :class:`.IPAddress` object containing GeoIP2 and
+      minFraud Insights information about the IP address.
 
-      :type: IPLocation
+      :type: IPAddress
 
     .. attribute:: billing_address
 
@@ -525,7 +525,7 @@ class Insights(object):
         'risk_score': None,
         'warnings': _create_warnings,
         'credits_remaining': None,
-        'ip_location': IPLocation,
+        'ip_address': IPAddress,
         'credit_card': CreditCard,
         'shipping_address': ShippingAddress,
         'billing_address': BillingAddress
@@ -534,15 +534,14 @@ class Insights(object):
 
 @_inflate_to_namedtuple
 class Score(object):
-
     """
     Model for Score response
 
     .. attribute:: id
 
       This is a UUID that identifies the minFraud request. Please use
-      this ID in bug reports or support requests to MaxMind so that we can easily
-      identify a particular request.
+      this ID in bug reports or support requests to MaxMind so that we can
+      easily identify a particular request.
 
       :type: str
 
@@ -556,9 +555,9 @@ class Score(object):
     .. attribute:: warnings
 
       This tuple contains :class:`.Warning` objects detailing
-      issues with the request that was sent such as invalid or unknown inputs. It
-      is highly recommended that you check this array for issues when integrating
-      the web service.
+      issues with the request that was sent such as invalid or unknown inputs.
+      It is highly recommended that you check this array for issues when
+      integrating the web service.
 
       :type: tuple[Warning]
 

@@ -18,14 +18,13 @@ from minfraud.validation import validate_transaction
 
 
 class Client(object):
-
     """
     Client for accessing the minFraud Score and Insights web services.
     """
 
     def __init__(self, user_id, license_key,
                  host='minfraud.maxmind.com',
-                 locales=('en',),
+                 locales=('en', ),
                  timeout=None):
         """
         Constructor for Client.
@@ -104,8 +103,9 @@ class Client(object):
             uri,
             json=request,
             auth=(self._user_id, self._license_key),
-            headers={'Accept': 'application/json',
-                     'User-Agent': self._user_agent()},
+            headers=
+            {'Accept': 'application/json',
+             'User-Agent': self._user_agent()},
             timeout=self._timeout)
         if response.status_code == 200:
             return self._handle_success(response, uri, model_class)
@@ -119,12 +119,12 @@ class Client(object):
     def _handle_success(self, response, uri, model_class):
         try:
             body = response.json()
-        except ValueError as ex:
+        except ValueError:
             raise MinFraudError('Received a 200 response'
                                 ' but could not decode the response as '
                                 'JSON: {0}'.format(response.content), 200, uri)
-        if 'ip_location' in body:
-            body['ip_location']['_locales'] = self._locales
+        if 'ip_address' in body:
+            body['ip_address']['_locales'] = self._locales
         return model_class(body)
 
     def _handle_error(self, response, uri):
