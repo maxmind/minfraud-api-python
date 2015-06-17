@@ -10,11 +10,11 @@ import requests
 from requests.utils import default_user_agent
 from voluptuous import MultipleInvalid
 
-import minfraud
-from minfraud.errors import MinFraudError, HTTPError, \
-    AuthenticationError, InsufficientFundsError, InvalidRequestError
-from minfraud.models import Insights, Score
-from minfraud.validation import validate_transaction
+from .version import __version__
+from .errors import MinFraudError, HTTPError, AuthenticationError, \
+    InsufficientFundsError, InvalidRequestError
+from .models import Insights, Score
+from .validation import validate_transaction
 
 
 class Client(object):
@@ -92,12 +92,13 @@ class Client(object):
         return self._response_for('score', Score, transaction, validate)
 
     def _response_for(self, path, model_class, request, validate):
+        """Send request and create response object"""
         if validate:
             try:
                 validate_transaction(request)
-            except MultipleInvalid as e:
+            except MultipleInvalid as ex:
                 raise InvalidRequestError(
-                    "Invalid transaction data: {0}".format(e))
+                    "Invalid transaction data: {0}".format(ex))
         uri = '/'.join([self._base_uri, path])
         response = requests.post(
             uri,
@@ -113,10 +114,11 @@ class Client(object):
             self._handle_error(response, uri)
 
     def _user_agent(self):
-        return 'minFraud-API/%s %s' % (minfraud.__version__,
-                                       default_user_agent())
+        """Create User-Agent header"""
+        return 'minFraud-API/%s %s' % (__version__, default_user_agent())
 
     def _handle_success(self, response, uri, model_class):
+        """Handle successful response"""
         try:
             body = response.json()
         except ValueError:
@@ -128,6 +130,7 @@ class Client(object):
         return model_class(body)
 
     def _handle_error(self, response, uri):
+        """Handle error responses"""
         status = response.status_code
 
         if 400 <= status < 500:
@@ -138,6 +141,7 @@ class Client(object):
             self._handle_non_200_status(status, uri)
 
     def _handle_4xx_status(self, response, status, uri):
+        """Handle error responses with 4xx status codes"""
         if not response.content:
             raise HTTPError('Received a {0} error with no body'.format(status),
                             status, uri)
@@ -152,7 +156,6 @@ class Client(object):
                 'Received a {status:d} error but it did not include'
                 ' the expected JSON body: {content}'
                 .format(status=status,
-                        uri=uri,
                         content=response.content), status, uri)
         else:
             if 'code' in body and 'error' in body:
@@ -165,6 +168,7 @@ class Client(object):
                     uri)
 
     def _handle_web_service_error(self, message, code, status, uri):
+        """Handle error responses with the JSON body from the web service"""
         if code in ('AUTHORIZATION_INVALID', 'LICENSE_KEY_REQUIRED',
                     'USER_ID_REQUIRED'):
             raise AuthenticationError(message)
@@ -174,9 +178,11 @@ class Client(object):
         raise InvalidRequestError(message, code, status, uri)
 
     def _handle_5xx_status(self, status, uri):
+        """Handle error response with 5xx status codes"""
         raise HTTPError(u'Received a server error ({0}) for '
                         u'{1}'.format(status, uri), status, uri)
 
     def _handle_non_200_status(self, status, uri):
+        """Handle successful responses with unexpected status codes"""
         raise HTTPError(u'Received an unexpected HTTP status '
                         u'({0}) for {1}'.format(status, uri), status, uri)

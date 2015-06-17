@@ -55,6 +55,7 @@ docs/doctrees/
 target/
 
 # Local
+.eggs
 *~
 *.egg
 .idea
