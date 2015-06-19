@@ -1,6 +1,6 @@
-===================
-minfraud-api-python
-===================
+======================================
+minFraud Score and Insights Python API
+======================================
 
 Description
 -----------
@@ -55,7 +55,7 @@ fields are optional.
 
 Assuming validation has not been disabled, before sending the transaction to
 the web service, the transaction dictionary structure and content will be
-validated. If validation fails, a :class:`minfraud.InvalidRequestError`
+validated. If validation fails, a ``minfraud.InvalidRequestError``
 will be raised.
 
 If the dictionary is valid, a request will be made to the web service. If the
@@ -67,18 +67,18 @@ Errors
 
 The possible errors are:
 
-* :class:`minfraud.AuthenticationError` - This will be raised when the server
+* ``minfraud.AuthenticationError`` - This will be raised when the server
   is unable to authenticate the request, e.g., if the license key or user ID
   is invalid.
-* :class:`minfraud.InsufficientFundsError` - This will be raised when `your
+* ``minfraud.InsufficientFundsError`` - This will be raised when `your
   account <https://www.maxmind.com/en/account>`_ is out of funds.
-* :class:`minfraud.InvalidRequestError` - This will be raised when the server
+* ``minfraud.InvalidRequestError`` - This will be raised when the server
   rejects the request as invalid for another reason, such as a missing or
   reserved IP address. It is also raised if validation of the request before
   it is sent to the server fails.
-* :class:`minfraud.HttpError` - This will be raised when an unexpected HTTP
+* ``minfraud.HttpError`` - This will be raised when an unexpected HTTP
   error occurs such as a firewall interfering with the request to the server.
-* :class:`minfraud.MinFraudError` - This will be raised when some other error
+* ``minfraud.MinFraudError`` - This will be raised when some other error
   occurs such as unexpected content from the server. This also serves as the
   base class for the above errors.
 
