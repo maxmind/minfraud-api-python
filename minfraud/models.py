@@ -22,10 +22,10 @@ def _inflate_to_namedtuple(orig_cls):
     fields = orig_cls._fields
     name = orig_cls.__name__
     orig_cls.__name__ += 'Super'
-    nt = namedtuple(name, keys)
-    nt.__name__ = name + 'NamedTuple'
-    nt.__new__.__defaults__ = (None, ) * len(keys)
-    new_cls = type(name, (nt, orig_cls),
+    ntup = namedtuple(name, keys)
+    ntup.__name__ = name + 'NamedTuple'
+    ntup.__new__.__defaults__ = (None, ) * len(keys)
+    new_cls = type(name, (ntup, orig_cls),
                    {'__slots__': (),
                     '__doc__': orig_cls.__doc__})
     update_wrapper(_inflate_to_namedtuple, new_cls)
@@ -36,6 +36,7 @@ def _inflate_to_namedtuple(orig_cls):
     #     getattr(cls, attr).__func__.__doc__ = None
 
     def new(cls, *args, **kwargs):
+        """Create new instance"""
         if (args and kwargs) or len(args) > 1:
             raise ValueError('Only provide a single (dict) positional argument'
                              ' or use keyword arguments. Do not use both.')
@@ -57,7 +58,7 @@ def _inflate_to_namedtuple(orig_cls):
 def _create_warnings(warnings):
     if not warnings:
         return ()
-    return tuple([Warning(x) for x in warnings])
+    return tuple([ServiceWarning(x) for x in warnings])
 
 
 class GeoIP2Location(geoip2.records.Location):
@@ -415,7 +416,7 @@ class ShippingAddress(object):
 
 
 @_inflate_to_namedtuple
-class Warning(object):
+class ServiceWarning(object):
     """
     Warning from the web service
 
@@ -439,9 +440,9 @@ class Warning(object):
     .. attribute:: input
 
       This is a tuple of keys representing the path to the input that
-      the warning is associated with. For instance, if the warning was about the
-      billing city, the tuple would be ``("billing", "city")``. The key is used
-      for an object and the index number for an array.
+      the warning is associated with. For instance, if the warning was about
+      the billing city, the tuple would be ``("billing", "city")``. The key is
+      used for an object and the index number for an array.
 
       :type: tuple[str|int]
 
@@ -476,20 +477,20 @@ class Insights(object):
 
     .. attribute:: warnings
 
-      This tuple contains :class:`.Warning` objects detailing
+      This tuple contains :class:`.ServiceWarning` objects detailing
       issues with the request that was sent such as invalid or unknown inputs.
       It is highly recommended that you check this array for issues when
       integrating the web service.
 
-      :type: tuple[Warning]
+      :type: tuple[ServiceWarning]
 
     .. attribute:: risk_score
 
       This property contains the risk score, from 0.01 to 99. A
-      higher score indicates a higher risk of fraud. For example, a score of 20
-      indicates a 20% chance that a transaction is fraudulent. We never return a
-      risk score of 0, since all transactions have the possibility of being
-      fraudulent. Likewise we never return a risk score of 100.
+      higher score indicates a higher risk of fraud. For example, a score of
+      20 indicates a 20% chance that a transaction is fraudulent. We never
+      return a risk score of 0, since all transactions have the possibility of
+      being fraudulent. Likewise we never return a risk score of 100.
 
       :type: float
 
@@ -554,20 +555,20 @@ class Score(object):
 
     .. attribute:: warnings
 
-      This tuple contains :class:`.Warning` objects detailing
+      This tuple contains :class:`.ServiceWarning` objects detailing
       issues with the request that was sent such as invalid or unknown inputs.
       It is highly recommended that you check this array for issues when
       integrating the web service.
 
-      :type: tuple[Warning]
+      :type: tuple[ServiceWarning]
 
     .. attribute:: risk_score
 
       This property contains the risk score, from 0.01 to 99. A
-      higher score indicates a higher risk of fraud. For example, a score of 20
-      indicates a 20% chance that a transaction is fraudulent. We never return a
-      risk score of 0, since all transactions have the possibility of being
-      fraudulent. Likewise we never return a risk score of 100.
+      higher score indicates a higher risk of fraud. For example, a score of
+      20 indicates a 20% chance that a transaction is fraudulent. We never
+      return a risk score of 0, since all transactions have the possibility of
+      being fraudulent. Likewise we never return a risk score of 100.
 
       :type: float
 

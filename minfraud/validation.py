@@ -1,3 +1,5 @@
+"""This is an internal module used for validating the minFraud request"""
+
 import re
 import sys
 from decimal import Decimal
@@ -14,6 +16,12 @@ that may break any direct use of it.
 
 """
 
+# Pylint doesn't like the private function type naming for the callable
+# objects below. Given the consistent use of them, the current names seem
+# preferable to blindly following pylint.
+#
+# pylint: disable=invalid-name
+
 if sys.version_info[0] == 3:
     import ipaddress  # pylint:disable=F0401
 
@@ -23,7 +31,8 @@ else:
 
     ipaddress.ip_address = ipaddress.IPAddress
 
-    _unicode_or_printable_ascii = Any(unicode, Match('^[\x20-\x7E]*$'))
+    # pylint: disable=undefined-variable
+    _unicode_or_printable_ascii = Any(unicode, Match(r'^[\x20-\x7E]*$'))
 
 _any_string = Any(_unicode_or_printable_ascii, str)
 
@@ -39,9 +48,12 @@ _subdivision_iso_code = All(_any_string, Match('^[0-9A-Z]{1,4}$'))
 
 
 def _ip_address(s):
-    # ipaddress accepts numeric IPs, which we don't want.
+    # ipaddress accepts numeric IPs, which we don't want. Pylint on Python 3
+    # doesn't like "unicode"
+    #
+    # pylint: disable=undefined-variable
     if (isinstance(s, str) or isinstance(s, unicode)) \
-            and not re.match('^\d+$', s):
+            and not re.match(r'^\d+$', s):
         return str(ipaddress.ip_address(s))
     raise ValueError
 
@@ -57,7 +69,7 @@ def _email_or_md5(s):
 def _hostname(hostname):
     if len(hostname) > 255:
         raise ValueError
-    allowed = re.compile("(?!-)[A-Z\d-]{1,63}(?<!-)$", re.IGNORECASE)
+    allowed = re.compile(r"(?!-)[A-Z\d-]{1,63}(?<!-)$", re.IGNORECASE)
     if all(allowed.match(x) for x in hostname.split(".")):
         return hostname
     raise ValueError
@@ -226,6 +238,6 @@ validate_transaction = Schema({
         'category': _unicode_or_printable_ascii,
         'item_id': _unicode_or_printable_ascii,
         'price': _price,
-        'quantity': All(int, Range(min = 1)),
+        'quantity': All(int, Range(min=1)),
     }, ],
 }, )

@@ -135,7 +135,7 @@ class BaseTest(object):
             headers = {
                 'Content-Type':
                 'application/vnd.maxmind.com-error+json; charset=UTF-8;'
-                    ' version=2.0'
+                ' version=2.0'
             }
         mock.post(self.base_uri + self.type,
                   status_code=status_code,
@@ -148,8 +148,8 @@ class BaseTest(object):
         if headers is None:
             headers = {
                 'Content-Type': 'application/vnd.maxmind.com-minfraud-{0}+json;'
-                    ' charset=UTF-8; version=2.0'.format(
-                        self.type)
+                                ' charset=UTF-8; version=2.0'.format(
+                                    self.type)
             }
         if text is None:
             text = self.response

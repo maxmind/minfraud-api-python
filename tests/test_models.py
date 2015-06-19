@@ -19,9 +19,9 @@ class TestModels(unittest.TestCase):
         models = [T(GeoIP2Country(), 'iso_code'),
                   T(GeoIP2Location(), 'latitude'), T(Issuer(), 'name'),
                   T(CreditCard(), 'country'), T(BillingAddress(), 'latitude'),
-                  T(ShippingAddress(), 'latitude'), T(Warning(), 'code'),
-                  T(Insights(), 'id'), T(Score(), 'id'),
-                  T(IPAddress({}), 'city')]
+                  T(ShippingAddress(), 'latitude'), T(
+                      ServiceWarning(), 'code'), T(Insights(), 'id'),
+                  T(Score(), 'id'), T(IPAddress({}), 'city')]
         for model in models:
             for attr in (model.attr, 'does_not_exist'):
                 with self.assertRaises(
@@ -164,7 +164,7 @@ class TestModels(unittest.TestCase):
         code = 'INVALID_INPUT'
         msg = 'Input invalid'
 
-        warning = Warning(
+        warning = ServiceWarning(
             {'code': code,
              'warning': msg,
              'input': ["first", "second"]})

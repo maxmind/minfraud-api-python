@@ -8,9 +8,12 @@ python:
   - nightly
   - pypy
 
+install:
+ - pip install pylint
+
 script:
   - python setup.py test
-  - if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pylint minfraud; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then ./.travis-pylint.sh; fi
 
 notifications:
   email:
