@@ -15,6 +15,7 @@ if sys.version_info[0] == 2:
 
 
 class ValidationBase(object):
+
     def setup_transaction(self, transaction):
         if 'device' not in transaction:
             transaction['device'] = {}
@@ -46,8 +47,16 @@ class ValidationBase(object):
         for bad in ('1.2', '1', -1, -1.1, 0):
             self.check_invalid_transaction(f(bad))
 
+    def check_bool(self, object, key):
+        for good in (True, False):
+            self.check_transaction({object: {key: good}})
+        for bad in ('', 0, 'True'):
+            self.check_invalid_transaction(
+                {object: {key: bad}})
+
 
 class TestAccount(unittest.TestCase, ValidationBase):
+
     def test_account_user_id(self):
         self.check_transaction({'account': {'user_id': 'usr'}})
 
@@ -64,6 +73,7 @@ class TestAccount(unittest.TestCase, ValidationBase):
 
 
 class AddressBase(ValidationBase):
+
     def test_strings(self):
         for key in ('first_name', 'last_name', 'company', 'address',
                     'address_2', 'city', 'postal', 'phone_number'):
@@ -105,6 +115,7 @@ class TestShippingAddress(unittest.TestCase, AddressBase):
 
 
 class TestCreditCard(ValidationBase, unittest.TestCase):
+
     def test_issuer_id_number(self):
         for iin in ('123456', '532313'):
             self.check_transaction({'credit_card': {'issuer_id_number': iin}})
@@ -143,6 +154,7 @@ class TestCreditCard(ValidationBase, unittest.TestCase):
 
 
 class TestDevice(ValidationBase, unittest.TestCase):
+
     def test_ip_address(self):
         for ip in ('1.2.3.4', '2001:db8:0:0:1:0:0:1', '::FFFF:1.2.3.4'):
             self.check_transaction({'device': {'ip_address': ip}})
@@ -165,6 +177,7 @@ class TestDevice(ValidationBase, unittest.TestCase):
 
 
 class TestEmail(ValidationBase, unittest.TestCase):
+
     def test_address(self):
         for good in ('test@maxmind.com', '977577b140bfb7c516e4746204fbdb01'):
             self.check_transaction({'email': {'address': good}})
@@ -180,6 +193,7 @@ class TestEmail(ValidationBase, unittest.TestCase):
 
 
 class TestEvent(ValidationBase, unittest.TestCase):
+
     def test_transaction(self):
         self.check_str_type('event', 'transaction_id')
 
@@ -201,6 +215,7 @@ class TestEvent(ValidationBase, unittest.TestCase):
 
 
 class TestOrder(ValidationBase, unittest.TestCase):
+
     def test_amount(self):
         self.check_positive_number(lambda v: {'order': {'amount': v}})
 
@@ -219,6 +234,15 @@ class TestOrder(ValidationBase, unittest.TestCase):
     def test_subaffiliate_id(self):
         self.check_str_type('order', 'subaffiliate_id')
 
+    def test_affiliate_id(self):
+        self.check_str_type('order', 'affiliate_id')
+
+    def test_is_gift(self):
+        self.check_bool('order', 'is_gift')
+
+    def test_is_gift(self):
+        self.check_bool('order', 'has_gift_message')
+
     def test_referrer_uri(self):
         for good in ('http://www.mm.com/fadsf', 'https://x.org/'):
             self.check_transaction({'order': {'referrer_uri': good}})
@@ -227,6 +251,7 @@ class TestOrder(ValidationBase, unittest.TestCase):
 
 
 class TestPayment(ValidationBase, unittest.TestCase):
+
     def test_processor(self):
         for good in ('adyen', 'stripe'):
             self.check_transaction({'payment': {'processor': good}})
@@ -234,17 +259,14 @@ class TestPayment(ValidationBase, unittest.TestCase):
             self.check_invalid_transaction({'payment': {'processor': bad}})
 
     def test_was_authorized(self):
-        for good in (True, False):
-            self.check_transaction({'payment': {'was_authorized': good}})
-        for bad in ('', 0, 'True'):
-            self.check_invalid_transaction(
-                {'payment': {'was_authorized': bad}})
+        self.check_bool('payment', 'was_authorized')
 
     def test_decline_code(self):
         self.check_str_type('payment', 'decline_code')
 
 
 class TestShoppingCart(ValidationBase, unittest.TestCase):
+
     def test_category(self):
         self.check_transaction({'shopping_cart': [{'category': 'cat'}]})
 
