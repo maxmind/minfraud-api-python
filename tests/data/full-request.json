@@ -60,6 +60,8 @@
     "discount_code": "FIRST",
     "affiliate_id": "af12",
     "subaffiliate_id": "saf42",
+    "is_gift": true,
+    "has_gift_message": false,
     "referrer_uri": "http://www.amazon.com/"
   },
   "shopping_cart": [

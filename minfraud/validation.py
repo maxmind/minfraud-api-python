@@ -230,6 +230,8 @@ validate_transaction = Schema({
         'amount': _price,
         'currency': _currency_code,
         'discount_code': _unicode_or_printable_ascii,
+        'has_gift_message': bool,
+        'is_gift': bool,
         'referrer_uri': _uri,
         'subaffiliate_id': _unicode_or_printable_ascii,
     },

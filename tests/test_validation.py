@@ -46,6 +46,12 @@ class ValidationBase(object):
         for bad in ('1.2', '1', -1, -1.1, 0):
             self.check_invalid_transaction(f(bad))
 
+    def check_bool(self, object, key):
+        for good in (True, False):
+            self.check_transaction({object: {key: good}})
+        for bad in ('', 0, 'True'):
+            self.check_invalid_transaction({object: {key: bad}})
+
 
 class TestAccount(unittest.TestCase, ValidationBase):
     def test_account_user_id(self):
@@ -160,7 +166,7 @@ class TestDevice(ValidationBase, unittest.TestCase):
     def test_user_agent(self):
         self.check_str_type('device', 'user_agent')
 
-    def test_user_agent(self):
+    def test_accept_language(self):
         self.check_str_type('device', 'accept_language')
 
 
@@ -219,6 +225,12 @@ class TestOrder(ValidationBase, unittest.TestCase):
     def test_subaffiliate_id(self):
         self.check_str_type('order', 'subaffiliate_id')
 
+    def test_is_gift(self):
+        self.check_bool('order', 'is_gift')
+
+    def test_has_gift_message(self):
+        self.check_bool('order', 'has_gift_message')
+
     def test_referrer_uri(self):
         for good in ('http://www.mm.com/fadsf', 'https://x.org/'):
             self.check_transaction({'order': {'referrer_uri': good}})
@@ -234,11 +246,7 @@ class TestPayment(ValidationBase, unittest.TestCase):
             self.check_invalid_transaction({'payment': {'processor': bad}})
 
     def test_was_authorized(self):
-        for good in (True, False):
-            self.check_transaction({'payment': {'was_authorized': good}})
-        for bad in ('', 0, 'True'):
-            self.check_invalid_transaction(
-                {'payment': {'was_authorized': bad}})
+        self.check_bool('payment', 'was_authorized')
 
     def test_decline_code(self):
         self.check_str_type('payment', 'decline_code')
@@ -247,9 +255,6 @@ class TestPayment(ValidationBase, unittest.TestCase):
 class TestShoppingCart(ValidationBase, unittest.TestCase):
     def test_category(self):
         self.check_transaction({'shopping_cart': [{'category': 'cat'}]})
-
-    def test_item_id(self):
-        self.check_transaction({'shopping_cart': [{'item_id': 'cat'}]})
 
     def test_item_id(self):
         self.check_transaction({'shopping_cart': [{'item_id': 'cat'}]})
