@@ -105,7 +105,7 @@ class BaseTest(object):
             self.create_error(headers={'Content-Type': 'text/plain'},
                               text='plain')
 
-    def test_400_with_unexpected_content_type(self):
+    def test_400_without_json_body(self):
         with self.assertRaisesRegex(
             HTTPError,
             "Received a 400 error but it did not include the expected JSON"
@@ -147,9 +147,10 @@ class BaseTest(object):
     def create_success(self, mock, text=None, headers=None, client=None):
         if headers is None:
             headers = {
-                'Content-Type': 'application/vnd.maxmind.com-minfraud-{0}+json;'
-                                ' charset=UTF-8; version=2.0'.format(
-                                    self.type)
+                'Content-Type':
+                'application/vnd.maxmind.com-minfraud-{0}+json;'
+                ' charset=UTF-8; version=2.0'.format(
+                    self.type)
             }
         if text is None:
             text = self.response

@@ -15,7 +15,6 @@ if sys.version_info[0] == 2:
 
 
 class ValidationBase(object):
-
     def setup_transaction(self, transaction):
         if 'device' not in transaction:
             transaction['device'] = {}
@@ -51,12 +50,10 @@ class ValidationBase(object):
         for good in (True, False):
             self.check_transaction({object: {key: good}})
         for bad in ('', 0, 'True'):
-            self.check_invalid_transaction(
-                {object: {key: bad}})
+            self.check_invalid_transaction({object: {key: bad}})
 
 
 class TestAccount(unittest.TestCase, ValidationBase):
-
     def test_account_user_id(self):
         self.check_transaction({'account': {'user_id': 'usr'}})
 
@@ -73,7 +70,6 @@ class TestAccount(unittest.TestCase, ValidationBase):
 
 
 class AddressBase(ValidationBase):
-
     def test_strings(self):
         for key in ('first_name', 'last_name', 'company', 'address',
                     'address_2', 'city', 'postal', 'phone_number'):
@@ -115,7 +111,6 @@ class TestShippingAddress(unittest.TestCase, AddressBase):
 
 
 class TestCreditCard(ValidationBase, unittest.TestCase):
-
     def test_issuer_id_number(self):
         for iin in ('123456', '532313'):
             self.check_transaction({'credit_card': {'issuer_id_number': iin}})
@@ -154,7 +149,6 @@ class TestCreditCard(ValidationBase, unittest.TestCase):
 
 
 class TestDevice(ValidationBase, unittest.TestCase):
-
     def test_ip_address(self):
         for ip in ('1.2.3.4', '2001:db8:0:0:1:0:0:1', '::FFFF:1.2.3.4'):
             self.check_transaction({'device': {'ip_address': ip}})
@@ -172,12 +166,11 @@ class TestDevice(ValidationBase, unittest.TestCase):
     def test_user_agent(self):
         self.check_str_type('device', 'user_agent')
 
-    def test_user_agent(self):
+    def test_accept_language(self):
         self.check_str_type('device', 'accept_language')
 
 
 class TestEmail(ValidationBase, unittest.TestCase):
-
     def test_address(self):
         for good in ('test@maxmind.com', '977577b140bfb7c516e4746204fbdb01'):
             self.check_transaction({'email': {'address': good}})
@@ -193,7 +186,6 @@ class TestEmail(ValidationBase, unittest.TestCase):
 
 
 class TestEvent(ValidationBase, unittest.TestCase):
-
     def test_transaction(self):
         self.check_str_type('event', 'transaction_id')
 
@@ -215,7 +207,6 @@ class TestEvent(ValidationBase, unittest.TestCase):
 
 
 class TestOrder(ValidationBase, unittest.TestCase):
-
     def test_amount(self):
         self.check_positive_number(lambda v: {'order': {'amount': v}})
 
@@ -234,13 +225,10 @@ class TestOrder(ValidationBase, unittest.TestCase):
     def test_subaffiliate_id(self):
         self.check_str_type('order', 'subaffiliate_id')
 
-    def test_affiliate_id(self):
-        self.check_str_type('order', 'affiliate_id')
-
     def test_is_gift(self):
         self.check_bool('order', 'is_gift')
 
-    def test_is_gift(self):
+    def test_has_gift_message(self):
         self.check_bool('order', 'has_gift_message')
 
     def test_referrer_uri(self):
@@ -251,7 +239,6 @@ class TestOrder(ValidationBase, unittest.TestCase):
 
 
 class TestPayment(ValidationBase, unittest.TestCase):
-
     def test_processor(self):
         for good in ('adyen', 'stripe'):
             self.check_transaction({'payment': {'processor': good}})
@@ -266,12 +253,8 @@ class TestPayment(ValidationBase, unittest.TestCase):
 
 
 class TestShoppingCart(ValidationBase, unittest.TestCase):
-
     def test_category(self):
         self.check_transaction({'shopping_cart': [{'category': 'cat'}]})
-
-    def test_item_id(self):
-        self.check_transaction({'shopping_cart': [{'item_id': 'cat'}]})
 
     def test_item_id(self):
         self.check_transaction({'shopping_cart': [{'item_id': 'cat'}]})
