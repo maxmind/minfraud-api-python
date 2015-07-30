@@ -99,9 +99,7 @@ class BaseTest(object):
 
     def test_400_with_unexpected_content_type(self):
         with self.assertRaisesRegex(
-            HTTPError,
-            "Received a 400 error but it did not include the expected JSON"
-            " body: b?'?plain'?"):
+            HTTPError, "Received a 400 with the following body: b?'?plain'?"):
             self.create_error(headers={'Content-Type': 'text/plain'},
                               text='plain')
 
