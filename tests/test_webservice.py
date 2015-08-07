@@ -41,6 +41,24 @@ class BaseTest(object):
         if self.type == 'insights':
             self.assertEqual('United Kingdom', model.ip_address.country.name)
 
+    def test_200_on_request_with_nones(self):
+        model = self.create_success(
+            request={
+                'device': {
+                    'ip_address': '81.2.69.160',
+                    'accept_language': None
+                },
+                'event': {
+                    'shop_id': None
+                },
+                'shopping_cart': [{
+                    'category': None,
+                    'quantity': 2,
+                }, None],
+            })
+        response = self.response
+        self.assertEqual(0.01, model.risk_score)
+
     def test_200_with_locales(self):
         locales = ('fr', )
         client = Client(42, 'abcdef123456', locales=locales)
@@ -142,7 +160,11 @@ class BaseTest(object):
         return getattr(self.client, self.type)(self.full_request)
 
     @requests_mock.mock()
-    def create_success(self, mock, text=None, headers=None, client=None):
+    def create_success(self, mock,
+                       text=None,
+                       headers=None,
+                       client=None,
+                       request=None):
         if headers is None:
             headers = {
                 'Content-Type':
@@ -158,7 +180,9 @@ class BaseTest(object):
                   headers=headers)
         if client is None:
             client = self.client
-        return getattr(client, self.type)(self.full_request)
+        if request is None:
+            request = self.full_request
+        return getattr(client, self.type)(request)
 
 
 class TestInsights(BaseTest, unittest.TestCase):
