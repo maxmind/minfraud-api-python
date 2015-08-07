@@ -117,10 +117,8 @@ class Client(object):
     def _copy_and_clean(self, data):
         """This returns a copy of the data structure with Nones removed"""
         if isinstance(data, dict):
-            return {
-                k: self._copy_and_clean(v)
-                for (k, v) in data.items() if v is not None
-            }
+            return dict((k, self._copy_and_clean(v)) for (k, v) in data.items()
+                        if v is not None)
         elif isinstance(data, (list, set, tuple)):
             return [self._copy_and_clean(x) for x in data if x is not None]
         else:
