@@ -93,16 +93,17 @@ class Client(object):
 
     def _response_for(self, path, model_class, request, validate):
         """Send request and create response object"""
+        cleaned_request = self._copy_and_clean(request)
         if validate:
             try:
-                validate_transaction(request)
+                validate_transaction(cleaned_request)
             except MultipleInvalid as ex:
                 raise InvalidRequestError(
                     "Invalid transaction data: {0}".format(ex))
         uri = '/'.join([self._base_uri, path])
         response = requests.post(
             uri,
-            json=request,
+            json=cleaned_request,
             auth=(self._user_id, self._license_key),
             headers=
             {'Accept': 'application/json',
@@ -112,6 +113,16 @@ class Client(object):
             return self._handle_success(response, uri, model_class)
         else:
             self._handle_error(response, uri)
+
+    def _copy_and_clean(self, data):
+        """This returns a copy of the data structure with Nones removed"""
+        if isinstance(data, dict):
+            return dict((k, self._copy_and_clean(v)) for (k, v) in data.items()
+                        if v is not None)
+        elif isinstance(data, (list, set, tuple)):
+            return [self._copy_and_clean(x) for x in data if x is not None]
+        else:
+            return data
 
     def _user_agent(self):
         """Create User-Agent header"""
@@ -154,9 +165,9 @@ class Client(object):
         except ValueError:
             raise HTTPError(
                 'Received a {status:d} error but it did not include'
-                ' the expected JSON body: {content}'
-                .format(status=status,
-                        content=response.content), status, uri)
+                ' the expected JSON body: {content}'.format(
+                    status=status,
+                    content=response.content), status, uri)
         else:
             if 'code' in body and 'error' in body:
                 self._handle_web_service_error(body.get('error'),

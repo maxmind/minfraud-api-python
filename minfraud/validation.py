@@ -214,8 +214,9 @@ validate_transaction = Schema({
         'last_4_digits': _credit_card_last_4,
     },
     Required('device'): {
-        'accept_language': _unicode_or_printable_ascii, Required('ip_address'):
-        _ip_address, 'user_agent': _unicode_or_printable_ascii
+        'accept_language': _unicode_or_printable_ascii,
+        Required('ip_address'): _ip_address,
+        'user_agent': _unicode_or_printable_ascii
     },
     'email': {'address': _email_or_md5,
               'domain': _hostname, },
