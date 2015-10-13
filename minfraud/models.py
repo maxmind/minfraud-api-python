@@ -254,17 +254,21 @@ class CreditCard(object):
 
     .. attribute:: country
 
-      This property contains an `ISO 3166-1 alpha-2 country
-      code <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ representing
-      the country that the card was issued in.
+      This property contains the `ISO 3166-1 alpha-2 country code
+      <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ associated with the
+      location of the majority of customers using this credit card as
+      determined by their billing address. In cases where the location of
+      customers is highly mixed, this defaults to the country of the bank
+      issuing the card.
 
       :type: str | None
 
     .. attribute:: is_issued_in_billing_address_country
 
-      This property is true if the
-      country of the billing address matches the country that the credit card
-      was issued in.
+      This property is true if the country of the billing address matches the
+      country of the majority of customers using this credit card. In cases
+      where the location of customers is highly mixed, the match is to the
+      country of the bank issuing the card.
 
       :type: bool | None
 
