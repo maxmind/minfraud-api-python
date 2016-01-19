@@ -22,7 +22,7 @@ that may break any direct use of it.
 #
 # pylint: disable=invalid-name
 
-if sys.version_info[0] == 3:
+if sys.version_info[0] >= 3:
     import ipaddress  # pylint:disable=F0401
 
     _unicode_or_printable_ascii = str
@@ -31,7 +31,7 @@ else:
 
     ipaddress.ip_address = ipaddress.IPAddress
 
-    # pylint: disable=undefined-variable
+    # pylint: disable=undefined-variable,redefined-variable-type
     _unicode_or_printable_ascii = Any(unicode, Match(r'^[\x20-\x7E]*$'))
 
 _any_string = Any(_unicode_or_printable_ascii, str)
