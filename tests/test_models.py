@@ -18,15 +18,16 @@ class TestModels(unittest.TestCase):
         T = namedtuple('T', ['obj', 'attr'], {})
         models = [T(GeoIP2Country(), 'iso_code'),
                   T(GeoIP2Location(), 'latitude'), T(Issuer(), 'name'),
-                  T(CreditCard(), 'country'), T(BillingAddress(), 'latitude'),
-                  T(ShippingAddress(), 'latitude'), T(
-                      ServiceWarning(), 'code'), T(Insights(), 'id'),
+                  T(CreditCard(), 'country'), T(Device(), 'id'),
+                  T(Email(), 'is_free'), T(BillingAddress(), 'latitude'),
+                  T(ShippingAddress(), 'latitude'),
+                  T(ServiceWarning(), 'code'), T(Insights(), 'id'),
                   T(Score(), 'id'), T(IPAddress({}), 'city')]
         for model in models:
             for attr in (model.attr, 'does_not_exist'):
                 with self.assertRaises(
-                    AttributeError,
-                    msg='{0!s} - {0}'.format(model.obj, attr)):
+                        AttributeError,
+                        msg='{0!s} - {0}'.format(model.obj, attr)):
                     setattr(model.obj, attr, 5)
 
     def test_billing_address(self):
@@ -63,15 +64,34 @@ class TestModels(unittest.TestCase):
     def test_credit_card(self):
         cc = CreditCard({
             'issuer': {'name': 'Bank'},
+            'brand': 'Visa',
             'country': 'US',
             'is_issued_in_billing_address_country': True,
-            'is_prepaid': True
+            'is_prepaid': True,
+            'type': 'credit'
         })
 
         self.assertEqual('Bank', cc.issuer.name)
+        self.assertEqual('Visa', cc.brand)
         self.assertEqual('US', cc.country)
         self.assertEqual(True, cc.is_prepaid)
         self.assertEqual(True, cc.is_issued_in_billing_address_country)
+        self.assertEqual('credit', cc.type)
+
+    def test_device(self):
+        id = 'b643d445-18b2-4b9d-bad4-c9c4366e402a'
+        device = Device({'id': id})
+
+        self.assertEqual(id, device.id)
+
+    def test_email(self):
+        email = Email({
+            'is_free': True,
+            'is_high_risk': False
+        })
+
+        self.assertEqual(True, email.is_free)
+        self.assertEqual(False, email.is_high_risk)
 
     def test_geoip2_country(self):
         country = GeoIP2Country(is_high_risk=True, iso_code='US')
@@ -112,7 +132,13 @@ class TestModels(unittest.TestCase):
         insights = Insights({
             'id': id,
             'ip_address': {'country': {'iso_code': 'US'}},
-            'credit_card': {'is_prepaid': True},
+            'credit_card': {
+                'is_prepaid': True,
+                'brand': 'Visa',
+                'type': 'debit'
+            },
+            'device': {'id': id},
+            'email': {'is_free': True},
             'shipping_address': {'is_in_ip_country': True},
             'billing_address': {'is_in_ip_country': True},
             'credits_remaining': 123,
@@ -122,6 +148,10 @@ class TestModels(unittest.TestCase):
 
         self.assertEqual('US', insights.ip_address.country.iso_code)
         self.assertEqual(True, insights.credit_card.is_prepaid)
+        self.assertEqual('Visa', insights.credit_card.brand)
+        self.assertEqual('debit', insights.credit_card.type)
+        self.assertEqual(id, insights.device.id)
+        self.assertEqual(True, insights.email.is_free)
         self.assertEqual(True, insights.shipping_address.is_in_ip_country)
         self.assertEqual(True, insights.billing_address.is_in_ip_country)
         self.assertEqual(id, insights.id)
@@ -167,8 +197,8 @@ class TestModels(unittest.TestCase):
         warning = ServiceWarning(
             {'code': code,
              'warning': msg,
-             'input': ["first", "second"]})
+             'input_pointer': "/first/second"})
 
         self.assertEqual(code, warning.code)
         self.assertEqual(msg, warning.warning)
-        self.assertEqual(('first', 'second'), warning.input)
+        self.assertEqual('/first/second', warning.input_pointer)

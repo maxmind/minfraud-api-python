@@ -248,6 +248,56 @@ class Issuer(object):
 
 
 @_inflate_to_namedtuple
+class Device(object):
+    """
+    Information about the device associated with the IP address
+
+    .. attribute:: id
+
+      A UUID that MaxMind uses for the device associated with this IP address.
+      Note that many devices cannot be uniquely identified because they are too
+      common (for example, all iPhones of a given model and OS release). In
+      these cases, the minFraud service will simply not return a UUID for that
+      device.
+
+      :type: str
+
+    """
+    __slots__ = ()
+    _fields = {
+        'id': None
+    }
+
+
+@_inflate_to_namedtuple
+class Email(object):
+    """
+    Information about the email address passed in the request
+
+    .. attribute:: is_free
+
+      This field is true if MaxMind believes that this email is hosted by a
+      free email provider such as Gmail or Yahoo! Mail.
+
+      :type: bool | None
+
+    .. attribute:: is_high_risk
+
+      This field is true if MaxMind believes that this email is likely to be
+      used for fraud. Note that this is also factored into the overall
+      `risk_score` in the response as well.
+
+      :type: bool | None
+
+    """
+    __slots__ = ()
+    _fields = {
+        'is_free': None,
+        'is_high_risk': None
+    }
+
+
+@_inflate_to_namedtuple
 class CreditCard(object):
     """
     Information about the credit card based on the issuer ID number
@@ -260,6 +310,12 @@ class CreditCard(object):
       determined by their billing address. In cases where the location of
       customers is highly mixed, this defaults to the country of the bank
       issuing the card.
+
+      :type: str | None
+
+    .. attribute:: brand
+
+      The card brand, such as "Visa", "Discover", "American Express", etc.
 
       :type: str | None
 
@@ -278,6 +334,14 @@ class CreditCard(object):
 
       :type: bool | None
 
+    .. attribute:: type
+
+      The card's type. The valid values are "charge", "credit", and "debit".
+      See Wikipedia for an explanation of the difference between charge and
+      credit cards.
+
+      :type: str | None
+
     .. attribute:: issuer
 
       An object containing information about the credit card issuer.
@@ -289,8 +353,10 @@ class CreditCard(object):
     _fields = {
         'issuer': Issuer,
         'country': None,
+        'brand': None,
         'is_issued_in_billing_address_country': None,
-        'is_prepaid': None
+        'is_prepaid': None,
+        'type': None
     }
 
 
@@ -441,21 +507,20 @@ class ServiceWarning(object):
 
       :type: str
 
-    .. attribute:: input
+    .. attribute:: input_pointer
 
-      This is a tuple of keys representing the path to the input that
+      This is a string representing the path to the input that
       the warning is associated with. For instance, if the warning was about
-      the billing city, the tuple would be ``("billing", "city")``. The key is
-      used for an object and the index number for an array.
+      the billing city, the string would be ``"/billing/city"``.
 
-      :type: tuple[str|int]
+      :type: str
 
     """
     __slots__ = ()
     _fields = {
         'code': None,
         'warning': None,
-        'input': lambda x: tuple(x) if x else ()
+        'input_pointer': None
     }
 
 
@@ -505,6 +570,20 @@ class Insights(object):
 
       :type: CreditCard
 
+    .. attribute:: device
+
+      A :class:`.Device` object containing information about the device that
+      MaxMind believes is associated with the IP address passed in the request.
+
+      :type: Device
+
+    .. attribute:: email
+
+      A :class:`.Email` object containing information about the email address
+      passed in the request.
+
+      :type: Email
+
     .. attribute:: ip_address
 
       A :class:`.IPAddress` object containing GeoIP2 and
@@ -532,6 +611,8 @@ class Insights(object):
         'credits_remaining': None,
         'ip_address': IPAddress,
         'credit_card': CreditCard,
+        'device': Device,
+        'email': Email,
         'shipping_address': ShippingAddress,
         'billing_address': BillingAddress
     }

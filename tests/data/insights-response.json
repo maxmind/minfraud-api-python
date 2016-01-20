@@ -103,9 +103,18 @@
       "phone_number": "8003421232",
       "matches_provided_phone_number": true
     },
+    "brand": "Visa",
     "country": "US",
     "is_issued_in_billing_address_country": true,
-    "is_prepaid": true
+    "is_prepaid": true,
+    "type": "credit"
+  },
+  "device": {
+    "id": "7835b099-d385-4e5b-969e-7df26181d73b"
+  },
+  "email": {
+    "is_free": true,
+    "is_high_risk": true
   },
   "shipping_address": {
     "distance_to_billing_address": 2227,
@@ -119,18 +128,12 @@
   "warnings": [
     {
       "code": "INPUT_INVALID",
-      "input": [
-        "account",
-        "user_id"
-      ],
+      "input_pointer": "/account/user_id",
       "warning": "Encountered value at \/account\/user_id that does meet the required constraints"
     },
     {
       "code": "INPUT_INVALID",
-      "input": [
-        "account",
-        "username_md5"
-      ],
+      "input_pointer": "/account/username_md5",
       "warning": "Encountered value at \/account\/username_md5 that does meet the required constraints"
     }
   ]
