@@ -3,6 +3,9 @@
 History
 -------
 
+0.3.0 (2016-01-20)
+++++++++++++++++++
+
 * Added support for new minFraud Insights outputs. These are:
      * ``/credit_card/brand``
      * ``/credit_card/type``
