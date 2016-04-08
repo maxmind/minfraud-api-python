@@ -7,7 +7,7 @@ from decimal import Decimal
 from strict_rfc3339 import validate_rfc3339
 from validate_email import validate_email
 from voluptuous import All, Any, In, Match, Range, Required, Schema
-import rfc3987
+import rfc3987  # pylint:disable=import-error
 """
 Internal code for validating the transaction dictionary.
 
