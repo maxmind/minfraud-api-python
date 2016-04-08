@@ -3,6 +3,13 @@
 History
 -------
 
+0.3.1 (2016-XX-XX)
+++++++++++++++++++
+
+* Added the following new values to the ``/payment/processor`` validation:
+  ``ccnow``, ``dalpay``, ``epay`` (repaces ``epayeu``), ``payplus``,
+  ``pinpayments``, ``quickpay``, and ``verepay``.
+
 0.3.0 (2016-01-20)
 ++++++++++++++++++
 
