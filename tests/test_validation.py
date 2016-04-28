@@ -91,8 +91,8 @@ class AddressBase(ValidationBase):
         for code in (1, '1', '2341'):
             self.check_transaction({self.type: {'phone_country_code': code}})
         for invalid in ('', '12345', 'U'):
-            self.check_invalid_transaction(
-                {self.type: {'phone_country_code': invalid}})
+            self.check_invalid_transaction({self.type: {'phone_country_code':
+                                                        invalid}})
 
 
 class TestBillingAddress(unittest.TestCase, AddressBase):
@@ -106,8 +106,8 @@ class TestShippingAddress(unittest.TestCase, AddressBase):
         for speed in ('same_day', 'overnight', 'expedited', 'standard'):
             self.check_transaction({self.type: {'delivery_speed': speed}})
         for invalid in ('fast', 'slow', ''):
-            self.check_invalid_transaction(
-                {self.type: {'delivery_speed': invalid}})
+            self.check_invalid_transaction({self.type: {'delivery_speed':
+                                                        invalid}})
 
 
 class TestCreditCard(ValidationBase, unittest.TestCase):
@@ -115,15 +115,15 @@ class TestCreditCard(ValidationBase, unittest.TestCase):
         for iin in ('123456', '532313'):
             self.check_transaction({'credit_card': {'issuer_id_number': iin}})
         for invalid in ('12345', '1234567', 123456, '12345a'):
-            self.check_invalid_transaction(
-                {'credit_card': {'issuer_id_number': invalid}})
+            self.check_invalid_transaction({'credit_card': {'issuer_id_number':
+                                                            invalid}})
 
     def test_last_4_digits(self):
         for iin in ('1234', '9323'):
             self.check_transaction({'credit_card': {'last_4_digits': iin}})
         for invalid in ('12345', '123', 1234, '123a'):
-            self.check_invalid_transaction(
-                {'credit_card': {'last_4_digits': invalid}})
+            self.check_invalid_transaction({'credit_card': {'last_4_digits':
+                                                            invalid}})
 
     def test_bank_name(self):
         self.check_str_type('credit_card', 'bank_name')
@@ -133,8 +133,8 @@ class TestCreditCard(ValidationBase, unittest.TestCase):
 
     def test_phone_country_code(self):
         for code in (1, '1', '2341'):
-            self.check_transaction(
-                {'credit_card': {'bank_phone_country_code': code}})
+            self.check_transaction({'credit_card': {'bank_phone_country_code':
+                                                    code}})
         for invalid in ('', '12345', 'U'):
             self.check_invalid_transaction(
                 {'credit_card': {'bank_phone_country_code': invalid}})
@@ -144,8 +144,8 @@ class TestCreditCard(ValidationBase, unittest.TestCase):
             for code in ('1', 'A'):
                 self.check_transaction({'credit_card': {key: code}})
             for invalid in ('', '12'):
-                self.check_invalid_transaction(
-                    {'credit_card': {'credit_card': invalid}})
+                self.check_invalid_transaction({'credit_card': {'credit_card':
+                                                                invalid}})
 
 
 class TestDevice(ValidationBase, unittest.TestCase):
@@ -266,5 +266,5 @@ class TestShoppingCart(ValidationBase, unittest.TestCase):
         for good in (1, 1000):
             self.check_transaction({'shopping_cart': [{'quantity': good}]})
         for bad in (1.1, -1, 0):
-            self.check_invalid_transaction(
-                {'shopping_cart': [{'quantity': bad}]})
+            self.check_invalid_transaction({'shopping_cart': [{'quantity': bad}
+                                                              ]})

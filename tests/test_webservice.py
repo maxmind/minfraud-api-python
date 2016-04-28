@@ -4,8 +4,9 @@ import sys
 import json
 import requests_mock
 from minfraud.errors import HTTPError, InvalidRequestError, \
-    AuthenticationError, InsufficientFundsError, MinFraudError
-from minfraud.models import Insights, Score
+    AuthenticationError, InsufficientFundsError, MinFraudError, \
+    PermissionRequiredError
+from minfraud.models import Factors, Insights, Score
 from minfraud.webservice import Client
 
 if sys.version_info[:2] == (2, 6):
@@ -32,30 +33,32 @@ class BaseTest(object):
 
     base_uri = 'https://minfraud.maxmind.com/minfraud/v2.0/'
 
+    def has_ip_location(self):
+        return self.type in ['factors', 'insights']
+
     def test_200(self):
         model = self.create_success()
         response = json.loads(self.response)
-        if self.type == 'insights':
+        if self.has_ip_location():
             response['ip_address']['_locales'] = ('en', )
         self.assertEqual(self.cls(response), model)
-        if self.type == 'insights':
+        if self.has_ip_location():
             self.assertEqual('United Kingdom', model.ip_address.country.name)
 
     def test_200_on_request_with_nones(self):
-        model = self.create_success(
-            request={
-                'device': {
-                    'ip_address': '81.2.69.160',
-                    'accept_language': None
-                },
-                'event': {
-                    'shop_id': None
-                },
-                'shopping_cart': [{
-                    'category': None,
-                    'quantity': 2,
-                }, None],
-            })
+        model = self.create_success(request={
+            'device': {
+                'ip_address': '81.2.69.160',
+                'accept_language': None
+            },
+            'event': {
+                'shop_id': None
+            },
+            'shopping_cart': [{
+                'category': None,
+                'quantity': 2,
+            }, None],
+        })
         response = self.response
         self.assertEqual(0.01, model.risk_score)
 
@@ -64,10 +67,10 @@ class BaseTest(object):
         client = Client(42, 'abcdef123456', locales=locales)
         model = self.create_success(client=client)
         response = json.loads(self.response)
-        if self.type == 'insights':
+        if self.has_ip_location():
             response['ip_address']['_locales'] = locales
         self.assertEqual(self.cls(response), model)
-        if self.type == 'insights':
+        if self.has_ip_location():
             self.assertEqual('Royaume-Uni', model.ip_address.country.name)
             self.assertEqual('Londres', model.ip_address.city.name)
 
@@ -88,7 +91,8 @@ class BaseTest(object):
     def test_insufficient_funds(self):
         with self.assertRaisesRegex(InsufficientFundsError, 'out of funds'):
             self.create_error(
-                text='{"code":"INSUFFICIENT_FUNDS","error":"out of funds"}')
+                text='{"code":"INSUFFICIENT_FUNDS","error":"out of funds"}',
+                status_code=402)
 
     def test_invalid_auth(self):
         for error in ('AUTHORIZATION_INVALID', 'LICENSE_KEY_REQUIRED',
@@ -96,12 +100,20 @@ class BaseTest(object):
             with self.assertRaisesRegex(AuthenticationError, 'Invalid auth'):
                 self.create_error(
                     text=u'{{"code":"{0:s}","error":"Invalid auth"}}'.format(
-                        error))
+                        error),
+                    status_code=401)
 
     def test_invalid_request(self):
         with self.assertRaisesRegex(InvalidRequestError, 'IP invalid'):
             self.create_error(
                 text='{"code":"IP_ADDRESS_INVALID","error":"IP invalid"}')
+
+    def test_permission_required(self):
+        with self.assertRaisesRegex(PermissionRequiredError, 'permission'):
+            self.create_error(
+                text=
+                '{"code":"PERMISSION_REQUIRED","error":"permission required"}',
+                status_code=403)
 
     def test_400_with_invalid_json(self):
         with self.assertRaisesRegex(
@@ -138,8 +150,7 @@ class BaseTest(object):
 
     def test_300_error(self):
         with self.assertRaisesRegex(
-                HTTPError,
-                'Received an unexpected HTTP status \(300\) for'):
+                HTTPError, 'Received an unexpected HTTP status \(300\) for'):
             self.create_error(status_code=300)
 
     def test_500_error(self):
@@ -162,7 +173,8 @@ class BaseTest(object):
         return getattr(self.client, self.type)(self.full_request)
 
     @requests_mock.mock()
-    def create_success(self, mock,
+    def create_success(self,
+                       mock,
                        text=None,
                        headers=None,
                        client=None,
@@ -171,8 +183,7 @@ class BaseTest(object):
             headers = {
                 'Content-Type':
                 'application/vnd.maxmind.com-minfraud-{0}+json;'
-                ' charset=UTF-8; version=2.0'.format(
-                    self.type)
+                ' charset=UTF-8; version=2.0'.format(self.type)
             }
         if text is None:
             text = self.response
@@ -185,6 +196,11 @@ class BaseTest(object):
         if request is None:
             request = self.full_request
         return getattr(client, self.type)(request)
+
+
+class TestFactors(BaseTest, unittest.TestCase):
+    type = 'factors'
+    cls = Factors
 
 
 class TestInsights(BaseTest, unittest.TestCase):

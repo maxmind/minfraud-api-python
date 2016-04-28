@@ -3,12 +3,16 @@
 History
 -------
 
-0.3.1 (2016-XX-XX)
+0.4.0 (2016-XX-XX)
 ++++++++++++++++++
 
+* Added support for the minFraud Factors.
+* Added IP address risk to the minFraud Score model.
 * Added the following new values to the ``/payment/processor`` validation:
   ``ccnow``, ``dalpay``, ``epay`` (repaces ``epayeu``), ``payplus``,
   ``pinpayments``, ``quickpay``, and ``verepay``.
+* A ``PERMISSION_REQUIRED`` error will now throw a ``PermissionRequiredError``
+  exception.
 
 0.3.0 (2016-01-20)
 ++++++++++++++++++

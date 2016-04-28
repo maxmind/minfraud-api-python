@@ -1,6 +1,6 @@
-======================================
-minFraud Score and Insights Python API
-======================================
+================================================
+minFraud Score, Insights, and Factors Python API
+================================================
 
 Beta Note
 ---------
@@ -8,14 +8,14 @@ Beta Note
 This is a beta release. The API may change before the first production
 release.
 
-You may find information on the changes in minFraud Score and minFraud
-Insights in our `What's New documentation
+You may find information on the changes in minFraud Score, Insights, and
+Factors in our `What's New documentation
 <https://dev.maxmind.com/minfraud/whats-new-in-minfraud-score-and-minfraud-insights/>`_.
 
 Description
 -----------
 
-This package provides an API for the `MaxMind minFraud Score and Insights
+This package provides an API for the `MaxMind minFraud Score, Insights, Factors
 web services <http://dev.maxmind.com/minfraud-score-and-insights-api-documentation>`_.
 
 Installation
@@ -43,6 +43,12 @@ takes your MaxMind user ID and license key:
 .. code-block:: pycon
 
     >>> client = Client(42, 'licensekey')
+
+The Factors service is called with the ``factors()`` method:
+
+.. code-block:: pycon
+
+    >>> factors = client.factors({'device': {'ip_address': '81.2.69.160'}})
 
 The Insights service is called with the ``insights()`` method:
 
@@ -188,6 +194,9 @@ Example
     >>>
     >>> client.insights(request)
     Insights(...)
+    >>>
+    >>> client.factors(request)
+    Factors(...)
 
 Requirements
 ------------

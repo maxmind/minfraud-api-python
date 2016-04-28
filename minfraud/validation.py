@@ -40,9 +40,9 @@ _md5 = All(_any_string, Match('^[0-9A-Fa-f]{32}$'))
 
 _country_code = All(_any_string, Match('^[A-Z]{2}$'))
 
-_telephone_country_code = Any(All(_any_string, Match('^[0-9]{1,4}$')),
-                              All(int, Range(min=1,
-                                             max=9999)))
+_telephone_country_code = Any(
+    All(_any_string, Match('^[0-9]{1,4}$')),
+    All(int, Range(min=1, max=9999)))
 
 _subdivision_iso_code = All(_any_string, Match('^[0-9A-Z]{1,4}$'))
 

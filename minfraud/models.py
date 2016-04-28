@@ -25,9 +25,8 @@ def _inflate_to_namedtuple(orig_cls):
     ntup = namedtuple(name, keys)
     ntup.__name__ = name + 'NamedTuple'
     ntup.__new__.__defaults__ = (None, ) * len(keys)
-    new_cls = type(name, (ntup, orig_cls),
-                   {'__slots__': (),
-                    '__doc__': orig_cls.__doc__})
+    new_cls = type(name, (ntup, orig_cls), {'__slots__': (),
+                                            '__doc__': orig_cls.__doc__})
     update_wrapper(_inflate_to_namedtuple, new_cls)
     orig_new = new_cls.__new__
 
@@ -82,8 +81,8 @@ class GeoIP2Location(geoip2.records.Location):
 
     """
     __doc__ += geoip2.records.Location.__doc__
-    _valid_attributes = geoip2.records.Location._valid_attributes.union(
-        set(['local_time']))
+    _valid_attributes = geoip2.records.Location._valid_attributes.union(set(
+        ['local_time']))
 
 
 class GeoIP2Country(geoip2.records.Country):
@@ -104,8 +103,8 @@ class GeoIP2Country(geoip2.records.Country):
 
     """
     __doc__ += geoip2.records.Country.__doc__
-    _valid_attributes = geoip2.records.Country._valid_attributes.union(
-        set(['is_high_risk']))
+    _valid_attributes = geoip2.records.Country._valid_attributes.union(set(
+        ['is_high_risk']))
 
 
 class IPAddress(geoip2.models.Insights):
@@ -200,6 +199,22 @@ class IPAddress(geoip2.models.Insights):
 
 
 @_inflate_to_namedtuple
+class ScoreIPAddress(object):
+    """
+    Information about the IP address for minFraud Score
+
+    .. attribute:: risk
+
+      This field contains the risk associated with the IP address. The value
+      ranges from 0.01 to 99. A higher score indicates a higher risk.
+
+      :type: float | None
+    """
+    __slots__ = ()
+    _fields = {'risk': None, }
+
+
+@_inflate_to_namedtuple
 class Issuer(object):
     """
     Information about the credit card issuer.
@@ -243,7 +258,7 @@ class Issuer(object):
         'name': None,
         'matches_provided_name': None,
         'phone_number': None,
-        'matches_provided_phone_number': None
+        'matches_provided_phone_number': None,
     }
 
 
@@ -264,9 +279,7 @@ class Device(object):
 
     """
     __slots__ = ()
-    _fields = {
-        'id': None
-    }
+    _fields = {'id': None, }
 
 
 @_inflate_to_namedtuple
@@ -291,10 +304,7 @@ class Email(object):
 
     """
     __slots__ = ()
-    _fields = {
-        'is_free': None,
-        'is_high_risk': None
-    }
+    _fields = {'is_free': None, 'is_high_risk': None, }
 
 
 @_inflate_to_namedtuple
@@ -356,7 +366,7 @@ class CreditCard(object):
         'brand': None,
         'is_issued_in_billing_address_country': None,
         'is_prepaid': None,
-        'type': None
+        'type': None,
     }
 
 
@@ -409,7 +419,7 @@ class BillingAddress(object):
         'latitude': None,
         'longitude': None,
         'distance_to_ip_location': None,
-        'is_in_ip_country': None
+        'is_in_ip_country': None,
     }
 
 
@@ -481,7 +491,7 @@ class ShippingAddress(object):
         'distance_to_ip_location': None,
         'is_in_ip_country': None,
         'is_high_risk': None,
-        'distance_to_billing_address': None
+        'distance_to_billing_address': None,
     }
 
 
@@ -517,10 +527,260 @@ class ServiceWarning(object):
 
     """
     __slots__ = ()
+    _fields = {'code': None, 'warning': None, 'input_pointer': None, }
+
+
+@_inflate_to_namedtuple
+class Subscores(object):
+    """
+    Subscores used in calculating the overall risk score
+
+    .. attribute:: avs_result
+
+      The risk associated with the AVS result. If present, this is a value
+      in the range 0.01 to 99.
+
+      :type: float | None
+
+    .. attribute:: billing_address
+
+      The risk associated with the billing address. If present, this is a
+      value in the range 0.01 to 99.
+
+      :type: float | None
+
+    .. attribute:: billing_address_distance_to_ip_location
+
+      The risk associated with the distance between the billing address and
+      the IP location for the given IP address.  If present, this is a value
+      in the range 0.01 to 99.
+
+      :type: float | None
+
+    .. attribute:: browser
+
+      The risk associated with the browser attributes such as the User-Agent
+      and Accept-Language AVS result. If present, this is a value
+      in the range 0.01 to 99.
+
+      :type: float | None
+
+    .. attribute:: chargeback
+
+      Individualized risk of chargeback for the given IP address given for
+      your account and any shop ID passed. This is only available to users
+      sending chargeback data to MaxMind. If present, this is a value in the
+      range 0.01 to 99.
+
+      :type: float | None
+
+    .. attribute:: country
+
+      The risk associated with the country the transaction originated from. If
+      present, this is a value in the  range 0.01 to 99.
+
+      :type: float | None
+
+    .. attribute:: country_mismatch
+
+      The risk associated with the combination of IP country, card issuer
+      country, billing country, and shipping country.  If present, this is a
+      value in the  range 0.01 to 99.
+
+      :type: float | None
+
+   .. attribute:: cvv_result
+
+      The risk associated with the CVV result. If present, this is a value
+      in the range 0.01 to 99.
+
+      :type: float | None
+
+   .. attribute:: email_address
+
+      The risk associated with the particular email address. If present, this
+      is a value in the range 0.01 to 99.
+
+      :type: float | None
+
+   .. attribute:: email_domain
+
+      The general risk associated with the email domain. If present, this is a
+      value in the range 0.01 to 99.
+
+      :type: float | None
+
+   .. attribute:: email_tenure
+
+      The risk associated with the issuer ID number on the email domain. If
+      present, this is a value in the range 0.01 to 99.
+
+      :type: float | None
+
+   .. attribute:: ip_tenure
+
+      The risk associated with the issuer ID number on the IP address. If
+      present, this is a value in the range 0.01 to 99.
+
+      :type: float | None
+
+   .. attribute:: issuer_id_number
+
+      The risk associated with the particular issuer ID number (IIN) given the
+      billing location and the history of usage of the IIN on your account and
+      shop ID. If present, this is a value in the range 0.01 to 99.
+
+      :type: float | None
+
+   .. attribute:: order_amount
+
+      The risk associated with the particular order amount for your account
+      and shop ID. If present, this is a value in the range 0.01 to 99.
+
+      :type: float | None
+
+   .. attribute:: phone_number
+
+      The risk associated with the particular phone number. If present, this
+      is a value in the range 0.01 to 99.
+
+      :type: float | None
+
+   .. attribute:: shipping_address_distance_to_ip_location
+
+      The risk associated with the distance between the billing address and
+      the IP location for the given IP address.  If present, this is a value
+      in the range 0.01 to 99.
+
+      :type: float | None
+
+   .. attribute:: time_of_day
+
+      The risk associated with the local time of day of the transaction in the
+      IP address location. If present, this is a value in the range 0.01 to 99.
+
+      :type: float | None
+
+    """
+    __slots__ = ()
     _fields = {
-        'code': None,
-        'warning': None,
-        'input_pointer': None
+        'avs_result': None,
+        'billing_address': None,
+        'billing_address_distance_to_ip_location': None,
+        'browser': None,
+        'chargeback': None,
+        'country': None,
+        'country_mismatch': None,
+        'cvv_result': None,
+        'email_address': None,
+        'email_domain': None,
+        'email_tenure': None,
+        'ip_tenure': None,
+        'issuer_id_number': None,
+        'order_amount': None,
+        'phone_number': None,
+        'shipping_address_distance_to_ip_location': None,
+        'time_of_day': None,
+    }
+
+
+@_inflate_to_namedtuple
+class Factors(object):
+    """
+    Model for Factors response
+
+    .. attribute:: id
+
+      This is a UUID that identifies the minFraud request. Please use
+      this ID in bug reports or support requests to MaxMind so that we can
+      easily identify a particular request.
+
+      :type: str
+
+    .. attribute:: credits_remaining
+
+      The approximate number of service credits remaining
+      on your account.
+
+      :type: int
+
+    .. attribute:: warnings
+
+      This tuple contains :class:`.ServiceWarning` objects detailing
+      issues with the request that was sent such as invalid or unknown inputs.
+      It is highly recommended that you check this array for issues when
+      integrating the web service.
+
+      :type: tuple[ServiceWarning]
+
+    .. attribute:: risk_score
+
+      This property contains the risk score, from 0.01 to 99. A
+      higher score indicates a higher risk of fraud. For example, a score of
+      20 indicates a 20% chance that a transaction is fraudulent. We never
+      return a risk score of 0, since all transactions have the possibility of
+      being fraudulent. Likewise we never return a risk score of 100.
+
+      :type: float
+
+    .. attribute:: credit_card
+
+      A :class:`.CreditCard` object containing minFraud data
+      about the credit card used in the transaction.
+
+      :type: CreditCard
+
+    .. attribute:: device
+
+      A :class:`.Device` object containing information about the device that
+      MaxMind believes is associated with the IP address passed in the request.
+
+      :type: Device
+
+    .. attribute:: email
+
+      A :class:`.Email` object containing information about the email address
+      passed in the request.
+
+      :type: Email
+
+    .. attribute:: ip_address
+
+      A :class:`.IPAddress` object containing GeoIP2 and
+      minFraud Insights information about the IP address.
+
+      :type: IPAddress
+
+    .. attribute:: billing_address
+
+      A :class:`.BillingAddress` object containing minFraud
+      data related to the billing address used in the transaction.
+
+      :type: BillingAddress
+
+    .. attribute:: shipping_address
+
+      A :class:`.ShippingAddress` object containing
+      minFraud data related to the shipping address used in the transaction.
+
+    .. attribute:: subscores
+
+      A :class:`.Subscores` object containing subscores for many of the
+      individual components that are used to calculate the overall risk score.
+    """
+    __slots__ = ()
+    _fields = {
+        'id': None,
+        'risk_score': None,
+        'warnings': _create_warnings,
+        'credits_remaining': None,
+        'ip_address': IPAddress,
+        'credit_card': CreditCard,
+        'device': Device,
+        'email': Email,
+        'shipping_address': ShippingAddress,
+        'billing_address': BillingAddress,
+        'subscores': Subscores,
     }
 
 
@@ -614,7 +874,7 @@ class Insights(object):
         'device': Device,
         'email': Email,
         'shipping_address': ShippingAddress,
-        'billing_address': BillingAddress
+        'billing_address': BillingAddress,
     }
 
 
@@ -657,6 +917,11 @@ class Score(object):
 
       :type: float
 
+    .. attribute:: ip_address
+
+      A :class:`.ScoreIPAddress` object containing IP address risk.
+
+      :type: IPAddress
     """
     __slots__ = ()
     _fields = {
@@ -664,4 +929,5 @@ class Score(object):
         'risk_score': None,
         'warnings': _create_warnings,
         'credits_remaining': None,
+        'ip_address': ScoreIPAddress,
     }
