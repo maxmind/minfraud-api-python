@@ -22,7 +22,8 @@ class TestModels(unittest.TestCase):
                   T(Email(), 'is_free'), T(BillingAddress(), 'latitude'),
                   T(ShippingAddress(), 'latitude'),
                   T(ServiceWarning(), 'code'), T(Insights(), 'id'),
-                  T(Score(), 'id'), T(IPAddress({}), 'city')]
+                  T(Score(), 'id'), T(
+                      IPAddress({}), 'city')]
         for model in models:
             for attr in (model.attr, 'does_not_exist'):
                 with self.assertRaises(
@@ -85,10 +86,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual(id, device.id)
 
     def test_email(self):
-        email = Email({
-            'is_free': True,
-            'is_high_risk': False
-        })
+        email = Email({'is_free': True, 'is_high_risk': False})
 
         self.assertEqual(True, email.is_free)
         self.assertEqual(False, email.is_high_risk)
@@ -116,6 +114,10 @@ class TestModels(unittest.TestCase):
         self.assertEqual(True, address.country.is_high_risk)
         self.assertEqual(99, address.risk)
 
+    def test_score_ip_address(self):
+        address = ScoreIPAddress({'risk': 99})
+        self.assertEqual(99, address.risk)
+
     def test_ip_address_locales(self):
 
         loc = IPAddress({
@@ -126,40 +128,6 @@ class TestModels(unittest.TestCase):
 
         self.assertEqual('City', loc.city.name)
         self.assertEqual('Country', loc.country.name)
-
-    def test_insights(self):
-        id = "b643d445-18b2-4b9d-bad4-c9c4366e402a"
-        insights = Insights({
-            'id': id,
-            'ip_address': {'country': {'iso_code': 'US'}},
-            'credit_card': {
-                'is_prepaid': True,
-                'brand': 'Visa',
-                'type': 'debit'
-            },
-            'device': {'id': id},
-            'email': {'is_free': True},
-            'shipping_address': {'is_in_ip_country': True},
-            'billing_address': {'is_in_ip_country': True},
-            'credits_remaining': 123,
-            'risk_score': 0.01,
-            'warnings': [{"code": "INVALID_INPUT"}]
-        })
-
-        self.assertEqual('US', insights.ip_address.country.iso_code)
-        self.assertEqual(True, insights.credit_card.is_prepaid)
-        self.assertEqual('Visa', insights.credit_card.brand)
-        self.assertEqual('debit', insights.credit_card.type)
-        self.assertEqual(id, insights.device.id)
-        self.assertEqual(True, insights.email.is_free)
-        self.assertEqual(True, insights.shipping_address.is_in_ip_country)
-        self.assertEqual(True, insights.billing_address.is_in_ip_country)
-        self.assertEqual(id, insights.id)
-        self.assertEqual(123, insights.credits_remaining)
-        self.assertEqual(0.01, insights.risk_score)
-        self.assertEqual("INVALID_INPUT", insights.warnings[0].code)
-        self.assertIsInstance(insights.warnings, tuple,
-                              'warnings is a tuple, not a dict')
 
     def test_issuer(self):
         phone = '132-342-2131'
@@ -176,29 +144,113 @@ class TestModels(unittest.TestCase):
         self.assertEqual(phone, issuer.phone_number)
         self.assertEqual(True, issuer.matches_provided_phone_number)
 
-    def test_score(self):
-        id = 'b643d445-18b2-4b9d-bad4-c9c4366e402a'
-        insights = Insights({
-            'id': id,
-            'credits_remaining': 123,
-            'risk_score': 0.01,
-            'warnings': [{'code': 'INVALID_INPUT'}],
-        })
-
-        self.assertEqual(id, insights.id)
-        self.assertEqual(123, insights.credits_remaining)
-        self.assertEqual(0.01, insights.risk_score)
-        self.assertEqual('INVALID_INPUT', insights.warnings[0].code)
-
     def test_warning(self):
         code = 'INVALID_INPUT'
         msg = 'Input invalid'
 
-        warning = ServiceWarning(
-            {'code': code,
-             'warning': msg,
-             'input_pointer': "/first/second"})
+        warning = ServiceWarning({'code': code,
+                                  'warning': msg,
+                                  'input_pointer': "/first/second"})
 
         self.assertEqual(code, warning.code)
         self.assertEqual(msg, warning.warning)
         self.assertEqual('/first/second', warning.input_pointer)
+
+    def test_score(self):
+        id = 'b643d445-18b2-4b9d-bad4-c9c4366e402a'
+        score = Score({
+            'id': id,
+            'credits_remaining': 123,
+            'risk_score': 0.01,
+            'ip_address': {'risk': 99},
+            'warnings': [{'code': 'INVALID_INPUT'}],
+        })
+
+        self.assertEqual(id, score.id)
+        self.assertEqual(123, score.credits_remaining)
+        self.assertEqual(0.01, score.risk_score)
+        self.assertEqual('INVALID_INPUT', score.warnings[0].code)
+        self.assertEqual(99, score.ip_address.risk)
+
+    def test_insights(self):
+        response = self.factors_response()
+        del response['subscores']
+        insights = Insights(response)
+        self.check_insights_data(insights, response['id'])
+
+    def test_factors(self):
+        response = self.factors_response()
+        factors = Factors(response)
+        self.check_insights_data(factors, response['id'])
+        self.assertEqual(0.01, factors.subscores.avs_result)
+        self.assertEqual(0.02, factors.subscores.billing_address)
+        self.assertEqual(
+            0.03, factors.subscores.billing_address_distance_to_ip_location)
+        self.assertEqual(0.04, factors.subscores.browser)
+        self.assertEqual(0.05, factors.subscores.chargeback)
+        self.assertEqual(0.06, factors.subscores.country)
+        self.assertEqual(0.07, factors.subscores.country_mismatch)
+        self.assertEqual(0.08, factors.subscores.cvv_result)
+        self.assertEqual(0.09, factors.subscores.email_address)
+        self.assertEqual(0.10, factors.subscores.email_domain)
+        self.assertEqual(0.11, factors.subscores.email_tenure)
+        self.assertEqual(0.12, factors.subscores.ip_tenure)
+        self.assertEqual(0.13, factors.subscores.issuer_id_number)
+        self.assertEqual(0.14, factors.subscores.order_amount)
+        self.assertEqual(0.15, factors.subscores.phone_number)
+        self.assertEqual(
+            0.16, factors.subscores.shipping_address_distance_to_ip_location)
+        self.assertEqual(0.17, factors.subscores.time_of_day)
+
+    def factors_response(self):
+        return {
+            'id': "b643d445-18b2-4b9d-bad4-c9c4366e402a",
+            'ip_address': {'country': {'iso_code': 'US'}},
+            'credit_card': {
+                'is_prepaid': True,
+                'brand': 'Visa',
+                'type': 'debit'
+            },
+            'device': {'id': "b643d445-18b2-4b9d-bad4-c9c4366e402a"},
+            'email': {'is_free': True},
+            'shipping_address': {'is_in_ip_country': True},
+            'billing_address': {'is_in_ip_country': True},
+            'credits_remaining': 123,
+            'risk_score': 0.01,
+            'subscores': {
+                'avs_result': 0.01,
+                'billing_address': 0.02,
+                'billing_address_distance_to_ip_location': 0.03,
+                'browser': 0.04,
+                'chargeback': 0.05,
+                'country': 0.06,
+                'country_mismatch': 0.07,
+                'cvv_result': 0.08,
+                'email_address': 0.09,
+                'email_domain': 0.10,
+                'email_tenure': 0.11,
+                'ip_tenure': 0.12,
+                'issuer_id_number': 0.13,
+                'order_amount': 0.14,
+                'phone_number': 0.15,
+                'shipping_address_distance_to_ip_location': 0.16,
+                'time_of_day': 0.17,
+            },
+            'warnings': [{"code": "INVALID_INPUT"}]
+        }
+
+    def check_insights_data(self, insights, uuid):
+        self.assertEqual('US', insights.ip_address.country.iso_code)
+        self.assertEqual(True, insights.credit_card.is_prepaid)
+        self.assertEqual('Visa', insights.credit_card.brand)
+        self.assertEqual('debit', insights.credit_card.type)
+        self.assertEqual(uuid, insights.device.id)
+        self.assertEqual(True, insights.email.is_free)
+        self.assertEqual(True, insights.shipping_address.is_in_ip_country)
+        self.assertEqual(True, insights.billing_address.is_in_ip_country)
+        self.assertEqual(uuid, insights.id)
+        self.assertEqual(123, insights.credits_remaining)
+        self.assertEqual(0.01, insights.risk_score)
+        self.assertEqual("INVALID_INPUT", insights.warnings[0].code)
+        self.assertIsInstance(insights.warnings, tuple,
+                              'warnings is a tuple, not a dict')

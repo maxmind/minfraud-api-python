@@ -50,3 +50,7 @@ class InvalidRequestError(MinFraudError):
 
 class InsufficientFundsError(MinFraudError):
     """Your account is out of funds for the service queried."""
+
+
+class PermissionRequiredError(MinFraudError):
+    """Your account does not have permission to access this service."""

@@ -12,8 +12,8 @@ from voluptuous import MultipleInvalid
 
 from .version import __version__
 from .errors import MinFraudError, HTTPError, AuthenticationError, \
-    InsufficientFundsError, InvalidRequestError
-from .models import Insights, Score
+    InsufficientFundsError, InvalidRequestError, PermissionRequiredError
+from .models import Factors, Insights, Score
 from .validation import validate_transaction
 
 
@@ -22,7 +22,9 @@ class Client(object):
     Client for accessing the minFraud Score and Insights web services.
     """
 
-    def __init__(self, user_id, license_key,
+    def __init__(self,
+                 user_id,
+                 license_key,
                  host='minfraud.maxmind.com',
                  locales=('en', ),
                  timeout=None):
@@ -49,6 +51,27 @@ class Client(object):
         self._base_uri = u'https://{0:s}/minfraud/v2.0'.format(host)
         self._timeout = timeout
 
+    def factors(self, transaction, validate=True):
+        """
+        Query Factors endpoint with transaction data.
+
+        :param transaction: A dictionary containing the transaction to be
+          sent to the minFraud Insights web service as specified in the `REST
+          API documentation
+          <https://dev.maxmind.com/minfraud/minfraud-score-and-insights-api-documentation/#Request_Body>`_.
+        :type transaction: dict
+        :param validate: If set to false, validation of the transaction
+          dictionary will be disabled. This validation helps ensure that your
+          request is correct before sending it to MaxMind. Validation raises an
+          InvalidRequestError.
+        :type validate: bool
+        :return: A Factors model object
+        :rtype: Factors
+        :raises: AuthenticationError, InsufficientFundsError,
+          InvalidRequestError, HTTPError, MinFraudError,
+        """
+        return self._response_for('factors', Factors, transaction, validate)
+
     def insights(self, transaction, validate=True):
         """
         Query Insights endpoint with transaction data.
@@ -56,7 +79,7 @@ class Client(object):
         :param transaction: A dictionary containing the transaction to be
           sent to the minFraud Insights web service as specified in the `REST
           API documentation
-          <http://dev.maxmind.com/minfraud-score-and-insights-api-documentation/#Request_Body>`_.
+          <https://dev.maxmind.com/minfraud/minfraud-score-and-insights-api-documentation/#Request_Body>`_.
         :type transaction: dict
         :param validate: If set to false, validation of the transaction
           dictionary will be disabled. This validation helps ensure that your
@@ -77,7 +100,7 @@ class Client(object):
         :param transaction: A dictionary containing the transaction to be
           sent to the minFraud Score web service as specified in the `REST API
           documentation
-          <http://dev.maxmind.com/minfraud-score-and-insights-api-documentation/#Request_Body>`_.
+          <https://dev.maxmind.com/minfraud/minfraud-score-and-insights-api-documentation/#Request_Body>`_.
         :type transaction: dict
         :param validate: If set to false, validation of the transaction
           dictionary will be disabled. This validation helps ensure that your
@@ -101,13 +124,12 @@ class Client(object):
                 raise InvalidRequestError(
                     "Invalid transaction data: {0}".format(ex))
         uri = '/'.join([self._base_uri, path])
-        response = requests.post(
-            uri,
-            json=cleaned_request,
-            auth=(self._user_id, self._license_key),
-            headers={'Accept': 'application/json',
-                     'User-Agent': self._user_agent()},
-            timeout=self._timeout)
+        response = requests.post(uri,
+                                 json=cleaned_request,
+                                 auth=(self._user_id, self._license_key),
+                                 headers={'Accept': 'application/json',
+                                          'User-Agent': self._user_agent()},
+                                 timeout=self._timeout)
         if response.status_code == 200:
             return self._handle_success(response, uri, model_class)
         else:
@@ -116,8 +138,8 @@ class Client(object):
     def _copy_and_clean(self, data):
         """This returns a copy of the data structure with Nones removed"""
         if isinstance(data, dict):
-            return dict((k, self._copy_and_clean(v)) for (k, v) in data.items()
-                        if v is not None)
+            return dict((k, self._copy_and_clean(v))
+                        for (k, v) in data.items() if v is not None)
         elif isinstance(data, (list, set, tuple)):
             return [self._copy_and_clean(x) for x in data if x is not None]
         else:
@@ -165,12 +187,13 @@ class Client(object):
             raise HTTPError(
                 'Received a {status:d} error but it did not include'
                 ' the expected JSON body: {content}'.format(
-                    status=status,
-                    content=response.content), status, uri)
+                    status=status, content=response.content),
+                status,
+                uri)
         else:
             if 'code' in body and 'error' in body:
-                self._handle_web_service_error(body.get('error'),
-                                               body.get('code'), status, uri)
+                self._handle_web_service_error(
+                    body.get('error'), body.get('code'), status, uri)
             else:
                 raise HTTPError(
                     'Error response contains JSON but it does not specify code'
@@ -184,6 +207,8 @@ class Client(object):
             raise AuthenticationError(message)
         elif code == 'INSUFFICIENT_FUNDS':
             raise InsufficientFundsError(message)
+        elif code == 'PERMISSION_REQUIRED':
+            raise PermissionRequiredError(message)
 
         raise InvalidRequestError(message, code, status, uri)
 
