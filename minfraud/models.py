@@ -552,16 +552,16 @@ class Subscores(object):
     .. attribute:: billing_address_distance_to_ip_location
 
       The risk associated with the distance between the billing address and
-      the IP location for the given IP address.  If present, this is a value
-      in the range 0.01 to 99.
+      the location for the given IP address. If present, this is a value in
+      the range 0.01 to 99.
 
       :type: float | None
 
     .. attribute:: browser
 
       The risk associated with the browser attributes such as the User-Agent
-      and Accept-Language AVS result. If present, this is a value
-      in the range 0.01 to 99.
+      and Accept-Language. If present, this is a value in the range 0.01 to
+      99.
 
       :type: float | None
 
@@ -648,9 +648,9 @@ class Subscores(object):
 
    .. attribute:: shipping_address_distance_to_ip_location
 
-      The risk associated with the distance between the billing address and
-      the IP location for the given IP address.  If present, this is a value
-      in the range 0.01 to 99.
+      The risk associated with the distance between the shipping address and
+      the location for the given IP address. If present, this is a value in
+      the range 0.01 to 99.
 
       :type: float | None
 
