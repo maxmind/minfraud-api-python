@@ -35,7 +35,7 @@ def _inflate_to_namedtuple(orig_cls):
     #     getattr(cls, attr).__func__.__doc__ = None
 
     def new(cls, *args, **kwargs):
-        """Create new instance"""
+        """Create new instance."""
         if (args and kwargs) or len(args) > 1:
             raise ValueError('Only provide a single (dict) positional argument'
                              ' or use keyword arguments. Do not use both.')
@@ -61,8 +61,7 @@ def _create_warnings(warnings):
 
 
 class GeoIP2Location(geoip2.records.Location):
-    """
-    Location information for the IP address
+    """Location information for the IP address.
 
     In addition to the attributes provided by ``geoip2.records.Location``,
     this class provides:
@@ -80,14 +79,14 @@ class GeoIP2Location(geoip2.records.Location):
     Parent:
 
     """
+
     __doc__ += geoip2.records.Location.__doc__
     _valid_attributes = geoip2.records.Location._valid_attributes.union(set(
         ['local_time']))
 
 
 class GeoIP2Country(geoip2.records.Country):
-    """
-    Country information for the IP address
+    """Country information for the IP address.
 
     In addition to the attributes provided by ``geoip2.records.Country``,
     this class provides:
@@ -102,14 +101,14 @@ class GeoIP2Country(geoip2.records.Country):
     Parent:
 
     """
+
     __doc__ += geoip2.records.Country.__doc__
     _valid_attributes = geoip2.records.Country._valid_attributes.union(set(
         ['is_high_risk']))
 
 
 class IPAddress(geoip2.models.Insights):
-    """
-    Model for minFraud and GeoIP2 data about the IP address
+    """Model for minFraud and GeoIP2 data about the IP address.
 
     .. attribute:: risk
 
@@ -200,8 +199,7 @@ class IPAddress(geoip2.models.Insights):
 
 @_inflate_to_namedtuple
 class ScoreIPAddress(object):
-    """
-    Information about the IP address for minFraud Score
+    """Information about the IP address for minFraud Score.
 
     .. attribute:: risk
 
@@ -210,14 +208,14 @@ class ScoreIPAddress(object):
 
       :type: float | None
     """
+
     __slots__ = ()
     _fields = {'risk': None, }
 
 
 @_inflate_to_namedtuple
 class Issuer(object):
-    """
-    Information about the credit card issuer.
+    """Information about the credit card issuer.
 
     .. attribute:: name
 
@@ -253,6 +251,7 @@ class Issuer(object):
       :type: bool
 
     """
+
     __slots__ = ()
     _fields = {
         'name': None,
@@ -264,8 +263,7 @@ class Issuer(object):
 
 @_inflate_to_namedtuple
 class Device(object):
-    """
-    Information about the device associated with the IP address
+    """Information about the device associated with the IP address.
 
     .. attribute:: id
 
@@ -276,16 +274,15 @@ class Device(object):
       device.
 
       :type: str
-
     """
+
     __slots__ = ()
     _fields = {'id': None, }
 
 
 @_inflate_to_namedtuple
 class Email(object):
-    """
-    Information about the email address passed in the request
+    """Information about the email address passed in the request.
 
     .. attribute:: is_free
 
@@ -303,14 +300,14 @@ class Email(object):
       :type: bool | None
 
     """
+
     __slots__ = ()
     _fields = {'is_free': None, 'is_high_risk': None, }
 
 
 @_inflate_to_namedtuple
 class CreditCard(object):
-    """
-    Information about the credit card based on the issuer ID number
+    """Information about the credit card based on the issuer ID number.
 
     .. attribute:: country
 
@@ -359,6 +356,7 @@ class CreditCard(object):
       :type: Issuer
 
     """
+
     __slots__ = ()
     _fields = {
         'issuer': Issuer,
@@ -372,8 +370,7 @@ class CreditCard(object):
 
 @_inflate_to_namedtuple
 class BillingAddress(object):
-    """
-    Information about the billing address
+    """Information about the billing address.
 
     .. attribute:: distance_to_ip_location
 
@@ -413,6 +410,7 @@ class BillingAddress(object):
       :type: float | None
 
     """
+
     __slots__ = ()
     _fields = {
         'is_postal_in_city': None,
@@ -425,8 +423,7 @@ class BillingAddress(object):
 
 @_inflate_to_namedtuple
 class ShippingAddress(object):
-    """
-    Information about the shipping address
+    """Information about the shipping address.
 
     .. attribute:: distance_to_ip_location
 
@@ -483,6 +480,7 @@ class ShippingAddress(object):
       :type: int | None
 
     """
+
     __slots__ = ()
     _fields = {
         'is_postal_in_city': None,
@@ -497,8 +495,7 @@ class ShippingAddress(object):
 
 @_inflate_to_namedtuple
 class ServiceWarning(object):
-    """
-    Warning from the web service
+    """Warning from the web service.
 
     .. attribute:: code
 
@@ -526,14 +523,14 @@ class ServiceWarning(object):
       :type: str
 
     """
+
     __slots__ = ()
     _fields = {'code': None, 'warning': None, 'input_pointer': None, }
 
 
 @_inflate_to_namedtuple
 class Subscores(object):
-    """
-    Subscores used in calculating the overall risk score
+    """Subscores used in calculating the overall risk score.
 
     .. attribute:: avs_result
 
@@ -589,42 +586,42 @@ class Subscores(object):
 
       :type: float | None
 
-   .. attribute:: cvv_result
+    .. attribute:: cvv_result
 
       The risk associated with the CVV result. If present, this is a value
       in the range 0.01 to 99.
 
       :type: float | None
 
-   .. attribute:: email_address
+    .. attribute:: email_address
 
       The risk associated with the particular email address. If present, this
       is a value in the range 0.01 to 99.
 
       :type: float | None
 
-   .. attribute:: email_domain
+    .. attribute:: email_domain
 
       The general risk associated with the email domain. If present, this is a
       value in the range 0.01 to 99.
 
       :type: float | None
 
-   .. attribute:: email_tenure
+     .. attribute:: email_tenure
 
       The risk associated with the issuer ID number on the email domain. If
       present, this is a value in the range 0.01 to 99.
 
       :type: float | None
 
-   .. attribute:: ip_tenure
+    .. attribute:: ip_tenure
 
       The risk associated with the issuer ID number on the IP address. If
       present, this is a value in the range 0.01 to 99.
 
       :type: float | None
 
-   .. attribute:: issuer_id_number
+    .. attribute:: issuer_id_number
 
       The risk associated with the particular issuer ID number (IIN) given the
       billing location and the history of usage of the IIN on your account and
@@ -632,21 +629,21 @@ class Subscores(object):
 
       :type: float | None
 
-   .. attribute:: order_amount
+    .. attribute:: order_amount
 
       The risk associated with the particular order amount for your account
       and shop ID. If present, this is a value in the range 0.01 to 99.
 
       :type: float | None
 
-   .. attribute:: phone_number
+    .. attribute:: phone_number
 
       The risk associated with the particular phone number. If present, this
       is a value in the range 0.01 to 99.
 
       :type: float | None
 
-   .. attribute:: shipping_address_distance_to_ip_location
+    .. attribute:: shipping_address_distance_to_ip_location
 
       The risk associated with the distance between the shipping address and
       the location for the given IP address. If present, this is a value in
@@ -654,7 +651,7 @@ class Subscores(object):
 
       :type: float | None
 
-   .. attribute:: time_of_day
+    .. attribute:: time_of_day
 
       The risk associated with the local time of day of the transaction in the
       IP address location. If present, this is a value in the range 0.01 to 99.
@@ -662,6 +659,7 @@ class Subscores(object):
       :type: float | None
 
     """
+
     __slots__ = ()
     _fields = {
         'avs_result': None,
@@ -686,8 +684,7 @@ class Subscores(object):
 
 @_inflate_to_namedtuple
 class Factors(object):
-    """
-    Model for Factors response
+    """Model for Factors response.
 
     .. attribute:: id
 
@@ -697,10 +694,17 @@ class Factors(object):
 
       :type: str
 
-    .. attribute:: credits_remaining
+    .. attribute:: funds_remaining
 
-      The approximate number of service credits remaining
-      on your account.
+      The approximate US dollar value of the funds remaining on your MaxMind
+      account.
+
+      :type: float
+
+    .. attribute:: queries_remaining
+
+      The approximate number of queries remaining on this service before
+      your account runs out of funds.
 
       :type: int
 
@@ -768,26 +772,27 @@ class Factors(object):
       A :class:`.Subscores` object containing subscores for many of the
       individual components that are used to calculate the overall risk score.
     """
+
     __slots__ = ()
     _fields = {
-        'id': None,
-        'risk_score': None,
-        'warnings': _create_warnings,
-        'credits_remaining': None,
-        'ip_address': IPAddress,
+        'billing_address': BillingAddress,
         'credit_card': CreditCard,
+        'funds_remaining': None,
         'device': Device,
         'email': Email,
+        'id': None,
+        'ip_address': IPAddress,
+        'queries_remaining': None,
+        'risk_score': None,
         'shipping_address': ShippingAddress,
-        'billing_address': BillingAddress,
         'subscores': Subscores,
+        'warnings': _create_warnings,
     }
 
 
 @_inflate_to_namedtuple
 class Insights(object):
-    """
-    Model for Insights response
+    """Model for Insights response.
 
     .. attribute:: id
 
@@ -797,10 +802,17 @@ class Insights(object):
 
       :type: str
 
-    .. attribute:: credits_remaining
+    .. attribute:: funds_remaining
 
-      The approximate number of service credits remaining
-      on your account.
+      The approximate US dollar value of the funds remaining on your MaxMind
+      account.
+
+      :type: float
+
+    .. attribute:: queries_remaining
+
+      The approximate number of queries remaining on this service before
+      your account runs out of funds.
 
       :type: int
 
@@ -863,25 +875,26 @@ class Insights(object):
       A :class:`.ShippingAddress` object containing
       minFraud data related to the shipping address used in the transaction.
     """
+
     __slots__ = ()
     _fields = {
-        'id': None,
-        'risk_score': None,
-        'warnings': _create_warnings,
-        'credits_remaining': None,
-        'ip_address': IPAddress,
+        'billing_address': BillingAddress,
         'credit_card': CreditCard,
         'device': Device,
         'email': Email,
+        'funds_remaining': None,
+        'id': None,
+        'ip_address': IPAddress,
+        'queries_remaining': None,
+        'risk_score': None,
         'shipping_address': ShippingAddress,
-        'billing_address': BillingAddress,
+        'warnings': _create_warnings,
     }
 
 
 @_inflate_to_namedtuple
 class Score(object):
-    """
-    Model for Score response
+    """Model for Score response.
 
     .. attribute:: id
 
@@ -891,10 +904,17 @@ class Score(object):
 
       :type: str
 
-    .. attribute:: credits_remaining
+    .. attribute:: funds_remaining
 
-      The approximate number of service credits remaining
-      on your account.
+      The approximate US dollar value of the funds remaining on your MaxMind
+      account.
+
+      :type: float
+
+    .. attribute:: queries_remaining
+
+      The approximate number of queries remaining on this service before
+      your account runs out of funds.
 
       :type: int
 
@@ -923,11 +943,13 @@ class Score(object):
 
       :type: IPAddress
     """
+
     __slots__ = ()
     _fields = {
+        'funds_remaining': None,
         'id': None,
+        'ip_address': ScoreIPAddress,
+        'queries_remaining': None,
         'risk_score': None,
         'warnings': _create_warnings,
-        'credits_remaining': None,
-        'ip_address': ScoreIPAddress,
     }

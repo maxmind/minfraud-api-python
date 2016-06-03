@@ -3,6 +3,15 @@
 History
 -------
 
+0.5.0 (2016-XX-XX)
+++++++++++++++++++
+
+* BREAKING CHANGE: ``credits_remaining`` has been removed from the web service
+  response model and has been replaced by ``queries_remaining``.
+* Added ``queries_remaining`` and ``funds_remaining``. Note that
+  ``funds_remaining`` will not be returned by the web service until our new
+  credit system is in place.
+
 0.4.0 (2016-05-23)
 ++++++++++++++++++
 
