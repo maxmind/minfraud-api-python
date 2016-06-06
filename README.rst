@@ -190,7 +190,7 @@ Example
     >>> }
     >>>
     >>> client.score(request)
-    Score(credits_remaining=5077062248, id='FB49B8E0-F987-11E4-8AD9-8B1442B6BA89', risk_score=56.41, warnings=())
+    Score(...)
     >>>
     >>> client.insights(request)
     Insights(...)

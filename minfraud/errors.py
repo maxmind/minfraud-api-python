@@ -21,6 +21,7 @@ class AuthenticationError(MinFraudError):
 
 class HTTPError(MinFraudError):
     """There was an error when making your HTTP request.
+
     This class represents an HTTP transport error. It extends
     :py:exc:`MinFraudError` and adds attributes of its own.
 

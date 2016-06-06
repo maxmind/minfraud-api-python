@@ -13,6 +13,7 @@ if sys.version_info[0] == 2:
 
 
 class TestModels(unittest.TestCase):
+
     def test_model_immutability(self):
         """This tests some level of _shallow_ immutability for these classes"""
         T = namedtuple('T', ['obj', 'attr'], {})
@@ -160,14 +161,16 @@ class TestModels(unittest.TestCase):
         id = 'b643d445-18b2-4b9d-bad4-c9c4366e402a'
         score = Score({
             'id': id,
-            'credits_remaining': 123,
+            'funds_remaining': 10.01,
+            'queries_remaining': 123,
             'risk_score': 0.01,
             'ip_address': {'risk': 99},
             'warnings': [{'code': 'INVALID_INPUT'}],
         })
 
         self.assertEqual(id, score.id)
-        self.assertEqual(123, score.credits_remaining)
+        self.assertEqual(10.01, score.funds_remaining)
+        self.assertEqual(123, score.queries_remaining)
         self.assertEqual(0.01, score.risk_score)
         self.assertEqual('INVALID_INPUT', score.warnings[0].code)
         self.assertEqual(99, score.ip_address.risk)
@@ -215,7 +218,8 @@ class TestModels(unittest.TestCase):
             'email': {'is_free': True},
             'shipping_address': {'is_in_ip_country': True},
             'billing_address': {'is_in_ip_country': True},
-            'credits_remaining': 123,
+            'funds_remaining': 10.01,
+            'queries_remaining': 123,
             'risk_score': 0.01,
             'subscores': {
                 'avs_result': 0.01,
@@ -249,7 +253,8 @@ class TestModels(unittest.TestCase):
         self.assertEqual(True, insights.shipping_address.is_in_ip_country)
         self.assertEqual(True, insights.billing_address.is_in_ip_country)
         self.assertEqual(uuid, insights.id)
-        self.assertEqual(123, insights.credits_remaining)
+        self.assertEqual(10.01, insights.funds_remaining)
+        self.assertEqual(123, insights.queries_remaining)
         self.assertEqual(0.01, insights.risk_score)
         self.assertEqual("INVALID_INPUT", insights.warnings[0].code)
         self.assertIsInstance(insights.warnings, tuple,

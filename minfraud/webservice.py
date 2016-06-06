@@ -18,9 +18,7 @@ from .validation import validate_transaction
 
 
 class Client(object):
-    """
-    Client for accessing the minFraud Score and Insights web services.
-    """
+    """Client for accessing the minFraud Score and Insights web services."""
 
     def __init__(self,
                  user_id,
@@ -28,8 +26,7 @@ class Client(object):
                  host='minfraud.maxmind.com',
                  locales=('en', ),
                  timeout=None):
-        """
-        Constructor for Client.
+        """Constructor for Client.
 
         :param user_id: Your MaxMind user ID
         :type user_id: int
@@ -52,8 +49,7 @@ class Client(object):
         self._timeout = timeout
 
     def factors(self, transaction, validate=True):
-        """
-        Query Factors endpoint with transaction data.
+        """Query Factors endpoint with transaction data.
 
         :param transaction: A dictionary containing the transaction to be
           sent to the minFraud Insights web service as specified in the `REST
@@ -73,8 +69,7 @@ class Client(object):
         return self._response_for('factors', Factors, transaction, validate)
 
     def insights(self, transaction, validate=True):
-        """
-        Query Insights endpoint with transaction data.
+        """Query Insights endpoint with transaction data.
 
         :param transaction: A dictionary containing the transaction to be
           sent to the minFraud Insights web service as specified in the `REST
@@ -94,8 +89,7 @@ class Client(object):
         return self._response_for('insights', Insights, transaction, validate)
 
     def score(self, transaction, validate=True):
-        """
-        Query Score endpoint with transaction data
+        """Query Score endpoint with transaction data.
 
         :param transaction: A dictionary containing the transaction to be
           sent to the minFraud Score web service as specified in the `REST API
@@ -115,7 +109,7 @@ class Client(object):
         return self._response_for('score', Score, transaction, validate)
 
     def _response_for(self, path, model_class, request, validate):
-        """Send request and create response object"""
+        """Send request and create response object."""
         cleaned_request = self._copy_and_clean(request)
         if validate:
             try:
@@ -136,7 +130,7 @@ class Client(object):
             self._handle_error(response, uri)
 
     def _copy_and_clean(self, data):
-        """This returns a copy of the data structure with Nones removed"""
+        """Create a copy of the data structure with Nones removed."""
         if isinstance(data, dict):
             return dict((k, self._copy_and_clean(v))
                         for (k, v) in data.items() if v is not None)
@@ -146,11 +140,11 @@ class Client(object):
             return data
 
     def _user_agent(self):
-        """Create User-Agent header"""
+        """Create User-Agent header."""
         return 'minFraud-API/%s %s' % (__version__, default_user_agent())
 
     def _handle_success(self, response, uri, model_class):
-        """Handle successful response"""
+        """Handle successful response."""
         try:
             body = response.json()
         except ValueError:
@@ -162,7 +156,7 @@ class Client(object):
         return model_class(body)
 
     def _handle_error(self, response, uri):
-        """Handle error responses"""
+        """Handle error responses."""
         status = response.status_code
 
         if 400 <= status < 500:
@@ -173,7 +167,7 @@ class Client(object):
             self._handle_non_200_status(status, uri)
 
     def _handle_4xx_status(self, response, status, uri):
-        """Handle error responses with 4xx status codes"""
+        """Handle error responses with 4xx status codes."""
         if not response.content:
             raise HTTPError('Received a {0} error with no body'.format(status),
                             status, uri)
@@ -201,7 +195,7 @@ class Client(object):
                     uri)
 
     def _handle_web_service_error(self, message, code, status, uri):
-        """Handle error responses with the JSON body from the web service"""
+        """Handle error responses with the JSON body from the web service."""
         if code in ('AUTHORIZATION_INVALID', 'LICENSE_KEY_REQUIRED',
                     'USER_ID_REQUIRED'):
             raise AuthenticationError(message)
@@ -213,11 +207,11 @@ class Client(object):
         raise InvalidRequestError(message, code, status, uri)
 
     def _handle_5xx_status(self, status, uri):
-        """Handle error response with 5xx status codes"""
+        """Handle error response with 5xx status codes."""
         raise HTTPError(u'Received a server error ({0}) for '
                         u'{1}'.format(status, uri), status, uri)
 
     def _handle_non_200_status(self, status, uri):
-        """Handle successful responses with unexpected status codes"""
+        """Handle successful responses with unexpected status codes."""
         raise HTTPError(u'Received an unexpected HTTP status '
                         u'({0}) for {1}'.format(status, uri), status, uri)
