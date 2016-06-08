@@ -265,6 +265,19 @@ class Issuer(object):
 class Device(object):
     """Information about the device associated with the IP address.
 
+    In order to receive device output from minFraud Insights or minFraud
+    Factors, you must be using the `Device Tracking Add-on
+    <https://dev.maxmind.com/minfraud/device/>`_.
+
+    .. attribute:: confidence
+
+      This number represents our confidence that the ``device_id`` refers to
+      a unique device as opposed to a cluster of similar devices. A confidence
+      of 0.01 indicates very low confidence that the device is unique, whereas
+       99 indicates very high confidence.
+
+      :type: float | None
+
     .. attribute:: id
 
       A UUID that MaxMind uses for the device associated with this IP address.
@@ -273,11 +286,18 @@ class Device(object):
       these cases, the minFraud service will simply not return a UUID for that
       device.
 
-      :type: str
+      :type: str | None
+
+    .. attribute:: last_seen
+
+      This is the date and time of the last sighting of the device. This is an
+      RFC 3339 date-time.
+
+      :type: str | None
     """
 
     __slots__ = ()
-    _fields = {'id': None, }
+    _fields = {'confidence': None, 'id': None, 'last_seen': None, }
 
 
 @_inflate_to_namedtuple

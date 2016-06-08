@@ -11,6 +11,8 @@ History
 * Added ``queries_remaining`` and ``funds_remaining``. Note that
   ``funds_remaining`` will not be returned by the web service until our new
   credit system is in place.
+* ``confidence`` and ``last_seen`` were added to the ``Device`` response
+  model.
 
 0.4.0 (2016-05-23)
 ++++++++++++++++++

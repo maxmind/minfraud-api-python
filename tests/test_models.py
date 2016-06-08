@@ -13,7 +13,6 @@ if sys.version_info[0] == 2:
 
 
 class TestModels(unittest.TestCase):
-
     def test_model_immutability(self):
         """This tests some level of _shallow_ immutability for these classes"""
         T = namedtuple('T', ['obj', 'attr'], {})
@@ -82,9 +81,12 @@ class TestModels(unittest.TestCase):
 
     def test_device(self):
         id = 'b643d445-18b2-4b9d-bad4-c9c4366e402a'
-        device = Device({'id': id})
+        last_seen = '2016-06-08T14:16:38Z'
+        device = Device({'confidence': 99, 'id': id, 'last_seen': last_seen})
 
+        self.assertEqual(99, device.confidence)
         self.assertEqual(id, device.id)
+        self.assertEqual(last_seen, device.last_seen)
 
     def test_email(self):
         email = Email({'is_free': True, 'is_high_risk': False})
