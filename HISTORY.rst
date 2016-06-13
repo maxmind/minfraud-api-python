@@ -3,6 +3,12 @@
 History
 -------
 
+0.5.1
+++++++++++++++++++
+
+* Added the following new values to the ``/payment/processor`` validation:
+  ``concept_payments``, ``ecomm365``, ``orangepay``, and ``pacnet_services``.
+
 0.5.0 (2016-06-08)
 ++++++++++++++++++
 
