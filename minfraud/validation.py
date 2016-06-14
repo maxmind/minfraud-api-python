@@ -1,9 +1,10 @@
-"""This is an internal module used for validating the minFraud request"""
+"""This is an internal module used for validating the minFraud request."""
 
 import re
 import sys
 from decimal import Decimal
 
+from geoip2.compat import compat_ip_address
 from strict_rfc3339 import validate_rfc3339
 from validate_email import validate_email
 from voluptuous import All, Any, In, Match, Range, Required, Schema
@@ -20,19 +21,13 @@ that may break any direct use of it.
 # objects below. Given the consistent use of them, the current names seem
 # preferable to blindly following pylint.
 #
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name,redefined-variable-type
 
 if sys.version_info[0] >= 3:
-    import ipaddress  # pylint:disable=F0401
-
     _unicode_or_printable_ascii = str
 else:
-    import ipaddr as ipaddress  # pylint:disable=F0401
-
-    ipaddress.ip_address = ipaddress.IPAddress
-
-    # pylint: disable=undefined-variable,redefined-variable-type
     _unicode_or_printable_ascii = Any(unicode, Match(r'^[\x20-\x7E]*$'))
+# pylint: enable=redefined-variable-type
 
 _any_string = Any(_unicode_or_printable_ascii, str)
 
@@ -54,7 +49,7 @@ def _ip_address(s):
     # pylint: disable=undefined-variable
     if (isinstance(s, str) or isinstance(s, unicode)) \
             and not re.match(r'^\d+$', s):
-        return str(ipaddress.ip_address(s))
+        return str(compat_ip_address(s))
     raise ValueError
 
 
