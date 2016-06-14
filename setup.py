@@ -33,14 +33,14 @@ setup(name='minfraud',
       packages=['minfraud'],
       include_package_data=True,
       platforms='any',
-      install_requires=['geoip2>=2.3.0',
+      install_requires=['geoip2>=2.4.0',
                         'requests>=2.7',
                         'rfc3987',
                         'strict-rfc3339',
                         'validate_email',
                         'voluptuous', ],
       extras_require={
-          ':python_version=="2.6" or python_version=="2.7"': ['ipaddr']
+          ':python_version=="2.6" or python_version=="2.7"': ['ipaddress']
       },
       tests_require=['requests_mock'],
       test_suite="tests",

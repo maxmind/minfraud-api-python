@@ -3,6 +3,13 @@
 History
 -------
 
+0.5.1
+++++++++++++++++++
+
+* Added the following new values to the ``/payment/processor`` validation:
+  ``concept_payments``, ``ecomm365``, ``orangepay``, and ``pacnet_services``.
+* `ipaddress` is now used for IP validation on Python 2 instead of `ipaddr`.
+
 0.5.0 (2016-06-08)
 ++++++++++++++++++
 
