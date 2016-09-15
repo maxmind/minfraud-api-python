@@ -3,7 +3,7 @@
 History
 -------
 
-0.5.1
+1.0.0 (2016-09-15)
 ++++++++++++++++++
 
 * Added the following new values to the ``/payment/processor`` validation:
