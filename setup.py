@@ -8,14 +8,7 @@ import sys
 # This is necessary for Python 2.6 on Travis for some reason.
 import multiprocessing
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
-
-if sys.argv[-1] == 'publish':
-    os.system('python setup.py sdist upload')
-    sys.exit()
+from setuptools import setup
 
 _version_re = re.compile(r'__version__\s+=\s+(.*)')
 
@@ -45,7 +38,7 @@ setup(name='minfraud',
       tests_require=['requests_mock'],
       test_suite="tests",
       license='Apache License 2.0 ',
-      classifiers=('Development Status :: 5 - Production/Stable',
+      classifiers=['Development Status :: 5 - Production/Stable',
                    'Environment :: Web Environment',
                    'Intended Audience :: Developers',
                    'License :: OSI Approved :: Apache Software License',
@@ -58,4 +51,4 @@ setup(name='minfraud',
                    'Programming Language :: Python',
                    'Topic :: Internet :: Proxy Servers',
                    'Topic :: Internet :: WWW/HTTP',
-                   'Topic :: Internet', ), )
+                   'Topic :: Internet', ], )
