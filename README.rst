@@ -6,7 +6,7 @@ Description
 -----------
 
 This package provides an API for the `MaxMind minFraud Score, Insights, Factors
-web services <http://dev.maxmind.com/minfraud-score-and-insights-api-documentation>`_.
+web services <https://dev.maxmind.com/minfraud/>`_.
 
 Installation
 ------------
@@ -61,7 +61,7 @@ The Score web service is called with the ``score()`` method:
 Each of these methods takes a dictionary representing the transaction to be sent
 to the web service. The structure of this dictionary should be in `the format
 specified in the REST API documentation
-<http://dev.maxmind.com/minfraud-score-and-insights-api-documentation/#Request_Body>`_.
+<https://dev.maxmind.com/minfraud/#Request_Body>`_.
 The ``ip_address`` in the ``device`` sub-dictionary is required. All other
 fields are optional.
 

@@ -54,7 +54,7 @@ class Client(object):
         :param transaction: A dictionary containing the transaction to be
           sent to the minFraud Insights web service as specified in the `REST
           API documentation
-          <https://dev.maxmind.com/minfraud/minfraud-score-and-insights-api-documentation/#Request_Body>`_.
+          <https://dev.maxmind.com/minfraud/#Request_Body>`_.
         :type transaction: dict
         :param validate: If set to false, validation of the transaction
           dictionary will be disabled. This validation helps ensure that your
@@ -74,7 +74,7 @@ class Client(object):
         :param transaction: A dictionary containing the transaction to be
           sent to the minFraud Insights web service as specified in the `REST
           API documentation
-          <https://dev.maxmind.com/minfraud/minfraud-score-and-insights-api-documentation/#Request_Body>`_.
+          <https://dev.maxmind.com/minfraud/#Request_Body>`_.
         :type transaction: dict
         :param validate: If set to false, validation of the transaction
           dictionary will be disabled. This validation helps ensure that your
@@ -94,7 +94,7 @@ class Client(object):
         :param transaction: A dictionary containing the transaction to be
           sent to the minFraud Score web service as specified in the `REST API
           documentation
-          <https://dev.maxmind.com/minfraud/minfraud-score-and-insights-api-documentation/#Request_Body>`_.
+          <https://dev.maxmind.com/minfraud/#Request_Body>`_.
         :type transaction: dict
         :param validate: If set to false, validation of the transaction
           dictionary will be disabled. This validation helps ensure that your
