@@ -412,8 +412,9 @@ class BillingAddress(object):
 
       This property is ``True`` if the postal code
       provided with the address is in the city for the address. The property is
-      ``False`` when the postal code is not in the city. If the address could
-      not be parsed or was not provided, the property will be ``None``.
+      ``False`` when the postal code is not in the city. If the address was
+      not provided, could not be parsed, or was outside USA, the property will
+      be ``None``.
 
       :type: bool | None
 
@@ -465,8 +466,8 @@ class ShippingAddress(object):
 
       This property is ``True`` if the postal code
       provided with the address is in the city for the address. The property is
-      ``False`` when the postal code is not in the city. If the address could
-      not be parsed or was not provided, the property will be ``None``.
+      ``False`` when the postal code is not in the city. If the address was
+      not provided, could not be parsed, or was not in USA, the property will be ``None``.
 
       :type: bool | None
 
@@ -521,7 +522,7 @@ class ServiceWarning(object):
 
       This value is a machine-readable code identifying the
       warning. See the `web service documentation
-      <http://dev.maxmind.com/minfraud-score-and-insights-api-documentation/#Warning_Object>`_
+      <https://dev.maxmind.com/minfraud/#Warning>`_
       for the current list of of warning codes.
 
       :type: str
