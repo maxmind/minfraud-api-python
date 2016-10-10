@@ -3,8 +3,11 @@
 History
 -------
 
+1.1.0 (2016-10-10)
+++++++++++++++++++
+
 * Added the following new values to the ``/event/type`` validation:
-  ``email_change`` and ``password_reset``
+  ``email_change`` and ``password_reset``.
 
 1.0.0 (2016-09-15)
 ++++++++++++++++++
