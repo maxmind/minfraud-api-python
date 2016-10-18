@@ -5,6 +5,7 @@ minfraud.models
 This module contains models for the minFraud response object.
 
 """
+#pylint:disable=too-many-lines
 from collections import namedtuple
 from functools import update_wrapper
 
@@ -25,8 +26,9 @@ def _inflate_to_namedtuple(orig_cls):
     ntup = namedtuple(name, keys)
     ntup.__name__ = name + 'NamedTuple'
     ntup.__new__.__defaults__ = (None, ) * len(keys)
-    new_cls = type(name, (ntup, orig_cls), {'__slots__': (),
-                                            '__doc__': orig_cls.__doc__})
+    new_cls = type(name, (ntup, orig_cls),
+                   {'__slots__': (),
+                    '__doc__': orig_cls.__doc__})
     update_wrapper(_inflate_to_namedtuple, new_cls)
     orig_new = new_cls.__new__
 
@@ -81,8 +83,8 @@ class GeoIP2Location(geoip2.records.Location):
     """
 
     __doc__ += geoip2.records.Location.__doc__
-    _valid_attributes = geoip2.records.Location._valid_attributes.union(set(
-        ['local_time']))
+    _valid_attributes = geoip2.records.Location._valid_attributes.union(
+        set(['local_time']))
 
 
 class GeoIP2Country(geoip2.records.Country):
@@ -103,8 +105,8 @@ class GeoIP2Country(geoip2.records.Country):
     """
 
     __doc__ += geoip2.records.Country.__doc__
-    _valid_attributes = geoip2.records.Country._valid_attributes.union(set(
-        ['is_high_risk']))
+    _valid_attributes = geoip2.records.Country._valid_attributes.union(
+        set(['is_high_risk']))
 
 
 class IPAddress(geoip2.models.Insights):
@@ -274,7 +276,7 @@ class Device(object):
       This number represents our confidence that the ``device_id`` refers to
       a unique device as opposed to a cluster of similar devices. A confidence
       of 0.01 indicates very low confidence that the device is unique, whereas
-       99 indicates very high confidence.
+      99 indicates very high confidence.
 
       :type: float | None
 
@@ -297,7 +299,42 @@ class Device(object):
     """
 
     __slots__ = ()
-    _fields = {'confidence': None, 'id': None, 'last_seen': None, }
+    _fields = {
+        'confidence': None,
+        'id': None,
+        'last_seen': None,
+    }
+
+
+@_inflate_to_namedtuple
+class Disposition(object):
+    """Information about disposition for the request as set by custom rules.
+
+    In order to receive a disposition, you must be use the minFraud custom
+    rules.
+
+    .. attribute:: action
+
+      The action to take on the transaction as defined by your custom rules.
+      The current set of values are "accept", "manual_review", and "reject".
+      If you do not have custom rules set up, ``None`` will be returned.
+
+      :type: str | None
+
+    .. attribute:: reason
+
+      The reason for the action. The current possible values are
+      "custom_rule", "block_list", and "default". If you do not have custom
+      rules set up, `null` will be returned.
+
+      :type: str | None
+    """
+
+    __slots__ = ()
+    _fields = {
+        'action': None,
+        'reason': None,
+    }
 
 
 @_inflate_to_namedtuple
@@ -322,7 +359,10 @@ class Email(object):
     """
 
     __slots__ = ()
-    _fields = {'is_free': None, 'is_high_risk': None, }
+    _fields = {
+        'is_free': None,
+        'is_high_risk': None,
+    }
 
 
 @_inflate_to_namedtuple
@@ -467,7 +507,8 @@ class ShippingAddress(object):
       This property is ``True`` if the postal code
       provided with the address is in the city for the address. The property is
       ``False`` when the postal code is not in the city. If the address was
-      not provided, could not be parsed, or was not in USA, the property will be ``None``.
+      not provided, could not be parsed, or was not in USA, the property will
+      be ``None``.
 
       :type: bool | None
 
@@ -546,7 +587,11 @@ class ServiceWarning(object):
     """
 
     __slots__ = ()
-    _fields = {'code': None, 'warning': None, 'input_pointer': None, }
+    _fields = {
+        'code': None,
+        'warning': None,
+        'input_pointer': None,
+    }
 
 
 @_inflate_to_namedtuple
@@ -762,6 +807,13 @@ class Factors(object):
 
       :type: Device
 
+    .. attribute:: disposition
+
+      A :class:`.Disposition` object containing the disposition for the
+      request as set by custom rules.
+
+      :type: Disposition
+
     .. attribute:: email
 
       A :class:`.Email` object containing information about the email address
@@ -798,6 +850,7 @@ class Factors(object):
     _fields = {
         'billing_address': BillingAddress,
         'credit_card': CreditCard,
+        'disposition': Disposition,
         'funds_remaining': None,
         'device': Device,
         'email': Email,
@@ -870,6 +923,13 @@ class Insights(object):
 
       :type: Device
 
+    .. attribute:: disposition
+
+      A :class:`.Disposition` object containing the disposition for the
+      request as set by custom rules.
+
+      :type: Disposition
+
     .. attribute:: email
 
       A :class:`.Email` object containing information about the email address
@@ -902,6 +962,7 @@ class Insights(object):
         'billing_address': BillingAddress,
         'credit_card': CreditCard,
         'device': Device,
+        'disposition': Disposition,
         'email': Email,
         'funds_remaining': None,
         'id': None,
@@ -958,6 +1019,13 @@ class Score(object):
 
       :type: float
 
+    .. attribute:: disposition
+
+      A :class:`.Disposition` object containing the disposition for the
+      request as set by custom rules.
+
+      :type: Disposition
+
     .. attribute:: ip_address
 
       A :class:`.ScoreIPAddress` object containing IP address risk.
@@ -967,6 +1035,7 @@ class Score(object):
 
     __slots__ = ()
     _fields = {
+        'disposition': Disposition,
         'funds_remaining': None,
         'id': None,
         'ip_address': ScoreIPAddress,
