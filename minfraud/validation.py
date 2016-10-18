@@ -21,7 +21,7 @@ that may break any direct use of it.
 # objects below. Given the consistent use of them, the current names seem
 # preferable to blindly following pylint.
 #
-# pylint: disable=invalid-name,redefined-variable-type
+# pylint: disable=invalid-name,redefined-variable-type,undefined-variable
 
 if sys.version_info[0] >= 3:
     _unicode_or_printable_ascii = str
