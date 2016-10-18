@@ -16,14 +16,13 @@ class TestModels(unittest.TestCase):
     def test_model_immutability(self):
         """This tests some level of _shallow_ immutability for these classes"""
         T = namedtuple('T', ['obj', 'attr'], {})
-        models = [T(GeoIP2Country(), 'iso_code'),
-                  T(GeoIP2Location(), 'latitude'), T(Issuer(), 'name'),
-                  T(CreditCard(), 'country'), T(Device(), 'id'),
-                  T(Email(), 'is_free'), T(BillingAddress(), 'latitude'),
-                  T(ShippingAddress(), 'latitude'),
-                  T(ServiceWarning(), 'code'), T(Insights(), 'id'),
-                  T(Score(), 'id'), T(
-                      IPAddress({}), 'city')]
+        models = [
+            T(GeoIP2Country(), 'iso_code'), T(GeoIP2Location(), 'latitude'),
+            T(Issuer(), 'name'), T(CreditCard(), 'country'), T(Device(), 'id'),
+            T(Email(), 'is_free'), T(BillingAddress(), 'latitude'),
+            T(ShippingAddress(), 'latitude'), T(ServiceWarning(), 'code'),
+            T(Insights(), 'id'), T(Score(), 'id'), T(IPAddress({}), 'city')
+        ]
         for model in models:
             for attr in (model.attr, 'does_not_exist'):
                 with self.assertRaises(
@@ -64,7 +63,9 @@ class TestModels(unittest.TestCase):
 
     def test_credit_card(self):
         cc = CreditCard({
-            'issuer': {'name': 'Bank'},
+            'issuer': {
+                'name': 'Bank'
+            },
             'brand': 'Visa',
             'country': 'US',
             'is_issued_in_billing_address_country': True,
@@ -88,6 +89,12 @@ class TestModels(unittest.TestCase):
         self.assertEqual(id, device.id)
         self.assertEqual(last_seen, device.last_seen)
 
+    def test_disposition(self):
+        disposition = Disposition({'action': 'accept', 'reason': 'default'})
+
+        self.assertEqual('accept', disposition.action)
+        self.assertEqual('default', disposition.reason)
+
     def test_email(self):
         email = Email({'is_free': True, 'is_high_risk': False})
 
@@ -108,8 +115,12 @@ class TestModels(unittest.TestCase):
     def test_ip_address(self):
         time = "2015-04-19T12:59:23-01:00"
         address = IPAddress({
-            'country': {'is_high_risk': True},
-            'location': {'local_time': time},
+            'country': {
+                'is_high_risk': True
+            },
+            'location': {
+                'local_time': time
+            },
             'risk': 99,
         })
 
@@ -125,8 +136,16 @@ class TestModels(unittest.TestCase):
 
         loc = IPAddress({
             '_locales': ['fr'],
-            'country': {'names': {'fr': 'Country'}},
-            'city': {'names': {'fr': 'City'}},
+            'country': {
+                'names': {
+                    'fr': 'Country'
+                }
+            },
+            'city': {
+                'names': {
+                    'fr': 'City'
+                }
+            },
         })
 
         self.assertEqual('City', loc.city.name)
@@ -151,9 +170,11 @@ class TestModels(unittest.TestCase):
         code = 'INVALID_INPUT'
         msg = 'Input invalid'
 
-        warning = ServiceWarning({'code': code,
-                                  'warning': msg,
-                                  'input_pointer': "/first/second"})
+        warning = ServiceWarning({
+            'code': code,
+            'warning': msg,
+            'input_pointer': "/first/second"
+        })
 
         self.assertEqual(code, warning.code)
         self.assertEqual(msg, warning.warning)
@@ -166,8 +187,12 @@ class TestModels(unittest.TestCase):
             'funds_remaining': 10.01,
             'queries_remaining': 123,
             'risk_score': 0.01,
-            'ip_address': {'risk': 99},
-            'warnings': [{'code': 'INVALID_INPUT'}],
+            'ip_address': {
+                'risk': 99
+            },
+            'warnings': [{
+                'code': 'INVALID_INPUT'
+            }],
         })
 
         self.assertEqual(id, score.id)
@@ -210,16 +235,31 @@ class TestModels(unittest.TestCase):
     def factors_response(self):
         return {
             'id': "b643d445-18b2-4b9d-bad4-c9c4366e402a",
-            'ip_address': {'country': {'iso_code': 'US'}},
+            'disposition': {
+                'action': 'reject'
+            },
+            'ip_address': {
+                'country': {
+                    'iso_code': 'US'
+                }
+            },
             'credit_card': {
                 'is_prepaid': True,
                 'brand': 'Visa',
                 'type': 'debit'
             },
-            'device': {'id': "b643d445-18b2-4b9d-bad4-c9c4366e402a"},
-            'email': {'is_free': True},
-            'shipping_address': {'is_in_ip_country': True},
-            'billing_address': {'is_in_ip_country': True},
+            'device': {
+                'id': "b643d445-18b2-4b9d-bad4-c9c4366e402a"
+            },
+            'email': {
+                'is_free': True
+            },
+            'shipping_address': {
+                'is_in_ip_country': True
+            },
+            'billing_address': {
+                'is_in_ip_country': True
+            },
             'funds_remaining': 10.01,
             'queries_remaining': 123,
             'risk_score': 0.01,
@@ -242,7 +282,9 @@ class TestModels(unittest.TestCase):
                 'shipping_address_distance_to_ip_location': 0.16,
                 'time_of_day': 0.17,
             },
-            'warnings': [{"code": "INVALID_INPUT"}]
+            'warnings': [{
+                "code": "INVALID_INPUT"
+            }]
         }
 
     def check_insights_data(self, insights, uuid):
@@ -251,6 +293,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual('Visa', insights.credit_card.brand)
         self.assertEqual('debit', insights.credit_card.type)
         self.assertEqual(uuid, insights.device.id)
+        self.assertEqual('reject', insights.disposition.action)
         self.assertEqual(True, insights.email.is_free)
         self.assertEqual(True, insights.shipping_address.is_in_ip_country)
         self.assertEqual(True, insights.billing_address.is_in_ip_country)
