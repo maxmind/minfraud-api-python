@@ -225,7 +225,7 @@ validate_transaction = Schema({
         'cvv_result': _single_char,
         'issuer_id_number': _iin,
         'last_4_digits': _credit_card_last_4,
-        'token': _credit_card_token, 
+        'token': _credit_card_token,
     },
     Required('device'): {
         'accept_language': _unicode_or_printable_ascii,
