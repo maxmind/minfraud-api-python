@@ -174,6 +174,12 @@ _iin = Match('^[0-9]{6}$')
 _credit_card_last_4 = Match('^[0-9]{4}$')
 
 
+def _credit_card_token(s):
+    if re.match('^[\x21-\x7E]{1,255}$', s) and not re.match('^[0-9]{1,19}$', s):
+        return s
+    raise ValueError
+
+
 def _rfc3339_datetime(s):
     if validate_rfc3339(s):
         return s
@@ -219,6 +225,7 @@ validate_transaction = Schema({
         'cvv_result': _single_char,
         'issuer_id_number': _iin,
         'last_4_digits': _credit_card_last_4,
+        'token': _credit_card_token, 
     },
     Required('device'): {
         'accept_language': _unicode_or_printable_ascii,
