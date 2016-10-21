@@ -63,6 +63,8 @@ build
 .coverage
 docs/html
 MANIFEST
+.project
+.pydevproject
 pylint.txt
 *.swp
 violations.pyflakes.txt

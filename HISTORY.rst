@@ -3,6 +3,8 @@
 History
 -------
 
+* Allow /credit_card/token input.
+
 1.1.0 (2016-10-10)
 ++++++++++++++++++
 

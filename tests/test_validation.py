@@ -147,6 +147,13 @@ class TestCreditCard(ValidationBase, unittest.TestCase):
                 self.check_invalid_transaction({'credit_card': {'credit_card':
                                                                 invalid}})
 
+    def test_token(self):
+        for token in ('123456abc1245', '\x21', '1' * 20):
+            self.check_transaction({'credit_card': {'token': token}})
+        for invalid in ('\x20', '123456', 'x' * 256):
+            self.check_invalid_transaction({'credit_card': {'token':
+                                                            invalid}})
+
 
 class TestDevice(ValidationBase, unittest.TestCase):
     def test_ip_address(self):
