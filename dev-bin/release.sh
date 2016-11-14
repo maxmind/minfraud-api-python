@@ -59,7 +59,7 @@ message="$version
 
 $notes"
 
-hub release create -a "$phar" -m "$message" "$tag"
+hub release create -m "$message" "$tag"
 
 git push --tags
 
