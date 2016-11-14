@@ -68,3 +68,6 @@ MANIFEST
 pylint.txt
 *.swp
 violations.pyflakes.txt
+
+/t.py
+/test*.py
