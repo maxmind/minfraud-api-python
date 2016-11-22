@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import ast
+import io
 import re
 
 # This is necessary for Python 2.6 on Travis for some reason.
@@ -10,10 +11,10 @@ from setuptools import setup
 
 _version_re = re.compile(r'__version__\s+=\s+(.*)')
 
-with open('minfraud/version.py', 'r', encoding='utf-8') as f:
+with io.open('minfraud/version.py', 'r', encoding='utf-8') as f:
     _version = str(ast.literal_eval(_version_re.search(f.read()).group(1)))
 
-with open('README.rst', 'r', encoding='utf-8') as f:
+with io.open('README.rst', 'r', encoding='utf-8') as f:
     _readme = f.read()
 
 setup(
