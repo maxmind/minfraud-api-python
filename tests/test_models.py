@@ -15,7 +15,7 @@ if sys.version_info[0] == 2:
 class TestModels(unittest.TestCase):
     def test_model_immutability(self):
         """This tests some level of _shallow_ immutability for these classes"""
-        T = namedtuple('T', ['obj', 'attr'], {})
+        T = namedtuple('T', ['obj', 'attr'])
         models = [
             T(GeoIP2Country(), 'iso_code'), T(GeoIP2Location(), 'latitude'),
             T(Issuer(), 'name'), T(CreditCard(), 'country'), T(Device(), 'id'),
