@@ -43,7 +43,9 @@ class Client(object):
         """
         # pylint: disable=too-many-arguments
         self._locales = locales
-        self._user_id = user_id
+        # requests 2.12.2 requires that the username passed to auth be bytes
+        # or a string, with the former being preferred.
+        self._user_id = str(user_id).encode()
         self._license_key = license_key
         self._base_uri = u'https://{0:s}/minfraud/v2.0'.format(host)
         self._timeout = timeout
@@ -118,12 +120,13 @@ class Client(object):
                 raise InvalidRequestError(
                     "Invalid transaction data: {0}".format(ex))
         uri = '/'.join([self._base_uri, path])
-        response = requests.post(uri,
-                                 json=cleaned_request,
-                                 auth=(self._user_id, self._license_key),
-                                 headers={'Accept': 'application/json',
-                                          'User-Agent': self._user_agent()},
-                                 timeout=self._timeout)
+        response = requests.post(
+            uri,
+            json=cleaned_request,
+            auth=(self._user_id, self._license_key),
+            headers={'Accept': 'application/json',
+                     'User-Agent': self._user_agent()},
+            timeout=self._timeout)
         if response.status_code == 200:
             return self._handle_success(response, uri, model_class)
         else:
@@ -132,8 +135,8 @@ class Client(object):
     def _copy_and_clean(self, data):
         """Create a copy of the data structure with Nones removed."""
         if isinstance(data, dict):
-            return dict((k, self._copy_and_clean(v))
-                        for (k, v) in data.items() if v is not None)
+            return dict((k, self._copy_and_clean(v)) for (k, v) in data.items()
+                        if v is not None)
         elif isinstance(data, (list, set, tuple)):
             return [self._copy_and_clean(x) for x in data if x is not None]
         else:
