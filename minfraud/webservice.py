@@ -45,7 +45,7 @@ class Client(object):
         self._locales = locales
         # requests 2.12.2 requires that the username passed to auth be a
         # string
-        self._user_id = str(user_id)
+        self._user_id = user_id if isinstance(user_id, bytes) else str(user_id)
         self._license_key = license_key
         self._base_uri = u'https://{0:s}/minfraud/v2.0'.format(host)
         self._timeout = timeout
@@ -124,8 +124,10 @@ class Client(object):
             uri,
             json=cleaned_request,
             auth=(self._user_id, self._license_key),
-            headers={'Accept': 'application/json',
-                     'User-Agent': self._user_agent()},
+            headers={
+                'Accept': 'application/json',
+                'User-Agent': self._user_agent()
+            },
             timeout=self._timeout)
         if response.status_code == 200:
             return self._handle_success(response, uri, model_class)
