@@ -201,7 +201,8 @@ _event_type = In([
 
 _currency_code = Match('^[A-Z]{3}$')
 
-_price = All(Any(float, int, Decimal), Range(min=0, min_included=False))
+_number = Any(float, int, Decimal)
+_price = All(_number, Range(min=0, min_included=False))
 
 
 def _uri(s):
@@ -236,8 +237,7 @@ validate_transaction = Schema(
         Required('device'): {
             'accept_language': _unicode_or_printable_ascii,
             Required('ip_address'): _ip_address,
-            'session_age': Any(
-                All(int, Range(min=0)), All(float, Range(min=0))),
+            'session_age': All(_number, Range(min=0)),
             'session_id': _unicode_or_printable_ascii,
             'user_agent': _unicode_or_printable_ascii,
         },
