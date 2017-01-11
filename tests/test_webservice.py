@@ -111,7 +111,8 @@ class BaseTest(object):
     def test_permission_required(self):
         with self.assertRaisesRegex(PermissionRequiredError, 'permission'):
             self.create_error(
-                text='{"code":"PERMISSION_REQUIRED","error":"permission required"}',
+                text=
+                '{"code":"PERMISSION_REQUIRED","error":"permission required"}',
                 status_code=403)
 
     def test_400_with_invalid_json(self):

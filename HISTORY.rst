@@ -3,6 +3,11 @@
 History
 -------
 
+1.4.0 (2017-XX-XX)
+++++++++++++++++++
+
+* Added support for custom inputs. You may set up custom inputs from your
+  account portal.
 * Added the following new values to the ``/payment/processor`` validation:
   ``ebs``, ``hipay``, and ``lemon_way``.
 * Added the following new input values:

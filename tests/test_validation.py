@@ -183,6 +183,29 @@ class TestCreditCard(ValidationBase, unittest.TestCase):
             self.check_invalid_transaction({'credit_card': {'token': invalid}})
 
 
+class TestCustomInputs(ValidationBase, unittest.TestCase):
+    def test_valid_inputs(self):
+        self.check_transaction({
+            'custom_inputs': {
+                'string_input_1': 'test string',
+                'int_input': 19,
+                'float_input': 3.2,
+                'bool_input': True
+            }
+        })
+
+    def test_invalid(self):
+        for invalid in (
+            {'InvalidKey': 1},
+            {'too_long': 'x' * 256},
+            {'has_newline': 'test\n'},
+            {'too_big': 1<<53},
+            {'too_small': -(1<<53)},
+            {'too_big_float': float(1<<53)}
+            ): # yapf: disable
+            self.check_invalid_transaction({'custom_inputs': invalid})
+
+
 class TestDevice(ValidationBase, unittest.TestCase):
     def test_ip_address(self):
         for ip in ('1.2.3.4', '2001:db8:0:0:1:0:0:1', '::FFFF:1.2.3.4'):

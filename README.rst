@@ -184,6 +184,12 @@ Example
     >>>         'discount_code': 'FIRST',
     >>>         'currency': 'USD',
     >>>         'amount': 323.21
+    >>>      },
+    >>>     'custom_inputs': {
+    >>>         'section': 'news',
+    >>>         'number_of_previous_purchases': 19,
+    >>>         'discount': 3.2,
+    >>>         'previous_user': True
     >>>     }
     >>> }
     >>>

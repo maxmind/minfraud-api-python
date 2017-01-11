@@ -26,20 +26,33 @@ that may break any direct use of it.
 if sys.version_info[0] >= 3:
     _unicode = str
     _unicode_or_printable_ascii = str
+    long = int
 else:
     _unicode = unicode
     _unicode_or_printable_ascii = Any(unicode, Match(r'^[\x20-\x7E]*$'))
 
 _any_string = Any(_unicode_or_printable_ascii, str)
+_any_number = Any(float, int, long, Decimal)
 
-_md5 = All(_any_string, Match('^[0-9A-Fa-f]{32}$'))
+_custom_input_key = All(_any_string, Match(r'^[a-z0-9_]{1,25}$'))
 
-_country_code = All(_any_string, Match('^[A-Z]{2}$'))
+_custom_input_value = Any(
+    All(_any_string, Match(r'^[^\n]{1,255}\Z')),
+    All(_any_number,
+        Range(
+            min=-(1 << 53),
+            max=1 << 53,
+            min_included=False,
+            max_included=False)), bool)
+
+_md5 = All(_any_string, Match(r'^[0-9A-Fa-f]{32}$'))
+
+_country_code = All(_any_string, Match(r'^[A-Z]{2}$'))
 
 _telephone_country_code = Any(
     All(_any_string, Match('^[0-9]{1,4}$')), All(int, Range(min=1, max=9999)))
 
-_subdivision_iso_code = All(_any_string, Match('^[0-9A-Z]{1,4}$'))
+_subdivision_iso_code = All(_any_string, Match(r'^[0-9A-Z]{1,4}$'))
 
 
 def _ip_address(s):
@@ -50,7 +63,7 @@ def _ip_address(s):
 
 
 def _email_or_md5(s):
-    if validate_email(s) or re.match('^[0-9A-Fa-f]{32}$', s):
+    if validate_email(s) or re.match(r'^[0-9A-Fa-f]{32}$', s):
         return s
     raise ValueError
 
@@ -201,8 +214,7 @@ _event_type = In([
 
 _currency_code = Match('^[A-Z]{3}$')
 
-_number = Any(float, int, Decimal)
-_price = All(_number, Range(min=0, min_included=False))
+_price = All(_any_number, Range(min=0, min_included=False))
 
 
 def _uri(s):
@@ -234,10 +246,13 @@ validate_transaction = Schema(
             'last_4_digits': _credit_card_last_4,
             'token': _credit_card_token,
         },
+        'custom_inputs': {
+            _custom_input_key: _custom_input_value
+        },
         Required('device'): {
             'accept_language': _unicode_or_printable_ascii,
             Required('ip_address'): _ip_address,
-            'session_age': All(_number, Range(min=0)),
+            'session_age': All(_any_number, Range(min=0)),
             'session_id': _unicode_or_printable_ascii,
             'user_agent': _unicode_or_printable_ascii,
         },
