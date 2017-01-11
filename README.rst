@@ -56,7 +56,7 @@ The Score web service is called with the ``score()`` method:
 
 .. code-block:: pycon
 
-    >>> insights = client.insights({'device': {'ip_address': '81.2.69.160'}})
+    >>> score = client.score({'device': {'ip_address': '81.2.69.160'}})
 
 Each of these methods takes a dictionary representing the transaction to be sent
 to the web service. The structure of this dictionary should be in `the format
