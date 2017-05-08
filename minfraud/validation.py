@@ -21,13 +21,14 @@ that may break any direct use of it.
 # objects below. Given the consistent use of them, the current names seem
 # preferable to blindly following pylint.
 #
-# pylint: disable=invalid-name,redefined-variable-type,undefined-variable
+# pylint: disable=invalid-name,undefined-variable
 
 if sys.version_info[0] >= 3:
+    _unicode = str
     _unicode_or_printable_ascii = str
 else:
+    _unicode = unicode
     _unicode_or_printable_ascii = Any(unicode, Match(r'^[\x20-\x7E]*$'))
-# pylint: enable=redefined-variable-type
 
 _any_string = Any(_unicode_or_printable_ascii, str)
 
@@ -43,12 +44,8 @@ _subdivision_iso_code = All(_any_string, Match('^[0-9A-Z]{1,4}$'))
 
 
 def _ip_address(s):
-    # ipaddress accepts numeric IPs, which we don't want. Pylint on Python 3
-    # doesn't like "unicode"
-    #
-    # pylint: disable=undefined-variable
-    if (isinstance(s, str) or isinstance(s, unicode)) \
-            and not re.match(r'^\d+$', s):
+    # ipaddress accepts numeric IPs, which we don't want.
+    if isinstance(s, (str, _unicode)) and not re.match(r'^\d+$', s):
         return str(compat_ip_address(s))
     raise ValueError
 

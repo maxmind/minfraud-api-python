@@ -141,8 +141,7 @@ class Client(object):
                         if v is not None)
         elif isinstance(data, (list, set, tuple)):
             return [self._copy_and_clean(x) for x in data if x is not None]
-        else:
-            return data
+        return data
 
     def _user_agent(self):
         """Create User-Agent header."""
