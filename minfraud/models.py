@@ -296,6 +296,22 @@ class Device(object):
       RFC 3339 date-time.
 
       :type: str | None
+
+    .. attribute:: session_age
+
+      A floating point number. The number of seconds between the creation of
+      the user's session and the time of the transaction. Note that session_age
+      is not the duration of the current visit, but the time since the start of
+      the first visit.
+
+      :type: float | None
+
+    .. attribute:: session_id
+
+      A string up to 255 characters in length. This is an ID which uniquely
+      identifies a visitor's session on the site.
+
+      :type: str | None
     """
 
     __slots__ = ()
@@ -303,6 +319,8 @@ class Device(object):
         'confidence': None,
         'id': None,
         'last_seen': None,
+        'session_age': None,
+        'session_id': None,
     }
 
 
@@ -341,6 +359,14 @@ class Disposition(object):
 class Email(object):
     """Information about the email address passed in the request.
 
+    .. attribute:: first_seen
+
+      A date string (e.g. 2017-04-24) to identify the date an email address
+      was first seen by MaxMind. This is expressed using the ISO 8601 date
+      format.
+
+      :type: str
+
     .. attribute:: is_free
 
       This field is true if MaxMind believes that this email is hosted by a
@@ -360,6 +386,7 @@ class Email(object):
 
     __slots__ = ()
     _fields = {
+        'first_seen': None,
         'is_free': None,
         'is_high_risk': None,
     }

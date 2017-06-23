@@ -83,11 +83,15 @@ class TestModels(unittest.TestCase):
     def test_device(self):
         id = 'b643d445-18b2-4b9d-bad4-c9c4366e402a'
         last_seen = '2016-06-08T14:16:38Z'
-        device = Device({'confidence': 99, 'id': id, 'last_seen': last_seen})
+        session_age = 3600
+        session_id = 'foobar'
+        device = Device({'confidence': 99, 'id': id, 'last_seen': last_seen, 'session_age': session_age, 'session_id': session_id })
 
         self.assertEqual(99, device.confidence)
         self.assertEqual(id, device.id)
         self.assertEqual(last_seen, device.last_seen)
+        self.assertEqual(session_age, device.session_age)
+        self.assertEqual(session_id, device.session_id)
 
     def test_disposition(self):
         disposition = Disposition({'action': 'accept', 'reason': 'default'})
@@ -96,8 +100,10 @@ class TestModels(unittest.TestCase):
         self.assertEqual('default', disposition.reason)
 
     def test_email(self):
-        email = Email({'is_free': True, 'is_high_risk': False})
+        first_seen = '2016-01-01';
+        email = Email({'first_seen': first_seen, 'is_free': True, 'is_high_risk': False})
 
+        self.assertEqual(first_seen, email.first_seen)
         self.assertEqual(True, email.is_free)
         self.assertEqual(False, email.is_high_risk)
 

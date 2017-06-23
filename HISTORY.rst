@@ -5,6 +5,10 @@ History
 
 * Added the following new values to the ``/payment/processor`` validation:
   ``ebs``, ``hipay``, and ``lemon_way``.
+* Added the following new values to the ``/device`` validation:
+  ``session_age`` and ``session_id``.
+* Added the following new values to the ``/email`` validation:
+  ``first_seen``.
 
 1.3.2 (2016-12-08)
 ++++++++++++++++++
