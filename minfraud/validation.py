@@ -230,7 +230,9 @@ validate_transaction = Schema({
     Required('device'): {
         'accept_language': _unicode_or_printable_ascii,
         Required('ip_address'): _ip_address,
-        'user_agent': _unicode_or_printable_ascii
+        'session_age': float,
+        'session_id': _unicode_or_printable_ascii,
+        'user_agent': _unicode_or_printable_ascii,
     },
     'email': {'address': _email_or_md5,
               'domain': _hostname, },

@@ -176,6 +176,13 @@ class TestDevice(ValidationBase, unittest.TestCase):
     def test_accept_language(self):
         self.check_str_type('device', 'accept_language')
 
+    def test_session_id(self):
+        self.check_str_type('device', 'session_id')
+
+    def test_session_age(self):
+        self.check_transaction({'device': {'ip_address': '4.4.4.4', 'session_age': 3600.5}})
+        for invalid in (3600, 0, -1):
+            self.check_invalid_transaction({'device': {'ip_address': '4.4.4.4', 'session_age': invalid }})
 
 class TestEmail(ValidationBase, unittest.TestCase):
     def test_address(self):

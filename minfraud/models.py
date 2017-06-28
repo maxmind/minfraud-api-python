@@ -297,21 +297,6 @@ class Device(object):
 
       :type: str | None
 
-    .. attribute:: session_age
-
-      A floating point number. The number of seconds between the creation of
-      the user's session and the time of the transaction. Note that session_age
-      is not the duration of the current visit, but the time since the start of
-      the first visit.
-
-      :type: float | None
-
-    .. attribute:: session_id
-
-      A string up to 255 characters in length. This is an ID which uniquely
-      identifies a visitor's session on the site.
-
-      :type: str | None
     """
 
     __slots__ = ()
@@ -319,8 +304,6 @@ class Device(object):
         'confidence': None,
         'id': None,
         'last_seen': None,
-        'session_age': None,
-        'session_id': None,
     }
 
 
