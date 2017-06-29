@@ -180,8 +180,9 @@ class TestDevice(ValidationBase, unittest.TestCase):
         self.check_str_type('device', 'session_id')
 
     def test_session_age(self):
-        self.check_transaction({'device': {'ip_address': '4.4.4.4', 'session_age': 3600.5}})
-        for invalid in (3600, 0, -1):
+        for valid in (3600, 0, 25.5 ):
+            self.check_transaction({'device': {'ip_address': '4.4.4.4', 'session_age': valid}})
+        for invalid in ('foo', -1):
             self.check_invalid_transaction({'device': {'ip_address': '4.4.4.4', 'session_age': invalid }})
 
 class TestEmail(ValidationBase, unittest.TestCase):

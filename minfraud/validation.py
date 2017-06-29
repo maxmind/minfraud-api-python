@@ -230,7 +230,7 @@ validate_transaction = Schema({
     Required('device'): {
         'accept_language': _unicode_or_printable_ascii,
         Required('ip_address'): _ip_address,
-        'session_age': float,
+        'session_age': Any(All(int, Range(min=0)), All(float, Range(min=0))),
         'session_id': _unicode_or_printable_ascii,
         'user_agent': _unicode_or_printable_ascii,
     },
