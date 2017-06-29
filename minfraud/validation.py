@@ -37,8 +37,7 @@ _md5 = All(_any_string, Match('^[0-9A-Fa-f]{32}$'))
 _country_code = All(_any_string, Match('^[A-Z]{2}$'))
 
 _telephone_country_code = Any(
-    All(_any_string, Match('^[0-9]{1,4}$')),
-    All(int, Range(min=1, max=9999)))
+    All(_any_string, Match('^[0-9]{1,4}$')), All(int, Range(min=1, max=9999)))
 
 _subdivision_iso_code = All(_any_string, Match('^[0-9A-Z]{1,4}$'))
 
@@ -87,85 +86,87 @@ _shipping_address = _address.copy()
 
 _shipping_address['delivery_speed'] = _delivery_speed
 
-_payment_processor = In(['adyen',
-                         'altapay',
-                         'amazon_payments',
-                         'authorizenet',
-                         'balanced',
-                         'beanstream',
-                         'bluepay',
-                         'braintree',
-                         'ccnow',
-                         'chase_paymentech',
-                         'cielo',
-                         'collector',
-                         'compropago',
-                         'concept_payments',
-                         'conekta',
-                         'cuentadigital',
-                         'dalpay',
-                         'dibs',
-                         'digital_river',
-                         'ebs',
-                         'ecomm365',
-                         'elavon',
-                         'epay',
-                         'eprocessing_network',
-                         'eway',
-                         'first_data',
-                         'global_payments',
-                         'hipay',
-                         'ingenico',
-                         'internetsecure',
-                         'intuit_quickbooks_payments',
-                         'iugu',
-                         'lemon_way',
-                         'mastercard_payment_gateway',
-                         'mercadopago',
-                         'merchant_esolutions',
-                         'mirjeh',
-                         'mollie',
-                         'moneris_solutions',
-                         'nmi',
-                         'openpaymx',
-                         'optimal_payments',
-                         'orangepay',
-                         'other',
-                         'pacnet_services',
-                         'payfast',
-                         'paygate',
-                         'payone',
-                         'paypal',
-                         'payplus',
-                         'paystation',
-                         'paytrace',
-                         'paytrail',
-                         'payture',
-                         'payu',
-                         'payulatam',
-                         'pinpayments',
-                         'princeton_payment_solutions',
-                         'psigate',
-                         'qiwi',
-                         'quickpay',
-                         'raberil',
-                         'rede',
-                         'redpagos',
-                         'rewardspay',
-                         'sagepay',
-                         'simplify_commerce',
-                         'skrill',
-                         'smartcoin',
-                         'sps_decidir',
-                         'stripe',
-                         'telerecargas',
-                         'towah',
-                         'usa_epay',
-                         'verepay',
-                         'vindicia',
-                         'virtual_card_services',
-                         'vme',
-                         'worldpay', ])
+_payment_processor = In([
+    'adyen',
+    'altapay',
+    'amazon_payments',
+    'authorizenet',
+    'balanced',
+    'beanstream',
+    'bluepay',
+    'braintree',
+    'ccnow',
+    'chase_paymentech',
+    'cielo',
+    'collector',
+    'compropago',
+    'concept_payments',
+    'conekta',
+    'cuentadigital',
+    'dalpay',
+    'dibs',
+    'digital_river',
+    'ebs',
+    'ecomm365',
+    'elavon',
+    'epay',
+    'eprocessing_network',
+    'eway',
+    'first_data',
+    'global_payments',
+    'hipay',
+    'ingenico',
+    'internetsecure',
+    'intuit_quickbooks_payments',
+    'iugu',
+    'lemon_way',
+    'mastercard_payment_gateway',
+    'mercadopago',
+    'merchant_esolutions',
+    'mirjeh',
+    'mollie',
+    'moneris_solutions',
+    'nmi',
+    'openpaymx',
+    'optimal_payments',
+    'orangepay',
+    'other',
+    'pacnet_services',
+    'payfast',
+    'paygate',
+    'payone',
+    'paypal',
+    'payplus',
+    'paystation',
+    'paytrace',
+    'paytrail',
+    'payture',
+    'payu',
+    'payulatam',
+    'pinpayments',
+    'princeton_payment_solutions',
+    'psigate',
+    'qiwi',
+    'quickpay',
+    'raberil',
+    'rede',
+    'redpagos',
+    'rewardspay',
+    'sagepay',
+    'simplify_commerce',
+    'skrill',
+    'smartcoin',
+    'sps_decidir',
+    'stripe',
+    'telerecargas',
+    'towah',
+    'usa_epay',
+    'verepay',
+    'vindicia',
+    'virtual_card_services',
+    'vme',
+    'worldpay',
+])
 
 _single_char = Match('^[A-Za-z0-9]$')
 
@@ -175,7 +176,8 @@ _credit_card_last_4 = Match('^[0-9]{4}$')
 
 
 def _credit_card_token(s):
-    if re.match('^[\x21-\x7E]{1,255}$', s) and not re.match('^[0-9]{1,19}$', s):
+    if re.match('^[\x21-\x7E]{1,255}$',
+                s) and not re.match('^[0-9]{1,19}$', s):
         return s
     raise ValueError
 
@@ -186,14 +188,16 @@ def _rfc3339_datetime(s):
     raise ValueError
 
 
-_event_type = In(['account_creation',
-                  'account_login',
-                  'email_change',
-                  'password_reset',
-                  'purchase',
-                  'recurring_purchase',
-                  'referral',
-                  'survey', ])
+_event_type = In([
+    'account_creation',
+    'account_login',
+    'email_change',
+    'password_reset',
+    'purchase',
+    'recurring_purchase',
+    'referral',
+    'survey',
+])
 
 _currency_code = Match('^[A-Z]{3}$')
 
@@ -206,57 +210,65 @@ def _uri(s):
     raise ValueError
 
 
-validate_transaction = Schema({
-    'account': {
-        'user_id': _unicode_or_printable_ascii,
-        'username_md5': _md5,
-    },
-    'billing': _address,
-    'payment': {
-        'processor': _payment_processor,
-        'was_authorized': bool,
-        'decline_code': _unicode_or_printable_ascii,
-    },
-    'credit_card': {
-        'avs_result': _single_char,
-        'bank_name': _unicode_or_printable_ascii,
-        'bank_phone_country_code': _telephone_country_code,
-        'bank_phone_number': _unicode_or_printable_ascii,
-        'cvv_result': _single_char,
-        'issuer_id_number': _iin,
-        'last_4_digits': _credit_card_last_4,
-        'token': _credit_card_token,
-    },
-    Required('device'): {
-        'accept_language': _unicode_or_printable_ascii,
-        Required('ip_address'): _ip_address,
-        'session_age': Any(All(int, Range(min=0)), All(float, Range(min=0))),
-        'session_id': _unicode_or_printable_ascii,
-        'user_agent': _unicode_or_printable_ascii,
-    },
-    'email': {'address': _email_or_md5,
-              'domain': _hostname, },
-    'event': {
-        'shop_id': _unicode_or_printable_ascii,
-        'time': _rfc3339_datetime,
-        'type': _event_type,
-        'transaction_id': _unicode_or_printable_ascii,
-    },
-    'order': {
-        'affiliate_id': _unicode_or_printable_ascii,
-        'amount': _price,
-        'currency': _currency_code,
-        'discount_code': _unicode_or_printable_ascii,
-        'has_gift_message': bool,
-        'is_gift': bool,
-        'referrer_uri': _uri,
-        'subaffiliate_id': _unicode_or_printable_ascii,
-    },
-    'shipping': _shipping_address,
-    'shopping_cart': [{
-        'category': _unicode_or_printable_ascii,
-        'item_id': _unicode_or_printable_ascii,
-        'price': _price,
-        'quantity': All(int, Range(min=1)),
-    }, ],
-}, )
+validate_transaction = Schema(
+    {
+        'account': {
+            'user_id': _unicode_or_printable_ascii,
+            'username_md5': _md5,
+        },
+        'billing':
+        _address,
+        'payment': {
+            'processor': _payment_processor,
+            'was_authorized': bool,
+            'decline_code': _unicode_or_printable_ascii,
+        },
+        'credit_card': {
+            'avs_result': _single_char,
+            'bank_name': _unicode_or_printable_ascii,
+            'bank_phone_country_code': _telephone_country_code,
+            'bank_phone_number': _unicode_or_printable_ascii,
+            'cvv_result': _single_char,
+            'issuer_id_number': _iin,
+            'last_4_digits': _credit_card_last_4,
+            'token': _credit_card_token,
+        },
+        Required('device'): {
+            'accept_language': _unicode_or_printable_ascii,
+            Required('ip_address'): _ip_address,
+            'session_age': Any(
+                All(int, Range(min=0)), All(float, Range(min=0))),
+            'session_id': _unicode_or_printable_ascii,
+            'user_agent': _unicode_or_printable_ascii,
+        },
+        'email': {
+            'address': _email_or_md5,
+            'domain': _hostname,
+        },
+        'event': {
+            'shop_id': _unicode_or_printable_ascii,
+            'time': _rfc3339_datetime,
+            'type': _event_type,
+            'transaction_id': _unicode_or_printable_ascii,
+        },
+        'order': {
+            'affiliate_id': _unicode_or_printable_ascii,
+            'amount': _price,
+            'currency': _currency_code,
+            'discount_code': _unicode_or_printable_ascii,
+            'has_gift_message': bool,
+            'is_gift': bool,
+            'referrer_uri': _uri,
+            'subaffiliate_id': _unicode_or_printable_ascii,
+        },
+        'shipping':
+        _shipping_address,
+        'shopping_cart': [
+            {
+                'category': _unicode_or_printable_ascii,
+                'item_id': _unicode_or_printable_ascii,
+                'price': _price,
+                'quantity': All(int, Range(min=1)),
+            },
+        ],
+    }, )

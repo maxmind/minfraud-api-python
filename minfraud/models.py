@@ -212,7 +212,9 @@ class ScoreIPAddress(object):
     """
 
     __slots__ = ()
-    _fields = {'risk': None, }
+    _fields = {
+        'risk': None,
+    }
 
 
 @_inflate_to_namedtuple
