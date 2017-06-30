@@ -212,7 +212,9 @@ class ScoreIPAddress(object):
     """
 
     __slots__ = ()
-    _fields = {'risk': None, }
+    _fields = {
+        'risk': None,
+    }
 
 
 @_inflate_to_namedtuple
@@ -296,6 +298,7 @@ class Device(object):
       RFC 3339 date-time.
 
       :type: str | None
+
     """
 
     __slots__ = ()
@@ -341,6 +344,14 @@ class Disposition(object):
 class Email(object):
     """Information about the email address passed in the request.
 
+    .. attribute:: first_seen
+
+      A date string (e.g. 2017-04-24) to identify the date an email address
+      was first seen by MaxMind. This is expressed using the ISO 8601 date
+      format.
+
+      :type: str
+
     .. attribute:: is_free
 
       This field is true if MaxMind believes that this email is hosted by a
@@ -360,6 +371,7 @@ class Email(object):
 
     __slots__ = ()
     _fields = {
+        'first_seen': None,
         'is_free': None,
         'is_high_risk': None,
     }

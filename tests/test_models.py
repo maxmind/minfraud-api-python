@@ -17,17 +17,24 @@ class TestModels(unittest.TestCase):
         """This tests some level of _shallow_ immutability for these classes"""
         T = namedtuple('T', ['obj', 'attr'])
         models = [
-            T(GeoIP2Country(), 'iso_code'), T(GeoIP2Location(), 'latitude'),
-            T(Issuer(), 'name'), T(CreditCard(), 'country'), T(Device(), 'id'),
-            T(Email(), 'is_free'), T(BillingAddress(), 'latitude'),
-            T(ShippingAddress(), 'latitude'), T(ServiceWarning(), 'code'),
-            T(Insights(), 'id'), T(Score(), 'id'), T(IPAddress({}), 'city')
+            T(GeoIP2Country(), 'iso_code'),
+            T(GeoIP2Location(), 'latitude'),
+            T(Issuer(), 'name'),
+            T(CreditCard(), 'country'),
+            T(Device(), 'id'),
+            T(Email(), 'is_free'),
+            T(BillingAddress(), 'latitude'),
+            T(ShippingAddress(), 'latitude'),
+            T(ServiceWarning(), 'code'),
+            T(Insights(), 'id'),
+            T(Score(), 'id'),
+            T(IPAddress({}), 'city')
         ]
         for model in models:
             for attr in (model.attr, 'does_not_exist'):
                 with self.assertRaises(
-                        AttributeError,
-                        msg='{0!s} - {0}'.format(model.obj, attr)):
+                        AttributeError, msg='{0!s} - {0}'.format(
+                            model.obj, attr)):
                     setattr(model.obj, attr, 5)
 
     def test_billing_address(self):
@@ -96,8 +103,14 @@ class TestModels(unittest.TestCase):
         self.assertEqual('default', disposition.reason)
 
     def test_email(self):
-        email = Email({'is_free': True, 'is_high_risk': False})
+        first_seen = '2016-01-01'
+        email = Email({
+            'first_seen': first_seen,
+            'is_free': True,
+            'is_high_risk': False
+        })
 
+        self.assertEqual(first_seen, email.first_seen)
         self.assertEqual(True, email.is_free)
         self.assertEqual(False, email.is_high_risk)
 

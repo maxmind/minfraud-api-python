@@ -107,6 +107,8 @@ Example
     >>>     'device': {
     >>>         'ip_address': '81.2.69.160',
     >>>         'accept_language': 'en-US,en;q=0.8',
+    >>>         'session_age': 3600,
+    >>>         'session_id': 'a333a4e127f880d8820e56a66f40717c',
     >>>         'user_agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.89 Safari/537.36'
     >>>     },
     >>>     'event': {

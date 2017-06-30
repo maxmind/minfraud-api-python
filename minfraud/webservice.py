@@ -137,8 +137,8 @@ class Client(object):
     def _copy_and_clean(self, data):
         """Create a copy of the data structure with Nones removed."""
         if isinstance(data, dict):
-            return dict((k, self._copy_and_clean(v)) for (k, v) in data.items()
-                        if v is not None)
+            return dict((k, self._copy_and_clean(v))
+                        for (k, v) in data.items() if v is not None)
         elif isinstance(data, (list, set, tuple)):
             return [self._copy_and_clean(x) for x in data if x is not None]
         return data
@@ -185,9 +185,7 @@ class Client(object):
             raise HTTPError(
                 'Received a {status:d} error but it did not include'
                 ' the expected JSON body: {content}'.format(
-                    status=status, content=response.content),
-                status,
-                uri)
+                    status=status, content=response.content), status, uri)
         else:
             if 'code' in body and 'error' in body:
                 self._handle_web_service_error(

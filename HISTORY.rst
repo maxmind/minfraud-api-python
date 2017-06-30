@@ -5,6 +5,9 @@ History
 
 * Added the following new values to the ``/payment/processor`` validation:
   ``ebs``, ``hipay``, and ``lemon_way``.
+* Added the following new input values:
+  ``/device/session_age`` and ``/device/session_id``.
+* Added support for the ``/email/first_seen`` output.
 
 1.3.2 (2016-12-08)
 ++++++++++++++++++
