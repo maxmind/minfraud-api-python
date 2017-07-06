@@ -3,13 +3,28 @@
 History
 -------
 
-1.4.0 (2017-XX-XX)
+1.4.0 (2017-07-06)
 ++++++++++++++++++
 
 * Added support for custom inputs. You may set up custom inputs from your
   account portal.
 * Added the following new values to the ``/payment/processor`` validation:
-  ``ebs``, ``hipay``, and ``lemon_way``.
+  * ``american_express_payment_gateway``
+  * ``bluesnap``
+  * ``commdoo``
+  * ``curopayments``
+  * ``ebs``
+  * ``exact``
+  * ``hipay``
+  * ``lemon_way``
+  * ``oceanpayment``
+  * ``paymentwall``
+  * ``payza``
+  * ``securetrading``
+  * ``solidtrust_pay``
+  * ``vantiv``
+  * ``vericheck``
+  * ``vpos``
 * Added the following new input values:
   ``/device/session_age`` and ``/device/session_id``.
 * Added support for the ``/email/first_seen`` output.
