@@ -15,10 +15,11 @@ matrix:
     - python: nightly
 install:
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then pip install unittest2; fi"
-  - pip install pylint
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then pip install pylint yapf; fi"
 script:
   - python setup.py test
-  - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then ./.travis-pylint.sh; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then ./.travis-pylint.sh; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then ./.travis-yapf.sh; fi"
 notifications:
   email:
     on_failure: always
