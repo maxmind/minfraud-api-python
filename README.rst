@@ -126,7 +126,7 @@ Example
     >>>         'domain': 'maxmind.com'
     >>>     },
     >>>     'billing': {
-    >>>         'first_name': 'Jane'
+    >>>         'first_name': 'Jane',
     >>>         'last_name': 'Doe',
     >>>         'company': 'Company',
     >>>         'address': '101 Address Rd.',
@@ -139,7 +139,7 @@ Example
     >>>         'phone_number': '323-123-4321',
     >>>     },
     >>>     'shipping': {
-    >>>         'first_name': 'John'
+    >>>         'first_name': 'John',
     >>>         'last_name': 'Doe',
     >>>         'company': 'ShipCo',
     >>>         'address': '322 Ship Addr. Ln.',
@@ -187,7 +187,7 @@ Example
     >>>      },
     >>>     'custom_inputs': {
     >>>         'section': 'news',
-    >>>         'number_of_previous_purchases': 19,
+    >>>         'num_of_previous_purchases': 19,
     >>>         'discount': 3.2,
     >>>         'previous_user': True
     >>>     }
