@@ -225,7 +225,7 @@ man_pages = [('index', 'minfraud', 'minfraud Documentation',
 #  dir menu entry, description, category)
 texinfo_documents = [
     ('index', 'minfraud', 'minfraud Documentation', 'Gregory Oschwald',
-     'minfraud', 'minFraud Score and Insights web service client.',
+     'minfraud', 'minFraud Score, Insights, and Factors web service client.',
      'Miscellaneous'),
 ]
 

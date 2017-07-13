@@ -20,7 +20,7 @@ with io.open('README.rst', 'r', encoding='utf-8') as f:
 setup(
     name='minfraud',
     version=_version,
-    description='MaxMind minFraud Score and Insights API',
+    description='MaxMind minFraud Score, Insights, and Factors API',
     long_description=_readme,
     author='Gregory Oschwald',
     author_email='goschwald@maxmind.com',

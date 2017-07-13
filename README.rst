@@ -5,8 +5,8 @@ minFraud Score, Insights, and Factors Python API
 Description
 -----------
 
-This package provides an API for the `MaxMind minFraud Score, Insights, Factors
-web services <https://dev.maxmind.com/minfraud/>`_.
+This package provides an API for the `MaxMind minFraud Score, Insights, and 
+Factors web services <https://dev.maxmind.com/minfraud/>`_.
 
 Installation
 ------------
