@@ -3,6 +3,16 @@
 History
 -------
 
+1.5.0
++++++++++++++++++
+
+* Added the following new values to the ``/payment/processor`` validation:
+  * ``bpoint``
+  * ``checkout_com``
+  * ``emerchantpay``
+  * ``heartland``
+  * ``payway``
+
 1.4.0 (2017-07-06)
 ++++++++++++++++++
 
