@@ -12,6 +12,8 @@ History
   * ``emerchantpay``
   * ``heartland``
   * ``payway``
+* Updated `geoip` dependency to add support for GeoIP2 Precision Insights
+  anonymizer fields.
 
 1.4.0 (2017-07-06)
 ++++++++++++++++++
