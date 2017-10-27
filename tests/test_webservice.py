@@ -3,6 +3,7 @@ import sys
 
 import json
 import requests_mock
+from io import open
 from minfraud.errors import HTTPError, InvalidRequestError, \
     AuthenticationError, InsufficientFundsError, MinFraudError, \
     PermissionRequiredError
@@ -23,12 +24,14 @@ class BaseTest(object):
     def setUp(self):
         self.client = Client(42, 'abcdef123456')
         test_dir = os.path.join(os.path.dirname(__file__), 'data')
-        with open(os.path.join(test_dir, 'full-request.json'), 'r') as file:
+        with open(
+                os.path.join(test_dir, 'full-request.json'),
+                encoding='utf-8') as file:
             content = file.read()
         self.full_request = json.loads(content)
         with open(
                 os.path.join(test_dir, '{0}-response.json'.format(self.type)),
-                'r') as file:
+                encoding='utf-8') as file:
             self.response = file.read()
 
     base_uri = 'https://minfraud.maxmind.com/minfraud/v2.0/'
