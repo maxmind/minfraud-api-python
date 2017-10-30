@@ -3,8 +3,8 @@
 History
 -------
 
-1.5.0
-+++++++++++++++++
+1.5.0 (2017-10-30)
+++++++++++++++++++
 
 * Added the following new values to the ``/payment/processor`` validation:
   * ``bpoint``
