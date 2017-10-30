@@ -34,8 +34,8 @@ if [ -n "$(git status --porcelain)" ]; then
     exit 1
 fi
 
-# Make sure Sphinx and wheel are installed with the current python
-pip install sphinx wheel
+# Make sure release deps are installed with the current python
+pip install -U sphinx wheel voluptuous strict_rfc3339 validate_email rfc3987
 
 perl -pi -e "s/(?<=__version__ = ').+?(?=')/$version/g" minfraud/version.py
 
