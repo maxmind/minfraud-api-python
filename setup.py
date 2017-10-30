@@ -29,7 +29,7 @@ setup(
     include_package_data=True,
     platforms='any',
     install_requires=[
-        'geoip2>=2.4.0',
+        'geoip2>=2.6.0',
         'requests>=2.7',
         'rfc3987',
         'strict-rfc3339',

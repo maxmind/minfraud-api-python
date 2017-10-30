@@ -135,11 +135,28 @@ class TestModels(unittest.TestCase):
                 'local_time': time
             },
             'risk': 99,
+            'traits': {
+                'is_anonymous': True,
+                'is_anonymous_proxy': True,
+                'is_anonymous_vpn': True,
+                'is_hosting_provider': True,
+                'is_public_proxy': True,
+                'is_satellite_provider': True,
+                'is_tor_exit_node': True,
+            },
         })
 
         self.assertEqual(time, address.location.local_time)
         self.assertEqual(True, address.country.is_high_risk)
         self.assertEqual(99, address.risk)
+        self.assertEqual(True, address.traits.is_anonymous)
+        self.assertEqual(True, address.traits.is_anonymous_proxy)
+        self.assertEqual(True, address.traits.is_anonymous_vpn)
+        self.assertEqual(True, address.traits.is_hosting_provider)
+        self.assertEqual(True, address.traits.is_public_proxy)
+        self.assertEqual(True, address.traits.is_satellite_provider)
+        self.assertEqual(True, address.traits.is_tor_exit_node)
+        self.assertEqual(True, address.country.is_high_risk)
 
     def test_score_ip_address(self):
         address = ScoreIPAddress({'risk': 99})

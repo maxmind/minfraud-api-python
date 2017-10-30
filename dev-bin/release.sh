@@ -34,6 +34,9 @@ if [ -n "$(git status --porcelain)" ]; then
     exit 1
 fi
 
+# Make sure Sphinx and wheel are installed with the current python
+pip install sphinx wheel
+
 perl -pi -e "s/(?<=__version__ = ').+?(?=')/$version/g" minfraud/version.py
 
 echo $"Test results:"
