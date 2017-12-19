@@ -7,7 +7,8 @@ python:
   - '3.3'
   - '3.4'
   - '3.5'
-  - '3.6-dev'
+  - '3.6'
+  - '3.7-dev'
   - nightly
   - pypy
 matrix:
@@ -15,11 +16,11 @@ matrix:
     - python: nightly
 install:
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then pip install unittest2; fi"
-  - "if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then pip install pylint yapf; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then pip install pylint yapf; fi"
 script:
   - python setup.py test
-  - "if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then ./.travis-pylint.sh; fi"
-  - "if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then ./.travis-yapf.sh; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then ./.travis-pylint.sh; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then ./.travis-yapf.sh; fi"
 notifications:
   email:
     on_failure: always
