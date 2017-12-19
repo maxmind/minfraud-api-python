@@ -122,6 +122,7 @@ _payment_processor = In([
     'conekta',
     'cuentadigital',
     'curopayments',
+    'cybersource',
     'dalpay',
     'dibs',
     'digital_river',
@@ -188,6 +189,7 @@ _payment_processor = In([
     'stripe',
     'telerecargas',
     'towah',
+    'transact_pro',
     'usa_epay',
     'vantiv',
     'verepay',
@@ -196,6 +198,7 @@ _payment_processor = In([
     'virtual_card_services',
     'vme',
     'vpos',
+    'wirecard',
     'worldpay',
 ])
 
