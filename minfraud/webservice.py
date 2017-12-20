@@ -129,10 +129,9 @@ class Client(object):
                 'User-Agent': self._user_agent()
             },
             timeout=self._timeout)
-        if response.status_code == 200:
-            return self._handle_success(response, uri, model_class)
-        else:
-            self._handle_error(response, uri)
+        if response.status_code != 200:
+            raise self._exception_for_error(response, uri)
+        return self._handle_success(response, uri, model_class)
 
     def _copy_and_clean(self, data):
         """Create a copy of the data structure with Nones removed."""
@@ -159,61 +158,59 @@ class Client(object):
             body['ip_address']['_locales'] = self._locales
         return model_class(body)
 
-    def _handle_error(self, response, uri):
-        """Handle error responses."""
+    def _exception_for_error(self, response, uri):
+        """Returns the exception for the error responses."""
         status = response.status_code
 
         if 400 <= status < 500:
-            self._handle_4xx_status(response, status, uri)
+            return self._exception_for_4xx_status(response, status, uri)
         elif 500 <= status < 600:
-            self._handle_5xx_status(status, uri)
-        else:
-            self._handle_non_200_status(status, uri)
+            return self._exception_for_5xx_status(status, uri)
+        return self._exception_for_non_200_status(status, uri)
 
-    def _handle_4xx_status(self, response, status, uri):
-        """Handle error responses with 4xx status codes."""
+    def _exception_for_4xx_status(self, response, status, uri):
+        """Returns exception for error responses with 4xx status codes."""
         if not response.content:
-            raise HTTPError('Received a {0} error with no body'.format(status),
-                            status, uri)
+            return HTTPError(
+                'Received a {0} error with no body'.format(status), status,
+                uri)
         elif response.headers.get('Content-Type', '').find('json') == -1:
-            raise HTTPError('Received a {0} with the following '
-                            'body: {1}'.format(status, response.content),
-                            status, uri)
+            return HTTPError('Received a {0} with the following '
+                             'body: {1}'.format(status, response.content),
+                             status, uri)
         try:
             body = response.json()
         except ValueError:
-            raise HTTPError(
+            return HTTPError(
                 'Received a {status:d} error but it did not include'
                 ' the expected JSON body: {content}'.format(
                     status=status, content=response.content), status, uri)
         else:
             if 'code' in body and 'error' in body:
-                self._handle_web_service_error(
+                return self._exception_for_web_service_error(
                     body.get('error'), body.get('code'), status, uri)
-            else:
-                raise HTTPError(
-                    'Error response contains JSON but it does not specify code'
-                    ' or error keys: {0}'.format(response.content), status,
-                    uri)
+            return HTTPError(
+                'Error response contains JSON but it does not specify code'
+                ' or error keys: {0}'.format(response.content), status, uri)
 
-    def _handle_web_service_error(self, message, code, status, uri):
-        """Handle error responses with the JSON body from the web service."""
+    def _exception_for_web_service_error(self, message, code, status, uri):
+        """Returns exception for error responses with the JSON body."""
         if code in ('AUTHORIZATION_INVALID', 'LICENSE_KEY_REQUIRED',
                     'USER_ID_REQUIRED'):
-            raise AuthenticationError(message)
+            return AuthenticationError(message)
         elif code == 'INSUFFICIENT_FUNDS':
-            raise InsufficientFundsError(message)
+            return InsufficientFundsError(message)
         elif code == 'PERMISSION_REQUIRED':
-            raise PermissionRequiredError(message)
+            return PermissionRequiredError(message)
 
-        raise InvalidRequestError(message, code, status, uri)
+        return InvalidRequestError(message, code, status, uri)
 
-    def _handle_5xx_status(self, status, uri):
-        """Handle error response with 5xx status codes."""
-        raise HTTPError(u'Received a server error ({0}) for '
-                        u'{1}'.format(status, uri), status, uri)
+    def _exception_for_5xx_status(self, status, uri):
+        """Returns exception for error response with 5xx status codes."""
+        return HTTPError(u'Received a server error ({0}) for '
+                         u'{1}'.format(status, uri), status, uri)
 
-    def _handle_non_200_status(self, status, uri):
-        """Handle successful responses with unexpected status codes."""
-        raise HTTPError(u'Received an unexpected HTTP status '
-                        u'({0}) for {1}'.format(status, uri), status, uri)
+    def _exception_for_non_200_status(self, status, uri):
+        """Returns exception for responses with unexpected status codes."""
+        return HTTPError(u'Received an unexpected HTTP status '
+                         u'({0}) for {1}'.format(status, uri), status, uri)
