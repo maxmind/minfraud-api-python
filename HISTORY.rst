@@ -3,7 +3,7 @@
 History
 -------
 
-1.6.0
+1.6.0 (2018-01-18)
 ++++++++++++++++++
 
 * Updated ``geoip2`` dependency. This version adds the
