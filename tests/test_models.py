@@ -129,10 +129,11 @@ class TestModels(unittest.TestCase):
         time = "2015-04-19T12:59:23-01:00"
         address = IPAddress({
             'country': {
-                'is_high_risk': True
+                'is_high_risk': True,
+                'is_in_european_union': True,
             },
             'location': {
-                'local_time': time
+                'local_time': time,
             },
             'risk': 99,
             'traits': {
@@ -148,6 +149,7 @@ class TestModels(unittest.TestCase):
 
         self.assertEqual(time, address.location.local_time)
         self.assertEqual(True, address.country.is_high_risk)
+        self.assertEqual(True, address.country.is_in_european_union)
         self.assertEqual(99, address.risk)
         self.assertEqual(True, address.traits.is_anonymous)
         self.assertEqual(True, address.traits.is_anonymous_proxy)
@@ -319,6 +321,8 @@ class TestModels(unittest.TestCase):
 
     def check_insights_data(self, insights, uuid):
         self.assertEqual('US', insights.ip_address.country.iso_code)
+        self.assertEqual(False,
+                         insights.ip_address.country.is_in_european_union)
         self.assertEqual(True, insights.credit_card.is_prepaid)
         self.assertEqual('Visa', insights.credit_card.brand)
         self.assertEqual('debit', insights.credit_card.type)

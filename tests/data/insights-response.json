@@ -39,6 +39,7 @@
     "country": {
       "confidence": 99,
       "geoname_id": 2635167,
+      "is_in_european_union": true,
       "is_high_risk": false,
       "iso_code": "GB",
       "names": {
