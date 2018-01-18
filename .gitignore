@@ -63,6 +63,7 @@ build
 .coverage
 docs/html
 MANIFEST
+.mypy_cache/
 .project
 .pydevproject
 pylint.txt
