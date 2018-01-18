@@ -6,6 +6,10 @@ History
 1.6.0
 ++++++++++++++++++
 
+* Updated ``geoip2`` dependency. This version adds the
+  ``is_in_european_union`` attribute to ``geoip2.record.Country`` and
+  ``geoip2.record.RepresentedCountry``. This attribute is ``True`` if the
+  country is a member state of the European Union.
 * Added the following new values to the ``/payment/processor`` validation:
   * ``cybersource``
   * ``transact_pro``
@@ -20,7 +24,7 @@ History
   * ``emerchantpay``
   * ``heartland``
   * ``payway``
-* Updated `geoip` dependency to add support for GeoIP2 Precision Insights
+* Updated ``geoip2`` dependency to add support for GeoIP2 Precision Insights
   anonymizer fields.
 
 1.4.0 (2017-07-06)
