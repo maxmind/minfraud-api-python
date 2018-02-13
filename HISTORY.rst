@@ -3,6 +3,11 @@
 History
 -------
 
+1.7.0
+++++++++++++++++++
+
+* Python 2.6 support has been dropped. Python 2.7+ or 3.3+ is now required.
+
 1.6.0 (2018-01-18)
 ++++++++++++++++++
 

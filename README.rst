@@ -205,7 +205,7 @@ Example
 Requirements
 ------------
 
-This code requires Python 2.6+ or 3.3+. Older versions are not supported.
+This code requires Python 2.7+ or 3.3+. Older versions are not supported.
 This library has been tested with CPython and PyPy.
 
 Versioning
