@@ -3,6 +3,13 @@
 History
 -------
 
+1.7.0
+++++++++++++++++++
+
+* Python 2.6 support has been dropped. Python 2.7+ or 3.3+ is now required.
+* Renamed MaxMind user ID to account ID in the code and added support for the
+  new ``ACCOUNT_ID_REQUIRED`` error code.
+
 1.6.0 (2018-01-18)
 ++++++++++++++++++
 

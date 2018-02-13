@@ -28,6 +28,7 @@ setup(
     packages=['minfraud'],
     include_package_data=True,
     platforms='any',
+    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*',
     install_requires=[
         'geoip2>=2.7.0',
         'requests>=2.7',
@@ -36,9 +37,7 @@ setup(
         'validate_email',
         'voluptuous',
     ],
-    extras_require={
-        ':python_version=="2.6" or python_version=="2.7"': ['ipaddress']
-    },
+    extras_require={':python_version=="2.7"': ['ipaddress']},
     tests_require=['requests_mock'],
     test_suite="tests",
     license='Apache License 2.0 ',
@@ -47,7 +46,6 @@ setup(
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache Software License',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
@@ -58,4 +56,5 @@ setup(
         'Topic :: Internet :: Proxy Servers',
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Internet',
-    ], )
+    ],
+)
