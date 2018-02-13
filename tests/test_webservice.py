@@ -99,8 +99,8 @@ class BaseTest(object):
                 status_code=402)
 
     def test_invalid_auth(self):
-        for error in ('AUTHORIZATION_INVALID', 'LICENSE_KEY_REQUIRED',
-                      'USER_ID_REQUIRED'):
+        for error in ('ACCOUNT_ID_REQUIRED', 'AUTHORIZATION_INVALID',
+                      'LICENSE_KEY_REQUIRED', 'USER_ID_REQUIRED'):
             with self.assertRaisesRegex(AuthenticationError, 'Invalid auth'):
                 self.create_error(
                     text=u'{{"code":"{0:s}","error":"Invalid auth"}}'.format(
@@ -202,6 +202,21 @@ class BaseTest(object):
         if request is None:
             request = self.full_request
         return getattr(client, self.type)(request)
+
+    def test_named_constructor_args(self):
+        id = '47'
+        key = '1234567890ab'
+        for client in (Client(account_id=id, license_key=key),
+                       Client(user_id=id, license_key=key)):
+            self.assertEqual(client._account_id, id)
+            self.assertEqual(client._license_key, key)
+
+    def test_missing_constructor_args(self):
+        with self.assertRaises(TypeError):
+            Client(license_key='1234567890ab')
+
+        with self.assertRaises(TypeError):
+            Client('47')
 
 
 class TestFactors(BaseTest, unittest.TestCase):

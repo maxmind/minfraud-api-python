@@ -34,7 +34,7 @@ Usage
 -----
 
 To use this API, create a new ``minfraud.Client`` object. The constructor
-takes your MaxMind user ID and license key:
+takes your MaxMind account ID and license key:
 
 .. code-block:: pycon
 
@@ -80,8 +80,8 @@ Errors
 The possible errors are:
 
 * ``minfraud.AuthenticationError`` - This will be raised when the server
-  is unable to authenticate the request, e.g., if the license key or user ID
-  is invalid.
+  is unable to authenticate the request, e.g., if the license key or account
+  ID is invalid.
 * ``minfraud.InsufficientFundsError`` - This will be raised when `your
   account <https://www.maxmind.com/en/account>`_ is out of funds.
 * ``minfraud.InvalidRequestError`` - This will be raised when the server
