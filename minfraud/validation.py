@@ -7,6 +7,10 @@ from decimal import Decimal
 import rfc3987
 from geoip2.compat import compat_ip_address
 from strict_rfc3339 import validate_rfc3339
+# I can't reproduce the failure locally and the order looks right to me.
+# It is failing on pylint 1.8.3 on Travis. We should try removing this
+# when a new version of pylint is released.
+# pylint: disable=wrong-import-order
 from validate_email import validate_email
 from voluptuous import All, Any, In, Match, Range, Required, Schema
 """
