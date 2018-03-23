@@ -15,7 +15,7 @@ matrix:
     - python: '3.7-dev'
     - python: nightly
 install:
-  - "if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then pip install pylint yapf; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then pip install --upgrade pylint yapf; fi"
 script:
   - python setup.py test
   - "if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then ./.travis-pylint.sh; fi"
