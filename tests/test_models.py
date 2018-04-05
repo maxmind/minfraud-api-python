@@ -77,6 +77,7 @@ class TestModels(unittest.TestCase):
             'country': 'US',
             'is_issued_in_billing_address_country': True,
             'is_prepaid': True,
+            'is_virtual': True,
             'type': 'credit'
         })
 

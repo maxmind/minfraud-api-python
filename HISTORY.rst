@@ -16,6 +16,7 @@ History
   * ``oney``
   * ``posconnect``
 * Added support for the ``/device/local_time`` output.
+* Added support for the ``/credit_card/is_virtual`` output.
 
 1.6.0 (2018-01-18)
 ++++++++++++++++++

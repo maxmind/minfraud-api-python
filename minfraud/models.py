@@ -423,6 +423,12 @@ class CreditCard(object):
 
       :type: bool | None
 
+    .. attribute:: is_virtual
+
+      This property is ``True`` if the card is a virtual card.
+
+      :type: bool | None
+
     .. attribute:: type
 
       The card's type. The valid values are "charge", "credit", and "debit".
@@ -446,6 +452,7 @@ class CreditCard(object):
         'brand': None,
         'is_issued_in_billing_address_country': None,
         'is_prepaid': None,
+        'is_virtual': None,
         'type': None,
     }
 
