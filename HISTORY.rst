@@ -15,6 +15,7 @@ History
   * ``dalenys``
   * ``oney``
   * ``posconnect``
+* Added support for the ``/device/local_time`` output.
 
 1.6.0 (2018-01-18)
 ++++++++++++++++++
