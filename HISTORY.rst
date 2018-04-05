@@ -17,6 +17,7 @@ History
   * ``posconnect``
 * Added support for the ``/device/local_time`` output.
 * Added support for the ``/credit_card/is_virtual`` output.
+* Added ``payout_change`` to the ``/event/type`` input validation.
 
 1.6.0 (2018-01-18)
 ++++++++++++++++++

@@ -277,8 +277,8 @@ class TestEvent(ValidationBase, unittest.TestCase):
 
     def test_type(self):
         for good in ('account_creation', 'account_login', 'email_change',
-                     'password_reset', 'purchase', 'recurring_purchase',
-                     'referral', 'survey'):
+                     'password_reset', 'payout_change', 'purchase',
+                     'recurring_purchase', 'referral', 'survey'):
             self.check_transaction({'event': {'type': good}})
         for bad in ('bad', 1, ''):
             self.check_invalid_transaction({'event': {'type': bad}})
