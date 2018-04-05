@@ -77,6 +77,7 @@ class TestModels(unittest.TestCase):
             'country': 'US',
             'is_issued_in_billing_address_country': True,
             'is_prepaid': True,
+            'is_virtual': True,
             'type': 'credit'
         })
 
@@ -84,17 +85,25 @@ class TestModels(unittest.TestCase):
         self.assertEqual('Visa', cc.brand)
         self.assertEqual('US', cc.country)
         self.assertEqual(True, cc.is_prepaid)
+        self.assertEqual(True, cc.is_virtual)
         self.assertEqual(True, cc.is_issued_in_billing_address_country)
         self.assertEqual('credit', cc.type)
 
     def test_device(self):
         id = 'b643d445-18b2-4b9d-bad4-c9c4366e402a'
         last_seen = '2016-06-08T14:16:38Z'
-        device = Device({'confidence': 99, 'id': id, 'last_seen': last_seen})
+        local_time = '2016-06-10T14:19:10-08:00'
+        device = Device({
+            'confidence': 99,
+            'id': id,
+            'last_seen': last_seen,
+            'local_time': local_time,
+        })
 
         self.assertEqual(99, device.confidence)
         self.assertEqual(id, device.id)
         self.assertEqual(last_seen, device.last_seen)
+        self.assertEqual(local_time, device.local_time)
 
     def test_disposition(self):
         disposition = Disposition({'action': 'accept', 'reason': 'default'})

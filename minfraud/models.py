@@ -300,6 +300,14 @@ class Device(object):
 
       :type: str | None
 
+    .. attribute:: local_time
+
+      This is the local date and time of the transaction in the time zone of
+      the device. This is determined by using the UTC offset associated with
+      the device. This is an RFC 3339 date-time.
+
+      :type: str | None
+
     """
 
     __slots__ = ()
@@ -307,6 +315,7 @@ class Device(object):
         'confidence': None,
         'id': None,
         'last_seen': None,
+        'local_time': None,
     }
 
 
@@ -414,6 +423,12 @@ class CreditCard(object):
 
       :type: bool | None
 
+    .. attribute:: is_virtual
+
+      This property is ``True`` if the card is a virtual card.
+
+      :type: bool | None
+
     .. attribute:: type
 
       The card's type. The valid values are "charge", "credit", and "debit".
@@ -437,6 +452,7 @@ class CreditCard(object):
         'brand': None,
         'is_issued_in_billing_address_country': None,
         'is_prepaid': None,
+        'is_virtual': None,
         'type': None,
     }
 
