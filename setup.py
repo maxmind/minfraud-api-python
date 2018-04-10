@@ -30,7 +30,7 @@ setup(
     platforms='any',
     python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*',
     install_requires=[
-        'geoip2>=2.7.0',
+        'geoip2>=2.8.0',
         'requests>=2.7',
         'rfc3987',
         'strict-rfc3339',
