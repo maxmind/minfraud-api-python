@@ -3,6 +3,13 @@
 History
 -------
 
+1.8.0
+++++++++++++++++++
+
+* Added the following new values to the ``/payment/processor`` validation:
+  * ``payeezy``
+  * ``payment_express``
+
 1.7.0 (2018-04-10)
 ++++++++++++++++++
 
