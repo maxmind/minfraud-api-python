@@ -42,7 +42,8 @@ _custom_input_key = All(_any_string, Match(r'^[a-z0-9_]{1,25}$'))
 
 _custom_input_value = Any(
     All(_any_string, Match(r'^[^\n]{1,255}\Z')),
-    All(_any_number,
+    All(
+        _any_number,
         Range(
             min=-(1 << 53),
             max=1 << 53,
