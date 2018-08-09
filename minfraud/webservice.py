@@ -153,7 +153,7 @@ class Client(object):
         if isinstance(data, dict):
             return dict((k, self._copy_and_clean(v))
                         for (k, v) in data.items() if v is not None)
-        elif isinstance(data, (list, set, tuple)):
+        if isinstance(data, (list, set, tuple)):
             return [self._copy_and_clean(x) for x in data if x is not None]
         return data
 
@@ -166,9 +166,10 @@ class Client(object):
         try:
             body = response.json()
         except ValueError:
-            raise MinFraudError('Received a 200 response'
-                                ' but could not decode the response as '
-                                'JSON: {0}'.format(response.content), 200, uri)
+            raise MinFraudError(
+                'Received a 200 response'
+                ' but could not decode the response as '
+                'JSON: {0}'.format(response.content), 200, uri)
         if 'ip_address' in body:
             body['ip_address']['_locales'] = self._locales
         return model_class(body)
@@ -179,7 +180,7 @@ class Client(object):
 
         if 400 <= status < 500:
             return self._exception_for_4xx_status(response, status, uri)
-        elif 500 <= status < 600:
+        if 500 <= status < 600:
             return self._exception_for_5xx_status(status, uri)
         return self._exception_for_non_200_status(status, uri)
 
@@ -189,10 +190,10 @@ class Client(object):
             return HTTPError(
                 'Received a {0} error with no body'.format(status), status,
                 uri)
-        elif response.headers.get('Content-Type', '').find('json') == -1:
-            return HTTPError('Received a {0} with the following '
-                             'body: {1}'.format(status, response.content),
-                             status, uri)
+        if response.headers.get('Content-Type', '').find('json') == -1:
+            return HTTPError(
+                'Received a {0} with the following '
+                'body: {1}'.format(status, response.content), status, uri)
         try:
             body = response.json()
         except ValueError:
@@ -213,19 +214,21 @@ class Client(object):
         if code in ('ACCOUNT_ID_REQUIRED', 'AUTHORIZATION_INVALID',
                     'LICENSE_KEY_REQUIRED', 'USER_ID_REQUIRED'):
             return AuthenticationError(message)
-        elif code == 'INSUFFICIENT_FUNDS':
+        if code == 'INSUFFICIENT_FUNDS':
             return InsufficientFundsError(message)
-        elif code == 'PERMISSION_REQUIRED':
+        if code == 'PERMISSION_REQUIRED':
             return PermissionRequiredError(message)
 
         return InvalidRequestError(message, code, status, uri)
 
     def _exception_for_5xx_status(self, status, uri):
         """Returns exception for error response with 5xx status codes."""
-        return HTTPError(u'Received a server error ({0}) for '
-                         u'{1}'.format(status, uri), status, uri)
+        return HTTPError(
+            u'Received a server error ({0}) for '
+            u'{1}'.format(status, uri), status, uri)
 
     def _exception_for_non_200_status(self, status, uri):
         """Returns exception for responses with unexpected status codes."""
-        return HTTPError(u'Received an unexpected HTTP status '
-                         u'({0}) for {1}'.format(status, uri), status, uri)
+        return HTTPError(
+            u'Received an unexpected HTTP status '
+            u'({0}) for {1}'.format(status, uri), status, uri)
