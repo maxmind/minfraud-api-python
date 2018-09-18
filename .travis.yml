@@ -1,25 +1,38 @@
 ---
 sudo: false
 language: python
-python:
-  - '2.7'
-  - '3.3'
-  - '3.4'
-  - '3.5'
-  - '3.6'
-  - '3.7-dev'
-  - nightly
-  - pypy
 matrix:
-  allow_failures:
-    - python: '3.7-dev'
+  include:
+    - python: 2.7
+      dist: trusty
+    - python: 3.3
+      dist: trusty
+    - python: 3.4
+      dist: trusty
+    - python: 3.5
+      dist: trusty
+    - python: 3.6
+      dist: trusty
+    - python: 3.7
+      dist: xenial
     - python: nightly
+      dist: xenial
+    - python: pypy
+      dist: trusty
+  allow_failures:
+    - python: nightly
+
+before_install:
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.7' ]]; then sudo apt-get install -y nodejs; npm install -g snyk; fi"
 install:
-  - "if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then pip install --upgrade pylint yapf; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.7' ]]; then pip install --upgrade pylint yapf; fi"
 script:
   - python setup.py test
-  - "if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then ./.travis-pylint.sh; fi"
-  - "if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then ./.travis-yapf.sh; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.7' ]]; then ./.travis-pylint.sh; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.7' ]]; then ./.travis-yapf.sh; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.7' ]]; then snyk test --org=maxmind --file=requirements.txt; fi"
+after_success:
+  - "if [[ $TRAVIS_BRANCH == 'master' && $TRAVIS_PULL_REQUEST == 'false' && $TRAVIS_PYTHON_VERSION == '3.7' ]]; then snyk monitor --org=maxmind --project=maxmind/minfraud-api-python; fi"
 notifications:
   email:
     on_failure: always
@@ -29,3 +42,7 @@ notifications:
   slack:
     rooms:
       secure: "wuwMo+BWnaBtkt1uGAi4Zd0EARX3B2TXDmBGCtn8r4PLfehh61S6nLQDASNXSk200PmniFM8PyOUNVGVJqWpYQAEMn32WWdy4vTK2c8CsjwfsMhgnOI2YDCzw+jiP+8EfIGBsPO4xA7yrzweP8gkzBtplb3LbaCiW83WfFo9+402yr0/0F9gfWi8qvuIw29XAS1XWhTY4itqGfkSPdOHQz/45ElpLkGlgreuRrih3tAgn9YLb/Uh/6McHfHkL74YwQU3p0NiZcoleWYM0CLpPzyrN8EsbmIT+L75nIVwXnh62Gx2jJWayj7ZzvyKtVKHtLb/LKRs4Dg0UEg65xX1EcBAkC5fn4KG1jQHvi/tdOx1Sfh3hO6OK+68q1R6cQQYy+uG84q8RUjpO6dzFcWpE1yMdbQ5XMKfTh56ZdhXJ803LD2gGeIgcMwJp6HK9tnf0vaPPI9kbr8fqJBUUkciUoqpYzFd5m0ZCUbJsMD0oPY19FSRtfCNQvCbmhYrLy1sQ5FeMzbF0bi2oaUv+JD/A5RKokNMrrwv3nnTtG4vN1hJklQk2VW3sZWl6UjYgzhrbmKABtvPuB+xcYywIu4+JSworpfDwM/PZAKOfd6n+r8OdNV256l8WaNeF6osvXkUR7yxYpytywdQPA0d/z8mxTVoATE3wat7pnmTrqI5fqw=\n"
+
+env:
+  global:
+    secure: "DQNJejPJ6XPJ/mCtaGabbthgIqgwrysF13Dhrw1N9G2DaRSNGS3jybQVnV/uzUnIRH3V+aC4rXhr1FTeF50Cz7d3va8X0JVLgBxY6zq2LrYnbcqu+FwCPPbVQipjGXampf+BtYCKAH+U8beAPilus1QJug+U73CGv4dtp17PVKIEGcDBxLLlTWDXvStPGbFoHe2yCSCmw2aHXQcfqZQrU0tuk6GVZD+w8/rkAb8B2RRWAbM+9WFS2PNz+VVjpgF/uTY17bbiGMiu9lTgmAXDnQS73N7e6eEH/42NRzLQsYbs9GzpZF39AYhaEY4KgzcX/jQoWZoazAuf9Z3tkt89f2u4wjzzRVRkbbdRRL1ez9W/T2DVqLxvn65spS7sFAQIBfW1b/uCQIWE6M90wsMYAdT19A9QqlRgTKxZN2HihKOfUHhMh2UAsf592uPAXzU9bPHxTfPKTaVFlAThxxQmaoEufGn+e9mYsc09D+9K2BMKxsgA8YCk0gHmhS+WANcnxiHlXB+Ouq3fgt1nKiyarIGwsqvtwgvVdMJlilC8aT7SevnrmawbMwRCoUYnYODMtirIhFR3i7I0U8vUg6xIGxHR9kiJk2dvlBZ1Z7S2LYWsTPQZnDnddJ28V9TNYd2Z7co+hs4KH8RffGSgy1Vs+03b4cDheWxiSj/vVqwu9JQ="

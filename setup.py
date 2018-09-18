@@ -2,10 +2,9 @@
 
 import ast
 import io
+import os
 import re
-
-# This is necessary for Python 2.6 on Travis for some reason.
-import multiprocessing
+import sys
 
 from setuptools import setup
 
@@ -16,6 +15,22 @@ with io.open('minfraud/version.py', 'r', encoding='utf-8') as f:
 
 with io.open('README.rst', 'r', encoding='utf-8') as f:
     _readme = f.read()
+
+requirements = [
+    'geoip2>=2.8.0',
+    'requests>=2.7',
+    'rfc3987',
+    'strict-rfc3339',
+    'validate_email',
+    'voluptuous',
+]
+
+# Write requirements.txt needed for snyk testing, only for latest release python.
+if os.environ.get('SNYK_TOKEN'
+                  ) and sys.version_info[0] == 3 and sys.version_info[1] == 7:
+    with open('requirements.txt', 'w') as f:
+        for r in requirements:
+            f.write(r + '\n')
 
 setup(
     name='minfraud',
@@ -29,14 +44,7 @@ setup(
     include_package_data=True,
     platforms='any',
     python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*',
-    install_requires=[
-        'geoip2>=2.8.0',
-        'requests>=2.7',
-        'rfc3987',
-        'strict-rfc3339',
-        'validate_email',
-        'voluptuous',
-    ],
+    install_requires=requirements,
     extras_require={':python_version=="2.7"': ['ipaddress']},
     tests_require=['requests_mock'],
     test_suite="tests",
@@ -52,6 +60,7 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python',
         'Topic :: Internet :: Proxy Servers',
         'Topic :: Internet :: WWW/HTTP',
