@@ -2,19 +2,34 @@
 
 import ast
 import io
+import os
 import re
+import sys
 
 from setuptools import setup
 
 _version_re = re.compile(r'__version__\s+=\s+(.*)')
-
-requirements = [i.strip() for i in open("requirements.txt").readlines()]
 
 with io.open('minfraud/version.py', 'r', encoding='utf-8') as f:
     _version = str(ast.literal_eval(_version_re.search(f.read()).group(1)))
 
 with io.open('README.rst', 'r', encoding='utf-8') as f:
     _readme = f.read()
+
+requirements = [
+    'geoip2>=2.8.0',
+    'requests>=2.7',
+    'rfc3987',
+    'strict-rfc3339',
+    'validate_email',
+    'voluptuous',
+]
+
+# Write requirements.txt needed for snyk testing, only for latest release python.
+if os.environ.get('SNYK_TOKEN'
+                  ) and sys.version_info[0] == 3 and sys.version_info[1] == 7:
+    rtxt = open('requirements.txt', 'w')
+    [rtxt.write(r + '\n') for r in requirements]
 
 setup(
     name='minfraud',
@@ -44,6 +59,7 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python',
         'Topic :: Internet :: Proxy Servers',
         'Topic :: Internet :: WWW/HTTP',

@@ -25,13 +25,12 @@ matrix:
 before_install:
   - "if [[ $TRAVIS_PYTHON_VERSION == '3.7' ]]; then sudo apt-get install -y nodejs; npm install -g snyk; fi"
 install:
-  - pip install -r requirements.txt
   - "if [[ $TRAVIS_PYTHON_VERSION == '3.7' ]]; then pip install --upgrade pylint yapf; fi"
-  - "if [[ $TRAVIS_PYTHON_VERSION == '3.7' ]]; then snyk test --org=maxmind; fi"
 script:
   - python setup.py test
   - "if [[ $TRAVIS_PYTHON_VERSION == '3.7' ]]; then ./.travis-pylint.sh; fi"
   - "if [[ $TRAVIS_PYTHON_VERSION == '3.7' ]]; then ./.travis-yapf.sh; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.7' ]]; then snyk test --org=maxmind --file=requirements.txt; fi"
 after_success:
   - "if [[ $TRAVIS_BRANCH == 'master' && $TRAVIS_PULL_REQUEST == 'false' && $TRAVIS_PYTHON_VERSION == '3.7' ]]; then snyk monitor --org=maxmind --project=maxmind/minfraud-api-python; fi"
 notifications:
