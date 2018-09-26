@@ -7,8 +7,12 @@ History
 ++++++++++++++++++
 
 * Added the following new values to the ``/payment/processor`` validation:
+  * ``datacash``
+  * ``gocardless``
   * ``payeezy``
   * ``payment_express``
+  * ``smartdebit``
+  * ``synapsefi``
 
 1.7.0 (2018-04-10)
 ++++++++++++++++++
