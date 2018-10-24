@@ -18,7 +18,7 @@ with io.open('README.rst', 'r', encoding='utf-8') as f:
 
 requirements = [
     'geoip2>=2.8.0',
-    'requests>=2.7',
+    'requests>=2.20.0',
     'rfc3987',
     'strict-rfc3339',
     'validate_email',
