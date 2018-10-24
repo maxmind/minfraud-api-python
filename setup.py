@@ -26,8 +26,7 @@ requirements = [
 ]
 
 # Write requirements.txt needed for snyk testing, only for latest release python.
-if os.environ.get('SNYK_TOKEN'
-                  ) and sys.version_info[0] == 3 and sys.version_info[1] == 7:
+if os.environ.get('SNYK_TOKEN') and os.environ.get('RUN_SNYK'):
     with open('requirements.txt', 'w') as f:
         for r in requirements:
             f.write(r + '\n')
