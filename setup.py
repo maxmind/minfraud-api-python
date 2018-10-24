@@ -17,7 +17,7 @@ with io.open('README.rst', 'r', encoding='utf-8') as f:
     _readme = f.read()
 
 requirements = [
-    'geoip2>=2.8.0',
+    'geoip2>=2.9.0',
     'requests>=2.20.0',
     'rfc3987',
     'strict-rfc3339',
