@@ -170,6 +170,7 @@ _payment_processor = In([
     'payeezy',
     'payfast',
     'paygate',
+    'paylike',
     'payment_express',
     'paymentwall',
     'payone',
