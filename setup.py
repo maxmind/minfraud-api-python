@@ -21,6 +21,7 @@ requirements = [
     'requests>=2.20.0',
     'rfc3987',
     'strict-rfc3339',
+    'urllib3>=2.5.2',
     'validate_email',
     'voluptuous',
 ]
