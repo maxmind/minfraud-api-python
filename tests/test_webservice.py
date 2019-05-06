@@ -24,14 +24,13 @@ class BaseTest(object):
     def setUp(self):
         self.client = Client(42, 'abcdef123456')
         test_dir = os.path.join(os.path.dirname(__file__), 'data')
-        with open(
-                os.path.join(test_dir, 'full-request.json'),
-                encoding='utf-8') as file:
+        with open(os.path.join(test_dir, 'full-request.json'),
+                  encoding='utf-8') as file:
             content = file.read()
         self.full_request = json.loads(content)
-        with open(
-                os.path.join(test_dir, '{0}-response.json'.format(self.type)),
-                encoding='utf-8') as file:
+        with open(os.path.join(test_dir,
+                               '{0}-response.json'.format(self.type)),
+                  encoding='utf-8') as file:
             self.response = file.read()
 
     base_uri = 'https://minfraud.maxmind.com/minfraud/v2.0/'
@@ -135,8 +134,8 @@ class BaseTest(object):
         with self.assertRaisesRegex(
                 HTTPError,
                 "Received a 400 with the following body: b?'?plain'?"):
-            self.create_error(
-                headers={'Content-Type': 'text/plain'}, text='plain')
+            self.create_error(headers={'Content-Type': 'text/plain'},
+                              text='plain')
 
     def test_400_without_json_body(self):
         with self.assertRaisesRegex(
@@ -170,11 +169,10 @@ class BaseTest(object):
                 'application/vnd.maxmind.com-error+json; charset=UTF-8;'
                 ' version=2.0'
             }
-        mock.post(
-            self.base_uri + self.type,
-            status_code=status_code,
-            text=text,
-            headers=headers)
+        mock.post(self.base_uri + self.type,
+                  status_code=status_code,
+                  text=text,
+                  headers=headers)
         return getattr(self.client, self.type)(self.full_request)
 
     @requests_mock.mock()
@@ -192,11 +190,10 @@ class BaseTest(object):
             }
         if text is None:
             text = self.response
-        mock.post(
-            self.base_uri + self.type,
-            status_code=200,
-            text=text,
-            headers=headers)
+        mock.post(self.base_uri + self.type,
+                  status_code=200,
+                  text=text,
+                  headers=headers)
         if client is None:
             client = self.client
         if request is None:

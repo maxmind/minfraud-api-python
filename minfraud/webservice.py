@@ -135,15 +135,14 @@ class Client(object):
                 raise InvalidRequestError(
                     "Invalid transaction data: {0}".format(ex))
         uri = '/'.join([self._base_uri, path])
-        response = requests.post(
-            uri,
-            json=cleaned_request,
-            auth=(self._account_id, self._license_key),
-            headers={
-                'Accept': 'application/json',
-                'User-Agent': self._user_agent()
-            },
-            timeout=self._timeout)
+        response = requests.post(uri,
+                                 json=cleaned_request,
+                                 auth=(self._account_id, self._license_key),
+                                 headers={
+                                     'Accept': 'application/json',
+                                     'User-Agent': self._user_agent()
+                                 },
+                                 timeout=self._timeout)
         if response.status_code != 200:
             raise self._exception_for_error(response, uri)
         return self._handle_success(response, uri, model_class)
