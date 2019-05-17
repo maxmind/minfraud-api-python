@@ -6,6 +6,7 @@ History
 1.8.0
 ++++++++++++++++++
 
+* Python 3.3 and 3.4 are no longer supported.
 * Added the following new values to the ``/payment/processor`` validation:
   * ``datacash``
   * ``gocardless``
