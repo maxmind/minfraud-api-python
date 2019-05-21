@@ -18,9 +18,10 @@ with io.open('README.rst', 'r', encoding='utf-8') as f:
 
 requirements = [
     'geoip2>=2.9.0',
-    'requests>=2.20.0',
+    'requests>=2.22.0',
     'rfc3987',
     'strict-rfc3339',
+    'urllib3>=1.25.2',
     'validate_email',
     'voluptuous',
 ]
@@ -42,7 +43,7 @@ setup(
     packages=['minfraud'],
     include_package_data=True,
     platforms='any',
-    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*',
+    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*',
     install_requires=requirements,
     extras_require={':python_version=="2.7"': ['ipaddress']},
     tests_require=['requests_mock'],
@@ -55,8 +56,6 @@ setup(
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',

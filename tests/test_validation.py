@@ -24,8 +24,8 @@ class ValidationBase(object):
 
     def check_invalid_transaction(self, transaction):
         self.setup_transaction(transaction)
-        with self.assertRaises(
-                MultipleInvalid, msg='{0!s} is invalid'.format(transaction)):
+        with self.assertRaises(MultipleInvalid,
+                               msg='{0!s} is invalid'.format(transaction)):
             validate_transaction(transaction)
 
     def check_transaction(self, transaction):
@@ -58,23 +58,20 @@ class TestAccount(unittest.TestCase, ValidationBase):
         self.check_transaction({'account': {'user_id': 'usr'}})
 
     def test_account_username_md5(self):
-        self.check_transaction({
-            'account': {
+        self.check_transaction(
+            {'account': {
                 'username_md5': '14c4b06b824ec593239362517f538b29'
-            }
-        })
+            }})
 
     def test_invalid_account_username_md5s(self):
-        self.check_invalid_transaction({
-            'account': {
+        self.check_invalid_transaction(
+            {'account': {
                 'username_md5': '14c4b06b824ec593239362517f538b2'
-            }
-        })
-        self.check_invalid_transaction({
-            'account': {
+            }})
+        self.check_invalid_transaction(
+            {'account': {
                 'username_md5': '14c4b06b824ec593239362517f538b29a'
-            }
-        })
+            }})
 
 
 class AddressBase(ValidationBase):
@@ -99,11 +96,10 @@ class AddressBase(ValidationBase):
         for code in (1, '1', '2341'):
             self.check_transaction({self.type: {'phone_country_code': code}})
         for invalid in ('', '12345', 'U'):
-            self.check_invalid_transaction({
-                self.type: {
+            self.check_invalid_transaction(
+                {self.type: {
                     'phone_country_code': invalid
-                }
-            })
+                }})
 
 
 class TestBillingAddress(unittest.TestCase, AddressBase):
@@ -117,11 +113,10 @@ class TestShippingAddress(unittest.TestCase, AddressBase):
         for speed in ('same_day', 'overnight', 'expedited', 'standard'):
             self.check_transaction({self.type: {'delivery_speed': speed}})
         for invalid in ('fast', 'slow', ''):
-            self.check_invalid_transaction({
-                self.type: {
+            self.check_invalid_transaction(
+                {self.type: {
                     'delivery_speed': invalid
-                }
-            })
+                }})
 
 
 class TestCreditCard(ValidationBase, unittest.TestCase):
@@ -129,21 +124,19 @@ class TestCreditCard(ValidationBase, unittest.TestCase):
         for iin in ('123456', '532313'):
             self.check_transaction({'credit_card': {'issuer_id_number': iin}})
         for invalid in ('12345', '1234567', 123456, '12345a'):
-            self.check_invalid_transaction({
-                'credit_card': {
+            self.check_invalid_transaction(
+                {'credit_card': {
                     'issuer_id_number': invalid
-                }
-            })
+                }})
 
     def test_last_4_digits(self):
         for iin in ('1234', '9323'):
             self.check_transaction({'credit_card': {'last_4_digits': iin}})
         for invalid in ('12345', '123', 1234, '123a'):
-            self.check_invalid_transaction({
-                'credit_card': {
+            self.check_invalid_transaction(
+                {'credit_card': {
                     'last_4_digits': invalid
-                }
-            })
+                }})
 
     def test_bank_name(self):
         self.check_str_type('credit_card', 'bank_name')
@@ -153,28 +146,25 @@ class TestCreditCard(ValidationBase, unittest.TestCase):
 
     def test_phone_country_code(self):
         for code in (1, '1', '2341'):
-            self.check_transaction({
-                'credit_card': {
+            self.check_transaction(
+                {'credit_card': {
                     'bank_phone_country_code': code
-                }
-            })
+                }})
         for invalid in ('', '12345', 'U'):
-            self.check_invalid_transaction({
-                'credit_card': {
+            self.check_invalid_transaction(
+                {'credit_card': {
                     'bank_phone_country_code': invalid
-                }
-            })
+                }})
 
     def test_avs_and_cvv(self):
         for key in ('avs_result', 'cvv_result'):
             for code in ('1', 'A'):
                 self.check_transaction({'credit_card': {key: code}})
             for invalid in ('', '12'):
-                self.check_invalid_transaction({
-                    'credit_card': {
+                self.check_invalid_transaction(
+                    {'credit_card': {
                         'credit_card': invalid
-                    }
-                })
+                    }})
 
     def test_token(self):
         for token in ('123456abc1245', '\x21', '1' * 20):
@@ -232,19 +222,17 @@ class TestDevice(ValidationBase, unittest.TestCase):
 
     def test_session_age(self):
         for valid in (3600, 0, 25.5):
-            self.check_transaction({
-                'device': {
+            self.check_transaction(
+                {'device': {
                     'ip_address': '4.4.4.4',
                     'session_age': valid
-                }
-            })
+                }})
         for invalid in ('foo', -1):
-            self.check_invalid_transaction({
-                'device': {
+            self.check_invalid_transaction(
+                {'device': {
                     'ip_address': '4.4.4.4',
                     'session_age': invalid
-                }
-            })
+                }})
 
 
 class TestEmail(ValidationBase, unittest.TestCase):
@@ -344,8 +332,7 @@ class TestShoppingCart(ValidationBase, unittest.TestCase):
         for good in (1, 1000):
             self.check_transaction({'shopping_cart': [{'quantity': good}]})
         for bad in (1.1, -1, 0):
-            self.check_invalid_transaction({
-                'shopping_cart': [{
+            self.check_invalid_transaction(
+                {'shopping_cart': [{
                     'quantity': bad
-                }]
-            })
+                }]})
