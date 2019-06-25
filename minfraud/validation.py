@@ -105,6 +105,7 @@ _shipping_address['delivery_speed'] = _delivery_speed
 
 _payment_processor = In([
     'adyen',
+    'afterpay',
     'altapay',
     'amazon_payments',
     'american_express_payment_gateway',
@@ -134,6 +135,7 @@ _payment_processor = In([
     'datacash'
     'dibs',
     'digital_river',
+    'dotpay',
     'ebs',
     'ecomm365',
     'elavon',
@@ -151,6 +153,7 @@ _payment_processor = In([
     'internetsecure',
     'intuit_quickbooks_payments',
     'iugu',
+    'klarna',
     'lemon_way',
     'mastercard_payment_gateway',
     'mercadopago',
@@ -175,6 +178,7 @@ _payment_processor = In([
     'payone',
     'paypal',
     'payplus',
+    'paysafecard',
     'paystation',
     'paytrace',
     'paytrail',
