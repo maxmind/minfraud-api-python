@@ -8,11 +8,15 @@ History
 
 * Python 3.3 and 3.4 are no longer supported.
 * Added the following new values to the ``/payment/processor`` validation:
+  * ``afterpay``
   * ``datacash``
+  * ``dotpay``
   * ``gocardless``
+  * ``klarna``
   * ``payeezy``
   * ``paylike``
   * ``payment_express``
+  * ``paysafecard``
   * ``smartdebit``
   * ``synapsefi``
 
