@@ -19,7 +19,6 @@ from .validation import validate_transaction
 
 class Client(object):
     """Client for accessing the minFraud Score and Insights web services."""
-
     def __init__(
             self,
             account_id=None,
