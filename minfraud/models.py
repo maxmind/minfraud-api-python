@@ -179,7 +179,6 @@ class IPAddress(geoip2.models.Insights):
       Object with the traits of the requested IP address.
 
     """
-
     def __init__(self, ip_address):
         if ip_address is None:
             ip_address = {}
