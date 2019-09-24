@@ -105,6 +105,7 @@ _shipping_address['delivery_speed'] = _delivery_speed
 
 _payment_processor = In([
     'adyen',
+    'affirm',
     'afterpay',
     'altapay',
     'amazon_payments',
@@ -150,6 +151,7 @@ _payment_processor = In([
     'heartland',
     'hipay',
     'ingenico',
+    'interac',
     'internetsecure',
     'intuit_quickbooks_payments',
     'iugu',
