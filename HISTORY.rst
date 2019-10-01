@@ -19,6 +19,8 @@ History
   * ``paysafecard``
   * ``smartdebit``
   * ``synapsefi``
+* Deprecated the ``email_tenure`` and ``ip_tenure`` attributes of
+  ``minfraud.models.Subscores``.
 
 1.7.0 (2018-04-10)
 ++++++++++++++++++
