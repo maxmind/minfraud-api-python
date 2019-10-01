@@ -21,6 +21,8 @@ History
   * ``synapsefi``
 * Deprecated the ``email_tenure`` and ``ip_tenure`` attributes of
   ``minfraud.models.Subscores``.
+* Deprecated the ``is_high_risk`` attribute of
+  ``minfraud.models.GeoIP2Country``.
 
 1.7.0 (2018-04-10)
 ++++++++++++++++++

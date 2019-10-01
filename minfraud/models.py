@@ -100,6 +100,8 @@ class GeoIP2Country(geoip2.records.Country):
 
       :type: bool | None
 
+      .. deprecated:: 1.8.0
+        Deprecated effective August 29, 2019.
 
     Parent:
 
