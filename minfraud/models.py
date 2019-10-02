@@ -84,8 +84,10 @@ class GeoIP2Location(geoip2.records.Location):
     """
 
     __doc__ += geoip2.records.Location.__doc__
-    _valid_attributes = geoip2.records.Location._valid_attributes.union(
-        set(['local_time']))
+
+    def __init__(self, *args, **kwargs):
+        self.local_time = kwargs.get('local_time', None)
+        super(GeoIP2Location, self).__init__(*args, **kwargs)
 
 
 class GeoIP2Country(geoip2.records.Country):
@@ -108,8 +110,10 @@ class GeoIP2Country(geoip2.records.Country):
     """
 
     __doc__ += geoip2.records.Country.__doc__
-    _valid_attributes = geoip2.records.Country._valid_attributes.union(
-        set(['is_high_risk']))
+
+    def __init__(self, *args, **kwargs):
+        self.is_high_risk = kwargs.get('is_high_risk', False)
+        super(GeoIP2Country, self).__init__(*args, **kwargs)
 
 
 class IPAddress(geoip2.models.Insights):
