@@ -44,8 +44,8 @@ _custom_input_value = Any(
     All(_any_string, Match(r'^[^\n]{1,255}\Z')),
     All(
         _any_number,
-        Range(min=-(1 << 53),
-              max=1 << 53,
+        Range(min=-1e13,
+              max=1e13,
               min_included=False,
               max_included=False)), bool)
 

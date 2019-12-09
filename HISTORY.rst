@@ -6,6 +6,9 @@ History
 1.8.0
 ++++++++++++++++++
 
+* The client-side validation for numeric custom inputs has been updated to
+  match the server-side validation. The valid range is -9,999,999,999,999
+  to 9,999,999,999,999. Previously, larger numbers were allowed.
 * Python 3.3 and 3.4 are no longer supported.
 * Added the following new values to the ``/payment/processor`` validation:
   * ``affirm``
