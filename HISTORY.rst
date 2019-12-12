@@ -13,11 +13,15 @@ History
 * Added the following new values to the ``/payment/processor`` validation:
   * ``affirm``
   * ``afterpay``
+  * ``cetelem``
   * ``datacash``
   * ``dotpay``
+  * ``ecommpay``
+  * ``g2a_pay``
   * ``gocardless``
   * ``interac``
   * ``klarna``
+  * ``mercanet``
   * ``payeezy``
   * ``paylike``
   * ``payment_express``
