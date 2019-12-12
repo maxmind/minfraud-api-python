@@ -133,7 +133,7 @@ _payment_processor = In([
     'cybersource',
     'dalenys',
     'dalpay',
-    'datacash'
+    'datacash',
     'dibs',
     'digital_river',
     'dotpay',
