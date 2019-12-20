@@ -3,7 +3,7 @@
 History
 -------
 
-1.8.0
+1.8.0 (2019-12-20)
 ++++++++++++++++++
 
 * The client-side validation for numeric custom inputs has been updated to
