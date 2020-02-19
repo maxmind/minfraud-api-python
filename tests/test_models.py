@@ -114,10 +114,16 @@ class TestModels(unittest.TestCase):
     def test_email(self):
         first_seen = "2016-01-01"
         email = Email(
-            {"first_seen": first_seen, "is_free": True, "is_high_risk": False}
+            {
+                "first_seen": first_seen,
+                "is_disposable": True,
+                "is_free": True,
+                "is_high_risk": False,
+            }
         )
 
         self.assertEqual(first_seen, email.first_seen)
+        self.assertEqual(True, email.is_disposable)
         self.assertEqual(True, email.is_free)
         self.assertEqual(False, email.is_high_risk)
 

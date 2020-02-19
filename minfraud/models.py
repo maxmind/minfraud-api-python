@@ -369,6 +369,14 @@ class Email(object):
 
       :type: str
 
+    .. attribute:: is_disposable
+
+      This field indicates whether the email is from a disposable email
+      provider. It will be ``None`` when an email address was not passed in
+      the inputs.
+
+      :type: bool | None
+
     .. attribute:: is_free
 
       This field is true if MaxMind believes that this email is hosted by a
@@ -389,6 +397,7 @@ class Email(object):
     __slots__ = ()
     _fields = {
         "first_seen": None,
+        "is_disposable": None,
         "is_free": None,
         "is_high_risk": None,
     }

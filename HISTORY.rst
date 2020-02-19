@@ -3,6 +3,13 @@
 History
 -------
 
+1.9.0
+++++++++++++++++++
+
+* Added support for the new email output ``/email/is_disposable``. This may
+  be accessed via the ``is_disposable`` attribute of
+  ``minfraud.modles.Email``.
+
 1.8.0 (2019-12-20)
 ++++++++++++++++++
 

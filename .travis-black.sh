@@ -1,6 +1,8 @@
 #!/bin/bash
 
-diff=$(black check .)
+set -eux
+
+diff=$(black --check .)
 
 if [[ $? != 0 ]]; then
     echo "black failed to run."
