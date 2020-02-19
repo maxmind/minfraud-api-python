@@ -24,11 +24,11 @@ matrix:
 before_install:
   - "if [[ $RUN_SNYK && $SNYK_TOKEN ]]; then sudo apt-get install -y nodejs; npm install -g snyk; fi"
 install:
-  - "if [[ $RUN_LINTER ]]; then pip install --upgrade pylint yapf; fi"
+  - "if [[ $RUN_LINTER ]]; then pip install --upgrade pylint black; fi"
 script:
   - python setup.py test
   - "if [[ $RUN_LINTER ]]; then ./.travis-pylint.sh; fi"
-  - "if [[ $RUN_LINTER ]]; then ./.travis-yapf.sh; fi"
+  - "if [[ $RUN_LINTER ]]; then ./.travis-black.sh; fi"
   - "if [[ $RUN_SNYK && $SNYK_TOKEN ]]; then snyk test --org=maxmind --file=requirements.txt; fi"
 after_success:
   - "if [[ $RUN_SNYK && $SNYK_TOKEN && $TRAVIS_BRANCH == 'master' && $TRAVIS_PULL_REQUEST == 'false' ]]; then snyk monitor --org=maxmind --project-name=maxmind/minfraud-api-python; fi"
