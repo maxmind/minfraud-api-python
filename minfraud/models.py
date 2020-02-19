@@ -5,7 +5,7 @@ minfraud.models
 This module contains models for the minFraud response object.
 
 """
-#pylint:disable=too-many-lines
+# pylint:disable=too-many-lines
 from collections import namedtuple
 from functools import update_wrapper
 
@@ -22,14 +22,13 @@ def _inflate_to_namedtuple(orig_cls):
     keys = sorted(orig_cls._fields.keys())
     fields = orig_cls._fields
     name = orig_cls.__name__
-    orig_cls.__name__ += 'Super'
+    orig_cls.__name__ += "Super"
     ntup = namedtuple(name, keys)
-    ntup.__name__ = name + 'NamedTuple'
-    ntup.__new__.__defaults__ = (None, ) * len(keys)
-    new_cls = type(name, (ntup, orig_cls), {
-        '__slots__': (),
-        '__doc__': orig_cls.__doc__
-    })
+    ntup.__name__ = name + "NamedTuple"
+    ntup.__new__.__defaults__ = (None,) * len(keys)
+    new_cls = type(
+        name, (ntup, orig_cls), {"__slots__": (), "__doc__": orig_cls.__doc__}
+    )
     update_wrapper(_inflate_to_namedtuple, new_cls)
     orig_new = new_cls.__new__
 
@@ -40,8 +39,10 @@ def _inflate_to_namedtuple(orig_cls):
     def new(cls, *args, **kwargs):
         """Create new instance."""
         if (args and kwargs) or len(args) > 1:
-            raise ValueError('Only provide a single (dict) positional argument'
-                             ' or use keyword arguments. Do not use both.')
+            raise ValueError(
+                "Only provide a single (dict) positional argument"
+                " or use keyword arguments. Do not use both."
+            )
         if args:
             values = args[0] if args[0] else {}
 
@@ -86,7 +87,7 @@ class GeoIP2Location(geoip2.records.Location):
     __doc__ += geoip2.records.Location.__doc__
 
     def __init__(self, *args, **kwargs):
-        self.local_time = kwargs.get('local_time', None)
+        self.local_time = kwargs.get("local_time", None)
         super(GeoIP2Location, self).__init__(*args, **kwargs)
 
 
@@ -112,7 +113,7 @@ class GeoIP2Country(geoip2.records.Country):
     __doc__ += geoip2.records.Country.__doc__
 
     def __init__(self, *args, **kwargs):
-        self.is_high_risk = kwargs.get('is_high_risk', False)
+        self.is_high_risk = kwargs.get("is_high_risk", False)
         super(GeoIP2Country, self).__init__(*args, **kwargs)
 
 
@@ -185,22 +186,23 @@ class IPAddress(geoip2.models.Insights):
       Object with the traits of the requested IP address.
 
     """
+
     def __init__(self, ip_address):
         if ip_address is None:
             ip_address = {}
-        locales = ip_address.get('_locales')
-        if '_locales' in ip_address:
-            del ip_address['_locales']
+        locales = ip_address.get("_locales")
+        if "_locales" in ip_address:
+            del ip_address["_locales"]
         super(IPAddress, self).__init__(ip_address, locales=locales)
-        self.country = GeoIP2Country(locales, **ip_address.get('country', {}))
-        self.location = GeoIP2Location(**ip_address.get('location', {}))
-        self.risk = ip_address.get('risk', None)
+        self.country = GeoIP2Country(locales, **ip_address.get("country", {}))
+        self.location = GeoIP2Location(**ip_address.get("location", {}))
+        self.risk = ip_address.get("risk", None)
         self._finalized = True
 
     # Unfortunately the GeoIP2 models are not immutable, only the records. This
     # corrects that for minFraud
     def __setattr__(self, name, value):
-        if hasattr(self, '_finalized') and self._finalized:
+        if hasattr(self, "_finalized") and self._finalized:
             raise AttributeError("can't set attribute")
         super(IPAddress, self).__setattr__(name, value)
 
@@ -219,7 +221,7 @@ class ScoreIPAddress(object):
 
     __slots__ = ()
     _fields = {
-        'risk': None,
+        "risk": None,
     }
 
 
@@ -264,10 +266,10 @@ class Issuer(object):
 
     __slots__ = ()
     _fields = {
-        'name': None,
-        'matches_provided_name': None,
-        'phone_number': None,
-        'matches_provided_phone_number': None,
+        "name": None,
+        "matches_provided_name": None,
+        "phone_number": None,
+        "matches_provided_phone_number": None,
     }
 
 
@@ -317,10 +319,10 @@ class Device(object):
 
     __slots__ = ()
     _fields = {
-        'confidence': None,
-        'id': None,
-        'last_seen': None,
-        'local_time': None,
+        "confidence": None,
+        "id": None,
+        "last_seen": None,
+        "local_time": None,
     }
 
 
@@ -350,8 +352,8 @@ class Disposition(object):
 
     __slots__ = ()
     _fields = {
-        'action': None,
-        'reason': None,
+        "action": None,
+        "reason": None,
     }
 
 
@@ -386,9 +388,9 @@ class Email(object):
 
     __slots__ = ()
     _fields = {
-        'first_seen': None,
-        'is_free': None,
-        'is_high_risk': None,
+        "first_seen": None,
+        "is_free": None,
+        "is_high_risk": None,
     }
 
 
@@ -452,13 +454,13 @@ class CreditCard(object):
 
     __slots__ = ()
     _fields = {
-        'issuer': Issuer,
-        'country': None,
-        'brand': None,
-        'is_issued_in_billing_address_country': None,
-        'is_prepaid': None,
-        'is_virtual': None,
-        'type': None,
+        "issuer": Issuer,
+        "country": None,
+        "brand": None,
+        "is_issued_in_billing_address_country": None,
+        "is_prepaid": None,
+        "is_virtual": None,
+        "type": None,
     }
 
 
@@ -508,11 +510,11 @@ class BillingAddress(object):
 
     __slots__ = ()
     _fields = {
-        'is_postal_in_city': None,
-        'latitude': None,
-        'longitude': None,
-        'distance_to_ip_location': None,
-        'is_in_ip_country': None,
+        "is_postal_in_city": None,
+        "latitude": None,
+        "longitude": None,
+        "distance_to_ip_location": None,
+        "is_in_ip_country": None,
     }
 
 
@@ -579,13 +581,13 @@ class ShippingAddress(object):
 
     __slots__ = ()
     _fields = {
-        'is_postal_in_city': None,
-        'latitude': None,
-        'longitude': None,
-        'distance_to_ip_location': None,
-        'is_in_ip_country': None,
-        'is_high_risk': None,
-        'distance_to_billing_address': None,
+        "is_postal_in_city": None,
+        "latitude": None,
+        "longitude": None,
+        "distance_to_ip_location": None,
+        "is_in_ip_country": None,
+        "is_high_risk": None,
+        "distance_to_billing_address": None,
     }
 
 
@@ -622,9 +624,9 @@ class ServiceWarning(object):
 
     __slots__ = ()
     _fields = {
-        'code': None,
-        'warning': None,
-        'input_pointer': None,
+        "code": None,
+        "warning": None,
+        "input_pointer": None,
     }
 
 
@@ -778,23 +780,23 @@ class Subscores(object):
 
     __slots__ = ()
     _fields = {
-        'avs_result': None,
-        'billing_address': None,
-        'billing_address_distance_to_ip_location': None,
-        'browser': None,
-        'chargeback': None,
-        'country': None,
-        'country_mismatch': None,
-        'cvv_result': None,
-        'email_address': None,
-        'email_domain': None,
-        'email_tenure': None,
-        'ip_tenure': None,
-        'issuer_id_number': None,
-        'order_amount': None,
-        'phone_number': None,
-        'shipping_address_distance_to_ip_location': None,
-        'time_of_day': None,
+        "avs_result": None,
+        "billing_address": None,
+        "billing_address_distance_to_ip_location": None,
+        "browser": None,
+        "chargeback": None,
+        "country": None,
+        "country_mismatch": None,
+        "cvv_result": None,
+        "email_address": None,
+        "email_domain": None,
+        "email_tenure": None,
+        "ip_tenure": None,
+        "issuer_id_number": None,
+        "order_amount": None,
+        "phone_number": None,
+        "shipping_address_distance_to_ip_location": None,
+        "time_of_day": None,
     }
 
 
@@ -898,19 +900,19 @@ class Factors(object):
 
     __slots__ = ()
     _fields = {
-        'billing_address': BillingAddress,
-        'credit_card': CreditCard,
-        'disposition': Disposition,
-        'funds_remaining': None,
-        'device': Device,
-        'email': Email,
-        'id': None,
-        'ip_address': IPAddress,
-        'queries_remaining': None,
-        'risk_score': None,
-        'shipping_address': ShippingAddress,
-        'subscores': Subscores,
-        'warnings': _create_warnings,
+        "billing_address": BillingAddress,
+        "credit_card": CreditCard,
+        "disposition": Disposition,
+        "funds_remaining": None,
+        "device": Device,
+        "email": Email,
+        "id": None,
+        "ip_address": IPAddress,
+        "queries_remaining": None,
+        "risk_score": None,
+        "shipping_address": ShippingAddress,
+        "subscores": Subscores,
+        "warnings": _create_warnings,
     }
 
 
@@ -1009,18 +1011,18 @@ class Insights(object):
 
     __slots__ = ()
     _fields = {
-        'billing_address': BillingAddress,
-        'credit_card': CreditCard,
-        'device': Device,
-        'disposition': Disposition,
-        'email': Email,
-        'funds_remaining': None,
-        'id': None,
-        'ip_address': IPAddress,
-        'queries_remaining': None,
-        'risk_score': None,
-        'shipping_address': ShippingAddress,
-        'warnings': _create_warnings,
+        "billing_address": BillingAddress,
+        "credit_card": CreditCard,
+        "device": Device,
+        "disposition": Disposition,
+        "email": Email,
+        "funds_remaining": None,
+        "id": None,
+        "ip_address": IPAddress,
+        "queries_remaining": None,
+        "risk_score": None,
+        "shipping_address": ShippingAddress,
+        "warnings": _create_warnings,
     }
 
 
@@ -1085,11 +1087,11 @@ class Score(object):
 
     __slots__ = ()
     _fields = {
-        'disposition': Disposition,
-        'funds_remaining': None,
-        'id': None,
-        'ip_address': ScoreIPAddress,
-        'queries_remaining': None,
-        'risk_score': None,
-        'warnings': _create_warnings,
+        "disposition": Disposition,
+        "funds_remaining": None,
+        "id": None,
+        "ip_address": ScoreIPAddress,
+        "queries_remaining": None,
+        "risk_score": None,
+        "warnings": _create_warnings,
     }
