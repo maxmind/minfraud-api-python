@@ -1,9 +1,9 @@
 #!/bin/bash
 
-diff=$(yapf -rd minfraud tests)
+diff=$(black check .)
 
 if [[ $? != 0 ]]; then
-    echo "yapf failed to run."
+    echo "black failed to run."
     echo "$diff"
     exit $?
 elif [[ $diff ]]; then

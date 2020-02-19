@@ -184,7 +184,7 @@ class TestCustomInputs(ValidationBase, unittest.TestCase):
             {"too_big": 1e13},
             {"too_small": -1e13},
             {"too_big_float": float(1e13)},
-        ):  # yapf: disable
+        ):
             self.check_invalid_transaction({"custom_inputs": invalid})
 
 

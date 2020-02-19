@@ -1,5 +1,5 @@
 [MESSAGES CONTROL]
-disable=R0201,R0205,W0105,locally-disabled,too-few-public-methods
+disable=C0330,R0201,R0205,W0105,locally-disabled,too-few-public-methods
 
 [BASIC]
 
