@@ -3,7 +3,7 @@
 History
 -------
 
-1.9.0
+1.9.0 (2020-02-21)
 ++++++++++++++++++
 
 * Added support for the new email output ``/email/is_disposable``. This may
