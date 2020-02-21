@@ -37,7 +37,7 @@ fi
 # Make sure release deps are installed with the current python
 pip install -U sphinx wheel voluptuous strict_rfc3339 validate_email rfc3987
 
-perl -pi -e "s/(?<=__version__ = ').+?(?=')/$version/g" minfraud/version.py
+perl -pi -e "s/(?<=__version__ = \").+?(?=\")/$version/g" minfraud/version.py
 
 echo $"Test results:"
 python setup.py test
