@@ -21,6 +21,7 @@ class TestModels(unittest.TestCase):
             T(CreditCard(), "country"),
             T(Device(), "id"),
             T(Email(), "is_free"),
+            T(EmailDomain(), "first_seen"),
             T(BillingAddress(), "latitude"),
             T(ShippingAddress(), "latitude"),
             T(ServiceWarning(), "code"),
@@ -126,6 +127,12 @@ class TestModels(unittest.TestCase):
         self.assertEqual(True, email.is_disposable)
         self.assertEqual(True, email.is_free)
         self.assertEqual(False, email.is_high_risk)
+
+    def test_email_domain(self):
+        first_seen = "2016-01-01"
+        domain = EmailDomain({"first_seen": first_seen,})
+
+        self.assertEqual(first_seen, domain.first_seen)
 
     def test_geoip2_country(self):
         country = GeoIP2Country(is_high_risk=True, iso_code="US")
@@ -275,7 +282,7 @@ class TestModels(unittest.TestCase):
             "ip_address": {"country": {"iso_code": "US"}},
             "credit_card": {"is_prepaid": True, "brand": "Visa", "type": "debit"},
             "device": {"id": "b643d445-18b2-4b9d-bad4-c9c4366e402a"},
-            "email": {"is_free": True},
+            "email": {"domain": {"first_seen": "2014-02-23"}, "is_free": True},
             "shipping_address": {"is_in_ip_country": True},
             "billing_address": {"is_in_ip_country": True},
             "funds_remaining": 10.01,
@@ -312,6 +319,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual(uuid, insights.device.id)
         self.assertEqual("reject", insights.disposition.action)
         self.assertEqual(True, insights.email.is_free)
+        self.assertEqual("2014-02-23", insights.email.domain.first_seen)
         self.assertEqual(True, insights.shipping_address.is_in_ip_country)
         self.assertEqual(True, insights.billing_address.is_in_ip_country)
         self.assertEqual(uuid, insights.id)

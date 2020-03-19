@@ -3,12 +3,19 @@
 History
 -------
 
+1.10.0
+++++++++++++++++++
+
+* Added support for the new email domain output ``/email/domain/first_seen``.
+  This may be accessed via ``response.email.domain.first_seen`` on the
+  minFraud Insights and Factors response objects.
+
 1.9.0 (2020-02-21)
 ++++++++++++++++++
 
 * Added support for the new email output ``/email/is_disposable``. This may
   be accessed via the ``is_disposable`` attribute of
-  ``minfraud.modles.Email``.
+  ``minfraud.models.Email``.
 
 1.8.0 (2019-12-20)
 ++++++++++++++++++
