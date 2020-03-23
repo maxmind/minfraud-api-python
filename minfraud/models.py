@@ -358,8 +358,34 @@ class Disposition(object):
 
 
 @_inflate_to_namedtuple
+class EmailDomain(object):
+    """Information about the email domain passed in the request.
+
+    .. attribute:: first_seen
+
+      A date string (e.g. 2017-04-24) to identify the date an email domain
+      was first seen by MaxMind. This is expressed using the ISO 8601 date
+      format.
+
+      :type: str
+
+    """
+
+    __slots__ = ()
+    _fields = {
+        "first_seen": None,
+    }
+
+
+@_inflate_to_namedtuple
 class Email(object):
     """Information about the email address passed in the request.
+
+    .. attribute:: domain
+
+      An object containing information about the email domain.
+
+      :type: EmailDomain
 
     .. attribute:: first_seen
 
@@ -396,6 +422,7 @@ class Email(object):
 
     __slots__ = ()
     _fields = {
+        "domain": EmailDomain,
         "first_seen": None,
         "is_disposable": None,
         "is_free": None,
