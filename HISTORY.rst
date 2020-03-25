@@ -9,6 +9,9 @@ History
 * Added support for the new email domain output ``/email/domain/first_seen``.
   This may be accessed via ``response.email.domain.first_seen`` on the
   minFraud Insights and Factors response objects.
+* Added the following new values to the ``/payment/processor`` validation:
+  * ``cardpay``
+  * ``epx``
 
 1.9.0 (2020-02-21)
 ++++++++++++++++++
