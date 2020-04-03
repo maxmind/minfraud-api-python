@@ -451,6 +451,12 @@ class CreditCard(object):
 
       :type: str | None
 
+    .. attribute:: is_business
+
+      This property is ``True`` if the card is a business card.
+
+      :type: bool | None
+
     .. attribute:: is_issued_in_billing_address_country
 
       This property is true if the country of the billing address matches the
@@ -493,6 +499,7 @@ class CreditCard(object):
         "issuer": Issuer,
         "country": None,
         "brand": None,
+        "is_business": None,
         "is_issued_in_billing_address_country": None,
         "is_prepaid": None,
         "is_virtual": None,

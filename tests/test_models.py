@@ -74,6 +74,7 @@ class TestModels(unittest.TestCase):
                 "brand": "Visa",
                 "country": "US",
                 "is_issued_in_billing_address_country": True,
+                "is_business": True,
                 "is_prepaid": True,
                 "is_virtual": True,
                 "type": "credit",
@@ -83,6 +84,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual("Bank", cc.issuer.name)
         self.assertEqual("Visa", cc.brand)
         self.assertEqual("US", cc.country)
+        self.assertEqual(True, cc.is_business)
         self.assertEqual(True, cc.is_prepaid)
         self.assertEqual(True, cc.is_virtual)
         self.assertEqual(True, cc.is_issued_in_billing_address_country)
@@ -280,7 +282,12 @@ class TestModels(unittest.TestCase):
             "id": "b643d445-18b2-4b9d-bad4-c9c4366e402a",
             "disposition": {"action": "reject"},
             "ip_address": {"country": {"iso_code": "US"}},
-            "credit_card": {"is_prepaid": True, "brand": "Visa", "type": "debit"},
+            "credit_card": {
+                "is_business": True,
+                "is_prepaid": True,
+                "brand": "Visa",
+                "type": "debit",
+            },
             "device": {"id": "b643d445-18b2-4b9d-bad4-c9c4366e402a"},
             "email": {"domain": {"first_seen": "2014-02-23"}, "is_free": True},
             "shipping_address": {"is_in_ip_country": True},
@@ -313,6 +320,7 @@ class TestModels(unittest.TestCase):
     def check_insights_data(self, insights, uuid):
         self.assertEqual("US", insights.ip_address.country.iso_code)
         self.assertEqual(False, insights.ip_address.country.is_in_european_union)
+        self.assertEqual(True, insights.credit_card.is_business)
         self.assertEqual(True, insights.credit_card.is_prepaid)
         self.assertEqual("Visa", insights.credit_card.brand)
         self.assertEqual("debit", insights.credit_card.type)
