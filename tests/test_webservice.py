@@ -37,7 +37,7 @@ class BaseTest(object):
         with open(os.path.join(test_dir, self.response_file), encoding="utf-8") as file:
             self.response = file.read()
 
-    base_uri = "https://minfraud.maxmind.com/minfraud/v2.0/"
+    base_uri = "https://minfraud.maxmind.com/minfraud/v2.0"
 
     def test_invalid_auth(self):
         for error in (
@@ -115,7 +115,7 @@ class BaseTest(object):
                 " version=2.0"
             }
         mock.post(
-            self.base_uri + self.type,
+            "/".join(self.base_uri, self.type),
             status_code=status_code,
             text=text,
             headers=headers,
@@ -132,7 +132,10 @@ class BaseTest(object):
         if text is None:
             text = self.response
         mock.post(
-            self.base_uri + self.type, status_code=200, text=text, headers=headers
+           "/".join(self.base_uri, self.type),
+           status_code=200,
+           text=text,
+           headers=headers
         )
         if client is None:
             client = self.client
