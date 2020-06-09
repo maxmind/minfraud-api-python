@@ -109,34 +109,38 @@ class BaseTest(object):
 
     @requests_mock.mock()
     def create_error(self, mock, status_code=400, text="", headers=None):
+        uri = "/".join(
+            [self.base_uri, "transactions", "report"]
+            if self.type == "report"
+            else [self.base_uri, self.type]
+        )
         if headers is None:
             headers = {
-                "Content-Type": "application/vnd.maxmind.com-error+json; charset=UTF-8;"
+                "Content-Type": "application/json"
+                if self.type == "report"
+                else "application/vnd.maxmind.com-error+json; charset=UTF-8;"
                 " version=2.0"
             }
-        mock.post(
-            "/".join(self.base_uri, self.type),
-            status_code=status_code,
-            text=text,
-            headers=headers,
-        )
+        mock.post(uri, status_code=status_code, text=text, headers=headers)
         return getattr(self.client, self.type)(self.full_request)
 
     @requests_mock.mock()
     def create_success(self, mock, text=None, headers=None, client=None, request=None):
+        uri = "/".join(
+            [self.base_uri, "transactions", "report"]
+            if self.type == "report"
+            else [self.base_uri, self.type]
+        )
+        params = {
+            "status_code": 204 if self.type == "report" else 200,
+            "text": self.response if text is None else text,
+        }
         if headers is None:
-            headers = {
+            params["headers"] = {
                 "Content-Type": "application/vnd.maxmind.com-minfraud-{0}+json;"
                 " charset=UTF-8; version=2.0".format(self.type)
             }
-        if text is None:
-            text = self.response
-        mock.post(
-           "/".join(self.base_uri, self.type),
-           status_code=200,
-           text=text,
-           headers=headers
-        )
+        mock.post(uri, **params)
         if client is None:
             client = self.client
         if request is None:
@@ -241,3 +245,23 @@ class TestScore(BaseTransactionTest, unittest.TestCase):
     request_file = "full-transaction-request.json"
     response_file = "score-response.json"
 
+
+class TestReportTransaction(BaseTest, unittest.TestCase):
+    type = "report"
+    request_file = "full-report-request.json"
+    response_file = "report-response.json"
+
+    def test_204(self):
+        self.create_success()
+
+    def test_204_on_request_with_nones(self):
+        self.create_success(
+            request={
+                "ip_address": "81.2.69.60",
+                "tag": "chargeback",
+                "chargeback_code": None,
+                "maxmind_id": None,
+                "minfraud_id": None,
+                "notes": None,
+            }
+        )

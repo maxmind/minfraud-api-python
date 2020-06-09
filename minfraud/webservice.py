@@ -20,7 +20,7 @@ from .errors import (
     PermissionRequiredError,
 )
 from .models import Factors, Insights, Score
-from .validation import validate_transaction
+from .validation import validate_report, validate_transaction
 
 
 class Client(object):
@@ -145,6 +145,36 @@ class Client(object):
         if response.status_code != 200:
             raise self._exception_for_error(response, uri)
         return self._handle_success(response, uri, model_class)
+
+    def report(self, report, validate=True):
+        """Send a transaction report to the Report Transaction endpoint.
+
+        :param report: A dictionary containing the transaction report to be sent
+          to the Report Transations web service as specified in the `REST API`
+          documentation
+          <https://dev.maxmind.com/minfraud/report-transaction/#Request_Body>_.
+        :type report: dict
+        :param validate: If set to false, validation of the report dictionary
+          will be disabled. This validation helps ensure that your request is
+          correct before sending it to MaxMind. Validation raises an
+          InvalidRequestError.
+        :type validate: bool
+        :return: Nothing
+        :rtype None
+        :raises: AuthenticationError, InvalidRequestError, HTTPError,
+          MinFraudError,
+        """
+
+        cleaned_request = self._copy_and_clean(report)
+        if validate:
+            try:
+                validate_report(cleaned_request)
+            except MultipleInvalid as ex:
+                raise InvalidRequestError("Invalid report data: {0}".format(ex))
+        uri = "/".join([self._base_uri, "transactions", "report"])
+        response = self._do_request(uri, cleaned_request)
+        if response.status_code != 204:
+            raise self._exception_for_error(response, uri)
 
     def _do_request(self, uri, data):
         return requests.post(

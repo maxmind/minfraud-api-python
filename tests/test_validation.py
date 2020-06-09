@@ -2,7 +2,7 @@ from decimal import Decimal
 import sys
 from voluptuous import MultipleInvalid
 
-from minfraud.validation import validate_transaction
+from minfraud.validation import validate_transaction, validate_report
 
 if sys.version_info[:2] == (2, 6):
     import unittest2 as unittest
@@ -51,6 +51,29 @@ class ValidationBase(object):
             self.check_transaction({object: {key: good}})
         for bad in ("", 0, "True"):
             self.check_invalid_transaction({object: {key: bad}})
+
+    def setup_report(self, report):
+        if "ip_address" not in report:
+            report["ip_address"] = "1.2.3.4"
+
+        if "tag" not in report:
+            report["tag"] = "chargeback"
+
+    def check_invalid_report(self, report):
+        self.setup_report(report)
+        with self.assertRaises(MultipleInvalid, msg="{0!s} is invalid".format(report)):
+            validate_report(report)
+
+    def check_report(self, report):
+        self.setup_report(report)
+        try:
+            validate_report(report)
+        except MultipleInvalid as e:
+            self.fail("MultipleInvalid {0} thrown for {1}".format(e.msg, report))
+
+    def check_report_str_type(self, key):
+        self.check_report({key: "string"})
+        self.check_invalid_report({key: 12})
 
 
 class TestAccount(unittest.TestCase, ValidationBase):
@@ -332,3 +355,47 @@ class TestShoppingCart(ValidationBase, unittest.TestCase):
             self.check_transaction({"shopping_cart": [{"quantity": good}]})
         for bad in (1.1, -1, 0):
             self.check_invalid_transaction({"shopping_cart": [{"quantity": bad}]})
+
+
+class TestReport(unittest.TestCase, ValidationBase):
+    def test_ip_address(self):
+        for good in ("182.193.2.1", "a74:777f:3acd:57a0:4e7e:e999:7fe6:1b5b"):
+            self.check_report({"ip_address": good})
+        for bad in ("1.2.3.", "299.1.1.1", "::AF123", "", None):
+            self.check_invalid_report({"ip_address": bad})
+
+    def test_maxmind_id(self):
+        for good in ("12345678", "abcdefgh"):
+            self.check_report({"maxmind_id": good})
+        for bad in ("1234567", "123456789", "", None):
+            self.check_invalid_report({"maxmind_id": bad})
+
+    def test_minfraud_id(self):
+        for good in (
+            "12345678-1234-1234-1234-123456789012",
+            "1234-5678-1234-1234-1234-1234-5678-9012",
+            "12345678901234567890123456789012",
+        ):
+            self.check_report({"minfraud_id": good})
+        for bad in (
+            "1234567812341234123412345678901",
+            "12345678-123412341234-12345678901",
+            "12345678-1234-1234-1234-1234567890123",
+            "12345678-1234-1234-1234-12345678901g",
+            "",
+        ):
+            self.check_invalid_report({"minfraud_id": bad})
+
+    def test_strings(self):
+        for key in (
+            "chargeback_code",
+            "notes",
+            "transaction_id",
+        ):
+            self.check_report_str_type(key)
+
+    def test_tag(self):
+        for good in ("chargeback", "not_fraud", "spam_or_abuse", "suspected_fraud"):
+            self.check_report({"tag": good})
+        for bad in ("risky_business", "", None):
+            self.check_invalid_report({"tag": bad})
