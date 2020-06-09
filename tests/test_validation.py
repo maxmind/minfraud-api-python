@@ -36,7 +36,7 @@ class ValidationBase(object):
         except MultipleInvalid as e:
             self.fail("MultipleInvalid {0} thrown for {1}".format(e.msg, transaction))
 
-    def check_str_type(self, object, key):
+    def check_transaction_str_type(self, object, key):
         self.check_transaction({object: {key: "string"}})
         self.check_invalid_transaction({object: {key: 12}})
 
@@ -83,7 +83,7 @@ class AddressBase(ValidationBase):
             "postal",
             "phone_number",
         ):
-            self.check_str_type(self.type, key)
+            self.check_transaction_str_type(self.type, key)
 
     def test_region(self):
         for region in ("A", "AA", "AAA", "ZZZZ"):
@@ -134,10 +134,10 @@ class TestCreditCard(ValidationBase, unittest.TestCase):
             self.check_invalid_transaction({"credit_card": {"last_4_digits": invalid}})
 
     def test_bank_name(self):
-        self.check_str_type("credit_card", "bank_name")
+        self.check_transaction_str_type("credit_card", "bank_name")
 
     def test_bank_phone_number(self):
-        self.check_str_type("credit_card", "bank_phone_number")
+        self.check_transaction_str_type("credit_card", "bank_phone_number")
 
     def test_phone_country_code(self):
         for code in (1, "1", "2341"):
@@ -204,13 +204,13 @@ class TestDevice(ValidationBase, unittest.TestCase):
             validate_transaction({})
 
     def test_user_agent(self):
-        self.check_str_type("device", "user_agent")
+        self.check_transaction_str_type("device", "user_agent")
 
     def test_accept_language(self):
-        self.check_str_type("device", "accept_language")
+        self.check_transaction_str_type("device", "accept_language")
 
     def test_session_id(self):
-        self.check_str_type("device", "session_id")
+        self.check_transaction_str_type("device", "session_id")
 
     def test_session_age(self):
         for valid in (3600, 0, 25.5):
@@ -243,10 +243,10 @@ class TestEmail(ValidationBase, unittest.TestCase):
 
 class TestEvent(ValidationBase, unittest.TestCase):
     def test_transaction(self):
-        self.check_str_type("event", "transaction_id")
+        self.check_transaction_str_type("event", "transaction_id")
 
     def test_shop_id(self):
-        self.check_str_type("event", "shop_id")
+        self.check_transaction_str_type("event", "shop_id")
 
     def test_time(self):
         for good in ("2015-05-08T16:07:56+00:00", "2015-05-08T16:07:56Z"):
@@ -282,13 +282,13 @@ class TestOrder(ValidationBase, unittest.TestCase):
             self.check_invalid_transaction({"order": {"currency": bad}})
 
     def test_discount_code(self):
-        self.check_str_type("order", "discount_code")
+        self.check_transaction_str_type("order", "discount_code")
 
     def test_affiliate_id(self):
-        self.check_str_type("order", "affiliate_id")
+        self.check_transaction_str_type("order", "affiliate_id")
 
     def test_subaffiliate_id(self):
-        self.check_str_type("order", "subaffiliate_id")
+        self.check_transaction_str_type("order", "subaffiliate_id")
 
     def test_is_gift(self):
         self.check_bool("order", "is_gift")
@@ -314,7 +314,7 @@ class TestPayment(ValidationBase, unittest.TestCase):
         self.check_bool("payment", "was_authorized")
 
     def test_decline_code(self):
-        self.check_str_type("payment", "decline_code")
+        self.check_transaction_str_type("payment", "decline_code")
 
 
 class TestShoppingCart(ValidationBase, unittest.TestCase):
