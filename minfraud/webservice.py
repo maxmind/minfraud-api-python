@@ -20,7 +20,7 @@ from .errors import (
     PermissionRequiredError,
 )
 from .models import Factors, Insights, Score
-from .validation import validate_transaction
+from .validation import validate_report, validate_transaction
 
 
 class Client(object):
@@ -141,16 +141,49 @@ class Client(object):
             except MultipleInvalid as ex:
                 raise InvalidRequestError("Invalid transaction data: {0}".format(ex))
         uri = "/".join([self._base_uri, path])
-        response = requests.post(
+        response = self._do_request(uri, cleaned_request)
+        if response.status_code != 200:
+            raise self._exception_for_error(response, uri)
+        return self._handle_success(response, uri, model_class)
+
+    def report(self, report, validate=True):
+        """Send a transaction report to the Report Transaction endpoint.
+
+        :param report: A dictionary containing the transaction report to be sent
+          to the Report Transations web service as specified in the `REST API`
+          documentation
+          <https://dev.maxmind.com/minfraud/report-transaction/#Request_Body>_.
+        :type report: dict
+        :param validate: If set to false, validation of the report dictionary
+          will be disabled. This validation helps ensure that your request is
+          correct before sending it to MaxMind. Validation raises an
+          InvalidRequestError.
+        :type validate: bool
+        :return: Nothing
+        :rtype None
+        :raises: AuthenticationError, InvalidRequestError, HTTPError,
+          MinFraudError,
+        """
+
+        cleaned_request = self._copy_and_clean(report)
+        if validate:
+            try:
+                validate_report(cleaned_request)
+            except MultipleInvalid as ex:
+                raise InvalidRequestError("Invalid report data: {0}".format(ex))
+        uri = "/".join([self._base_uri, "transactions", "report"])
+        response = self._do_request(uri, cleaned_request)
+        if response.status_code != 204:
+            raise self._exception_for_error(response, uri)
+
+    def _do_request(self, uri, data):
+        return requests.post(
             uri,
-            json=cleaned_request,
+            json=data,
             auth=(self._account_id, self._license_key),
             headers={"Accept": "application/json", "User-Agent": self._user_agent()},
             timeout=self._timeout,
         )
-        if response.status_code != 200:
-            raise self._exception_for_error(response, uri)
-        return self._handle_success(response, uri, model_class)
 
     def _copy_and_clean(self, data):
         """Create a copy of the data structure with Nones removed."""
@@ -190,7 +223,7 @@ class Client(object):
             return self._exception_for_4xx_status(response, status, uri)
         if 500 <= status < 600:
             return self._exception_for_5xx_status(status, uri)
-        return self._exception_for_non_200_status(status, uri)
+        return self._exception_for_unexpected_status(status, uri)
 
     def _exception_for_4xx_status(self, response, status, uri):
         """Returns exception for error responses with 4xx status codes."""
@@ -252,7 +285,7 @@ class Client(object):
             uri,
         )
 
-    def _exception_for_non_200_status(self, status, uri):
+    def _exception_for_unexpected_status(self, status, uri):
         """Returns exception for responses with unexpected status codes."""
         return HTTPError(
             u"Received an unexpected HTTP status " u"({0}) for {1}".format(status, uri),

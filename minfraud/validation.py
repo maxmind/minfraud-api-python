@@ -2,6 +2,7 @@
 
 import re
 import sys
+import uuid
 from decimal import Decimal
 
 import rfc3987
@@ -331,5 +332,35 @@ validate_transaction = Schema(
                 "quantity": All(int, Range(min=1)),
             },
         ],
+    },
+)
+
+
+def _maxmind_id(s):
+    if isinstance(s, (str, _unicode)) and len(s) == 8:
+        return s
+    raise ValueError
+
+
+_tag = In(["chargeback", "not_fraud", "spam_or_abuse", "suspected_fraud"])
+
+
+def _uuid(s):
+    if isinstance(s, uuid.UUID):
+        return str(s)
+    if isinstance(s, (str, _unicode)):
+        return str(uuid.UUID(s))
+    raise ValueError
+
+
+validate_report = Schema(
+    {
+        "chargeback_code": _unicode_or_printable_ascii,
+        Required("ip_address"): _ip_address,
+        "maxmind_id": _maxmind_id,
+        "minfraud_id": _uuid,
+        "notes": _unicode_or_printable_ascii,
+        Required("tag"): _tag,
+        "transaction_id": _unicode_or_printable_ascii,
     },
 )

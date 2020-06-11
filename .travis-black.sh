@@ -2,7 +2,7 @@
 
 set -eux
 
-diff=$(black --check .)
+diff=$(black --check --diff .)
 
 if [[ $? != 0 ]]; then
     echo "black failed to run."

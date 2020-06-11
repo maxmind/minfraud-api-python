@@ -1,12 +1,14 @@
-================================================
-minFraud Score, Insights, and Factors Python API
-================================================
+===================================================================
+minFraud Score, Insights, Factors and Report Transaction Python API
+===================================================================
 
 Description
 -----------
 
 This package provides an API for the `MaxMind minFraud Score, Insights, and 
-Factors web services <https://dev.maxmind.com/minfraud/>`_.
+Factors web services <https://dev.maxmind.com/minfraud/>`_ as well as the
+`Report Transaction web service
+<https://dev.maxmind.com/minfraud/report_transaction>`_.
 
 Installation
 ------------
@@ -40,6 +42,9 @@ takes your MaxMind account ID and license key:
 
     >>> client = Client(42, 'licensekey')
 
+Score, Insights and Factors
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 The Factors service is called with the ``factors()`` method:
 
 .. code-block:: pycon
@@ -65,6 +70,26 @@ specified in the REST API documentation
 The ``ip_address`` in the ``device`` sub-dictionary is required. All other
 fields are optional.
 
+Report Transactions
+^^^^^^^^^^^^^^^^^^^
+
+MaxMind encourages the use of this API as data received through this channel is
+used to continually improve the accuracy of our fraud detection algorithms. The
+Report Transaction web service is called with the ``report()`` method:
+
+.. code-block:: pycon
+
+    >>> client.report({'ip_address': '81.2.69.160', 'tag': 'chargeback'})
+
+The method takes a dictionary representing the report to be sent to the web
+service. The structure of this dictionary should be in `the format specified
+in the REST API documentation
+<https://dev.maxmind.com/minfraud/report-transaction/#Request_Body>`_. The
+``ip_address`` and ``tag`` fields are required. All other fields are optional.
+
+Request Validation (for all request methods)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Assuming validation has not been disabled, before sending the transaction to
 the web service, the transaction dictionary structure and content will be
 validated. If validation fails, a ``minfraud.InvalidRequestError``
@@ -82,8 +107,6 @@ The possible errors are:
 * ``minfraud.AuthenticationError`` - This will be raised when the server
   is unable to authenticate the request, e.g., if the license key or account
   ID is invalid.
-* ``minfraud.InsufficientFundsError`` - This will be raised when `your
-  account <https://www.maxmind.com/en/account>`_ is out of funds.
 * ``minfraud.InvalidRequestError`` - This will be raised when the server
   rejects the request as invalid for another reason, such as a missing or
   reserved IP address. It is also raised if validation of the request before
@@ -94,8 +117,16 @@ The possible errors are:
   occurs such as unexpected content from the server. This also serves as the
   base class for the above errors.
 
+Additionally, ``score``, ``insights`` and ``factors`` may also raise:
+
+* ``minfraud.InsufficientFundsError`` - This will be raised when `your
+  account <https://www.maxmind.com/en/account>`_ is out of funds.
+
 Example
 -------
+
+Score, Insights and Factors
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: pycon
 
@@ -201,6 +232,22 @@ Example
     >>>
     >>> client.factors(request)
     Factors(...)
+
+Report Transactions
+^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: pycon
+
+    >>> from minfraud import Client
+    >>>
+    >>> client = Client(42, 'licensekey')
+    >>>
+    >>> transaction_report = {
+    >>>     'ip_address': '81.2.69.160',
+    >>>     'tag': 'chargeback',
+    >>>     'minfraud_id': '2c69df73-01c0-45a5-b218-ed85f40b17aa',
+    >>> }
+    >>> client.report(transaction_report)
 
 Requirements
 ------------

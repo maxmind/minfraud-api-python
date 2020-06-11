@@ -28,20 +28,144 @@ if sys.version_info[0] == 2:
 class BaseTest(object):
     def setUp(self):
         self.client = Client(42, "abcdef123456")
+
         test_dir = os.path.join(os.path.dirname(__file__), "data")
-        with open(
-            os.path.join(test_dir, "full-request.json"), encoding="utf-8"
-        ) as file:
+        with open(os.path.join(test_dir, self.request_file), encoding="utf-8") as file:
             content = file.read()
         self.full_request = json.loads(content)
-        with open(
-            os.path.join(test_dir, "{0}-response.json".format(self.type)),
-            encoding="utf-8",
-        ) as file:
+
+        with open(os.path.join(test_dir, self.response_file), encoding="utf-8") as file:
             self.response = file.read()
 
-    base_uri = "https://minfraud.maxmind.com/minfraud/v2.0/"
+    base_uri = "https://minfraud.maxmind.com/minfraud/v2.0"
 
+    def test_invalid_auth(self):
+        for error in (
+            "ACCOUNT_ID_REQUIRED",
+            "AUTHORIZATION_INVALID",
+            "LICENSE_KEY_REQUIRED",
+            "USER_ID_REQUIRED",
+        ):
+            with self.assertRaisesRegex(AuthenticationError, "Invalid auth"):
+                self.create_error(
+                    text=u'{{"code":"{0:s}","error":"Invalid auth"}}'.format(error),
+                    status_code=401,
+                )
+
+    def test_invalid_request(self):
+        with self.assertRaisesRegex(InvalidRequestError, "IP invalid"):
+            self.create_error(text='{"code":"IP_ADDRESS_INVALID","error":"IP invalid"}')
+
+    def test_300_error(self):
+        with self.assertRaisesRegex(
+            HTTPError, "Received an unexpected HTTP status \(300\) for"
+        ):
+            self.create_error(status_code=300)
+
+    def test_permission_required(self):
+        with self.assertRaisesRegex(PermissionRequiredError, "permission"):
+            self.create_error(
+                text='{"code":"PERMISSION_REQUIRED","error":"permission required"}',
+                status_code=403,
+            )
+
+    def test_400_with_invalid_json(self):
+        with self.assertRaisesRegex(
+            HTTPError,
+            "Received a 400 error but it did not include the expected JSON"
+            " body: b?'?{blah}'?",
+        ):
+            self.create_error(text="{blah}")
+
+    def test_400_with_no_body(self):
+        with self.assertRaisesRegex(HTTPError, "Received a 400 error with no body"):
+            self.create_error()
+
+    def test_400_with_unexpected_content_type(self):
+        with self.assertRaisesRegex(
+            HTTPError, "Received a 400 with the following body: b?'?plain'?"
+        ):
+            self.create_error(headers={"Content-Type": "text/plain"}, text="plain")
+
+    def test_400_without_json_body(self):
+        with self.assertRaisesRegex(
+            HTTPError,
+            "Received a 400 error but it did not include the expected JSON"
+            " body: b?'?plain'?",
+        ):
+            self.create_error(text="plain")
+
+    def test_400_with_unexpected_json(self):
+        with self.assertRaisesRegex(
+            HTTPError,
+            "Error response contains JSON but it does not specify code or"
+            ' error keys: b?\'?{"not":"expected"}\'?',
+        ):
+            self.create_error(text='{"not":"expected"}')
+
+    def test_500_error(self):
+        with self.assertRaisesRegex(HTTPError, "Received a server error \(500\) for"):
+            self.create_error(status_code=500)
+
+    @requests_mock.mock()
+    def create_error(self, mock, status_code=400, text="", headers=None):
+        uri = "/".join(
+            [self.base_uri, "transactions", "report"]
+            if self.type == "report"
+            else [self.base_uri, self.type]
+        )
+        if headers is None:
+            headers = {
+                "Content-Type": "application/json"
+                if self.type == "report"
+                else "application/vnd.maxmind.com-error+json; charset=UTF-8;"
+                " version=2.0"
+            }
+        mock.post(uri, status_code=status_code, text=text, headers=headers)
+        return getattr(self.client, self.type)(self.full_request)
+
+    @requests_mock.mock()
+    def create_success(self, mock, text=None, headers=None, client=None, request=None):
+        uri = "/".join(
+            [self.base_uri, "transactions", "report"]
+            if self.type == "report"
+            else [self.base_uri, self.type]
+        )
+        params = {
+            "status_code": 204 if self.type == "report" else 200,
+            "text": self.response if text is None else text,
+        }
+        if headers is None:
+            params["headers"] = {
+                "Content-Type": "application/vnd.maxmind.com-minfraud-{0}+json;"
+                " charset=UTF-8; version=2.0".format(self.type)
+            }
+        mock.post(uri, **params)
+        if client is None:
+            client = self.client
+        if request is None:
+            request = self.full_request
+        return getattr(client, self.type)(request)
+
+    def test_named_constructor_args(self):
+        id = "47"
+        key = "1234567890ab"
+        for client in (
+            Client(account_id=id, license_key=key),
+            Client(user_id=id, license_key=key),
+        ):
+            self.assertEqual(client._account_id, id)
+            self.assertEqual(client._license_key, key)
+
+    def test_missing_constructor_args(self):
+        with self.assertRaises(TypeError):
+            Client(license_key="1234567890ab")
+
+        with self.assertRaises(TypeError):
+            Client("47")
+
+
+class BaseTransactionTest(BaseTest):
     def has_ip_location(self):
         return self.type in ["factors", "insights"]
 
@@ -100,135 +224,44 @@ class BaseTest(object):
                 status_code=402,
             )
 
-    def test_invalid_auth(self):
-        for error in (
-            "ACCOUNT_ID_REQUIRED",
-            "AUTHORIZATION_INVALID",
-            "LICENSE_KEY_REQUIRED",
-            "USER_ID_REQUIRED",
-        ):
-            with self.assertRaisesRegex(AuthenticationError, "Invalid auth"):
-                self.create_error(
-                    text=u'{{"code":"{0:s}","error":"Invalid auth"}}'.format(error),
-                    status_code=401,
-                )
 
-    def test_invalid_request(self):
-        with self.assertRaisesRegex(InvalidRequestError, "IP invalid"):
-            self.create_error(text='{"code":"IP_ADDRESS_INVALID","error":"IP invalid"}')
-
-    def test_permission_required(self):
-        with self.assertRaisesRegex(PermissionRequiredError, "permission"):
-            self.create_error(
-                text='{"code":"PERMISSION_REQUIRED","error":"permission required"}',
-                status_code=403,
-            )
-
-    def test_400_with_invalid_json(self):
-        with self.assertRaisesRegex(
-            HTTPError,
-            "Received a 400 error but it did not include the expected JSON"
-            " body: b?'?{blah}'?",
-        ):
-            self.create_error(text="{blah}")
-
-    def test_400_with_no_body(self):
-        with self.assertRaisesRegex(HTTPError, "Received a 400 error with no body"):
-            self.create_error()
-
-    def test_400_with_unexpected_content_type(self):
-        with self.assertRaisesRegex(
-            HTTPError, "Received a 400 with the following body: b?'?plain'?"
-        ):
-            self.create_error(headers={"Content-Type": "text/plain"}, text="plain")
-
-    def test_400_without_json_body(self):
-        with self.assertRaisesRegex(
-            HTTPError,
-            "Received a 400 error but it did not include the expected JSON"
-            " body: b?'?plain'?",
-        ):
-            self.create_error(text="plain")
-
-    def test_400_with_unexpected_json(self):
-        with self.assertRaisesRegex(
-            HTTPError,
-            "Error response contains JSON but it does not specify code or"
-            ' error keys: b?\'?{"not":"expected"}\'?',
-        ):
-            self.create_error(text='{"not":"expected"}')
-
-    def test_300_error(self):
-        with self.assertRaisesRegex(
-            HTTPError, "Received an unexpected HTTP status \(300\) for"
-        ):
-            self.create_error(status_code=300)
-
-    def test_500_error(self):
-        with self.assertRaisesRegex(HTTPError, "Received a server error \(500\) for"):
-            self.create_error(status_code=500)
-
-    @requests_mock.mock()
-    def create_error(self, mock, status_code=400, text="", headers=None):
-        if headers is None:
-            headers = {
-                "Content-Type": "application/vnd.maxmind.com-error+json; charset=UTF-8;"
-                " version=2.0"
-            }
-        mock.post(
-            self.base_uri + self.type,
-            status_code=status_code,
-            text=text,
-            headers=headers,
-        )
-        return getattr(self.client, self.type)(self.full_request)
-
-    @requests_mock.mock()
-    def create_success(self, mock, text=None, headers=None, client=None, request=None):
-        if headers is None:
-            headers = {
-                "Content-Type": "application/vnd.maxmind.com-minfraud-{0}+json;"
-                " charset=UTF-8; version=2.0".format(self.type)
-            }
-        if text is None:
-            text = self.response
-        mock.post(
-            self.base_uri + self.type, status_code=200, text=text, headers=headers
-        )
-        if client is None:
-            client = self.client
-        if request is None:
-            request = self.full_request
-        return getattr(client, self.type)(request)
-
-    def test_named_constructor_args(self):
-        id = "47"
-        key = "1234567890ab"
-        for client in (
-            Client(account_id=id, license_key=key),
-            Client(user_id=id, license_key=key),
-        ):
-            self.assertEqual(client._account_id, id)
-            self.assertEqual(client._license_key, key)
-
-    def test_missing_constructor_args(self):
-        with self.assertRaises(TypeError):
-            Client(license_key="1234567890ab")
-
-        with self.assertRaises(TypeError):
-            Client("47")
-
-
-class TestFactors(BaseTest, unittest.TestCase):
+class TestFactors(BaseTransactionTest, unittest.TestCase):
     type = "factors"
     cls = Factors
+    request_file = "full-transaction-request.json"
+    response_file = "factors-response.json"
 
 
-class TestInsights(BaseTest, unittest.TestCase):
+class TestInsights(BaseTransactionTest, unittest.TestCase):
     type = "insights"
     cls = Insights
+    request_file = "full-transaction-request.json"
+    response_file = "insights-response.json"
 
 
-class TestScore(BaseTest, unittest.TestCase):
+class TestScore(BaseTransactionTest, unittest.TestCase):
     type = "score"
     cls = Score
+    request_file = "full-transaction-request.json"
+    response_file = "score-response.json"
+
+
+class TestReportTransaction(BaseTest, unittest.TestCase):
+    type = "report"
+    request_file = "full-report-request.json"
+    response_file = "report-response.json"
+
+    def test_204(self):
+        self.create_success()
+
+    def test_204_on_request_with_nones(self):
+        self.create_success(
+            request={
+                "ip_address": "81.2.69.60",
+                "tag": "chargeback",
+                "chargeback_code": None,
+                "maxmind_id": None,
+                "minfraud_id": None,
+                "notes": None,
+            }
+        )
