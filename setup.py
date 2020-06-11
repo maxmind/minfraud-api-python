@@ -35,7 +35,7 @@ if os.environ.get("SNYK_TOKEN") and os.environ.get("RUN_SNYK"):
 setup(
     name="minfraud",
     version=_version,
-    description="MaxMind minFraud Score, Insights, and Factors API",
+    description="MaxMind minFraud Score, Insights, Factors and Report Transactions API",
     long_description=_readme,
     author="Gregory Oschwald",
     author_email="goschwald@maxmind.com",
