@@ -3,7 +3,7 @@
 History
 -------
 
-1.12.0 (XXXX-XX-XX)
+1.12.0 (2020-06-17)
 +++++++++++++++++++
 
 * Added support for the Report Transactions API. We encourage use of this API
