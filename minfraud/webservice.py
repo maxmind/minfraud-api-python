@@ -160,7 +160,7 @@ class Client(object):
           InvalidRequestError.
         :type validate: bool
         :return: Nothing
-        :rtype None
+        :rtype: None
         :raises: AuthenticationError, InvalidRequestError, HTTPError,
           MinFraudError,
         """

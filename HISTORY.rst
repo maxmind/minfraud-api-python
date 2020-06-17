@@ -3,6 +3,10 @@
 History
 -------
 
+1.12.1 (XXXX-XX-XX)
+
+* Fixes documentation that caused warnings when building a distribution.
+
 1.12.0 (2020-06-17)
 +++++++++++++++++++
 
