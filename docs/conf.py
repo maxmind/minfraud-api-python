@@ -228,7 +228,7 @@ texinfo_documents = [
         "minfraud Documentation",
         "Gregory Oschwald",
         "minfraud",
-        "minFraud Score, Insights, and Factors web service client.",
+        "minFraud Score, Insights, Factors and Report Transaction web service client.",
         "Miscellaneous",
     ),
 ]
