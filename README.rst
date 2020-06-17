@@ -42,8 +42,8 @@ takes your MaxMind account ID and license key:
 
     >>> client = Client(42, 'licensekey')
 
-Score, Insights and Factors
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Score, Insights and Factors Usage
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The Factors service is called with the ``factors()`` method:
 
@@ -66,12 +66,12 @@ The Score web service is called with the ``score()`` method:
 Each of these methods takes a dictionary representing the transaction to be sent
 to the web service. The structure of this dictionary should be in `the format
 specified in the REST API documentation
-<https://dev.maxmind.com/minfraud/#Request_Body>`_.
+<https://dev.maxmind.com/minfraud/#Request_Body>`__.
 The ``ip_address`` in the ``device`` sub-dictionary is required. All other
 fields are optional.
 
-Report Transactions
-^^^^^^^^^^^^^^^^^^^
+Report Transactions Usage
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 MaxMind encourages the use of this API as data received through this channel is
 used to continually improve the accuracy of our fraud detection algorithms. The
@@ -84,7 +84,7 @@ Report Transaction web service is called with the ``report()`` method:
 The method takes a dictionary representing the report to be sent to the web
 service. The structure of this dictionary should be in `the format specified
 in the REST API documentation
-<https://dev.maxmind.com/minfraud/report-transaction/#Request_Body>`_. The
+<https://dev.maxmind.com/minfraud/report-transaction/#Request_Body>`__. The
 ``ip_address`` and ``tag`` fields are required. All other fields are optional.
 
 Request Validation (for all request methods)
@@ -122,11 +122,11 @@ Additionally, ``score``, ``insights`` and ``factors`` may also raise:
 * ``minfraud.InsufficientFundsError`` - This will be raised when `your
   account <https://www.maxmind.com/en/account>`_ is out of funds.
 
-Example
--------
+Examples
+--------
 
-Score, Insights and Factors
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Score, Insights and Factors Example
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: pycon
 
@@ -233,8 +233,8 @@ Score, Insights and Factors
     >>> client.factors(request)
     Factors(...)
 
-Report Transactions
-^^^^^^^^^^^^^^^^^^^
+Report Transactions Example
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: pycon
 
