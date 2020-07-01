@@ -3,6 +3,17 @@
 History
 -------
 
+1.13.0
++++++++++++++++++++
+
+* Added the following new values to the ``/payment/processor`` validation:
+  * ``cashfree``
+  * ``first_atlantic_commerce``
+  * ``komoju``
+  * ``paytm``
+  * ``razorpay``
+  * ``systempay``
+
 1.12.1 (2020-06-17)
 +++++++++++++++++++
 
