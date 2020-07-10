@@ -738,6 +738,13 @@ class Subscores(object):
 
       :type: float | None
 
+    .. attribute:: device
+
+      The risk associated with the device. If present, this is a value in the
+      range 0.01 to 99.
+
+      :type: float | None
+
     .. attribute:: email_address
 
       The risk associated with the particular email address. If present, this
@@ -749,6 +756,14 @@ class Subscores(object):
 
       The general risk associated with the email domain. If present, this is a
       value in the range 0.01 to 99.
+
+      :type: float | None
+
+    .. attribute:: email_local_part
+
+      The risk associated with the email address local part (the part of the
+      email address before the @ symbol). If present, this is a value in the
+      range 0.01 to 99.
 
       :type: float | None
 
@@ -804,6 +819,13 @@ class Subscores(object):
 
       :type: float | None
 
+    .. attribute:: shipping_address
+
+      The risk associated with the shipping address. If present, this is a
+      value in the range 0.01 to 99.
+
+      :type: float | None
+
     .. attribute:: shipping_address_distance_to_ip_location
 
       The risk associated with the distance between the shipping address and
@@ -831,13 +853,16 @@ class Subscores(object):
         "country": None,
         "country_mismatch": None,
         "cvv_result": None,
+        "device": None,
         "email_address": None,
         "email_domain": None,
+        "email_local_part": None,
         "email_tenure": None,
         "ip_tenure": None,
         "issuer_id_number": None,
         "order_amount": None,
         "phone_number": None,
+        "shipping_address": None,
         "shipping_address_distance_to_ip_location": None,
         "time_of_day": None,
     }

@@ -265,13 +265,16 @@ class TestModels(unittest.TestCase):
         self.assertEqual(0.06, factors.subscores.country)
         self.assertEqual(0.07, factors.subscores.country_mismatch)
         self.assertEqual(0.08, factors.subscores.cvv_result)
+        self.assertEqual(0.18, factors.subscores.device)
         self.assertEqual(0.09, factors.subscores.email_address)
         self.assertEqual(0.10, factors.subscores.email_domain)
+        self.assertEqual(0.19, factors.subscores.email_local_part)
         self.assertEqual(0.11, factors.subscores.email_tenure)
         self.assertEqual(0.12, factors.subscores.ip_tenure)
         self.assertEqual(0.13, factors.subscores.issuer_id_number)
         self.assertEqual(0.14, factors.subscores.order_amount)
         self.assertEqual(0.15, factors.subscores.phone_number)
+        self.assertEqual(0.2, factors.subscores.shipping_address)
         self.assertEqual(
             0.16, factors.subscores.shipping_address_distance_to_ip_location
         )
@@ -304,13 +307,16 @@ class TestModels(unittest.TestCase):
                 "country": 0.06,
                 "country_mismatch": 0.07,
                 "cvv_result": 0.08,
+                "device": 0.18,
                 "email_address": 0.09,
                 "email_domain": 0.10,
+                "email_local_part": 0.19,
                 "email_tenure": 0.11,
                 "ip_tenure": 0.12,
                 "issuer_id_number": 0.13,
                 "order_amount": 0.14,
                 "phone_number": 0.15,
+                "shipping_address": 0.2,
                 "shipping_address_distance_to_ip_location": 0.16,
                 "time_of_day": 0.17,
             },
