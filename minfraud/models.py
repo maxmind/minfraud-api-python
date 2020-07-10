@@ -727,7 +727,7 @@ class Subscores(object):
 
       The risk associated with the combination of IP country, card issuer
       country, billing country, and shipping country.  If present, this is a
-      value in the  range 0.01 to 99.
+      value in the range 0.01 to 99.
 
       :type: float | None
 
