@@ -26,17 +26,14 @@ from .validation import validate_report, validate_transaction
 class Client:
     """Client for accessing the minFraud Score and Insights web services."""
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
-        account_id=None,
-        license_key=None,
-        host="minfraud.maxmind.com",
-        locales=("en",),
-        timeout=None,
-        # This is deprecated and not documented for that reason.
-        # It can be removed if we do a major release in the future.
-        user_id=None,
-    ):
+        account_id: int,
+        license_key: str,
+        host: str = "minfraud.maxmind.com",
+        locales: Tuple[str] = ("en",),
+        timeout: None = None,
+    ) -> None:
         """Constructor for Client.
 
         :param account_id: Your MaxMind account ID
@@ -52,22 +49,11 @@ class Client:
         :return: Client object
         :rtype: Client
         """
-        # pylint: disable=too-many-arguments
-        if account_id is None:
-            account_id = user_id
 
-        if account_id is None:
-            raise TypeError("The account_id is a required parameter")
-        if license_key is None:
-            raise TypeError("The license_key is a required parameter")
-
-        # pylint: disable=too-many-arguments
         self._locales = locales
         # requests 2.12.2 requires that the username passed to auth be a
         # string
-        self._account_id = (
-            account_id if isinstance(account_id, bytes) else str(account_id)
-        )
+        self._account_id = str(account_id)
         self._license_key = license_key
         self._base_uri = u"https://{0:s}/minfraud/v2.0".format(host)
         self._timeout = timeout

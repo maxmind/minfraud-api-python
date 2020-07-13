@@ -144,7 +144,7 @@ class BaseTest:
         key = "1234567890ab"
         for client in (
             Client(account_id=id, license_key=key),
-            Client(user_id=id, license_key=key),
+            Client(account_id=id, license_key=key),
         ):
             self.assertEqual(client._account_id, id)
             self.assertEqual(client._license_key, key)
