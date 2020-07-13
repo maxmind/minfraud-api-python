@@ -5,6 +5,9 @@ History
 
 2.0.0
 
+* IMPORTANT: Python 2.7 and 3.5 support has been dropped. Python 3.6 or greater
+  is required.
+* Type hints have been added.
 * Email validation is now done with ``email_validator`` rather than
   ``validate_email``.
 
