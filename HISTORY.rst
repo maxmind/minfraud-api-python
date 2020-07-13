@@ -13,7 +13,6 @@ History
   * ``paytm``
   * ``razorpay``
   * ``systempay``
-
 * Added support for the following new subscores in Factors responses:
   * ``device``: the risk associated with the device
   * ``email_local_part``: the risk associated with the email address local part
