@@ -20,7 +20,7 @@ from strict_rfc3339 import validate_rfc3339
 # It is failing on pylint 1.8.3 on Travis. We should try removing this
 # when a new version of pylint is released.
 # pylint: disable=wrong-import-order
-from validate_email import validate_email
+from email_validator import validate_email
 from voluptuous import All, Any, In, Match, Range, Required, Schema
 from typing import Optional
 
@@ -61,9 +61,9 @@ def _ip_address(s: Optional[str]) -> str:
 
 
 def _email_or_md5(s: str) -> str:
-    if validate_email(s) or re.match(r"^[0-9A-Fa-f]{32}$", s):
+    if re.match(r"^[0-9A-Fa-f]{32}$", s):
         return s
-    raise ValueError
+    return validate_email(s, check_deliverability=False).email
 
 
 # based off of:

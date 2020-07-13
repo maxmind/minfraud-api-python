@@ -17,12 +17,12 @@ with io.open("README.rst", "r", encoding="utf-8") as f:
     _readme = f.read()
 
 requirements = [
+    "email_validator",
     "geoip2>=4.0.0,<5.0.0",
     "requests>=2.22.0",
     "rfc3987",
     "strict-rfc3339",
     "urllib3>=1.25.2",
-    "validate_email",
     "voluptuous",
 ]
 

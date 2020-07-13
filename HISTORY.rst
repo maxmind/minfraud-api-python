@@ -3,6 +3,11 @@
 History
 -------
 
+2.0.0
+
+* Email validation is now done with ``email_validator`` rather than
+  ``validate_email``.
+
 1.13.0 (2020-07-14)
 +++++++++++++++++++
 
