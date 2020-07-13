@@ -13,15 +13,11 @@ import re
 import uuid
 import urllib.parse
 from decimal import Decimal
+from typing import Optional
 
-# I can't reproduce the failure locally and the order looks right to me.
-# It is failing on pylint 1.8.3 on Travis. We should try removing this
-# when a new version of pylint is released.
-# pylint: disable=wrong-import-order
 from email_validator import validate_email  # type: ignore
 from voluptuous import All, Any, In, Match, Range, Required, Schema
 from voluptuous.error import UrlInvalid
-from typing import Optional
 
 # Pylint doesn't like the private function type naming for the callable
 # objects below. Given the consistent use of them, the current names seem
