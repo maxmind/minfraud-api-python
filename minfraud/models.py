@@ -8,6 +8,7 @@ This module contains models for the minFraud response object.
 # pylint:disable=too-many-lines
 from collections import namedtuple
 from functools import update_wrapper
+from typing import List, Optional
 
 import geoip2.models
 import geoip2.records
@@ -84,7 +85,9 @@ class GeoIP2Location(geoip2.records.Location):
 
     """
 
-    __doc__ += geoip2.records.Location.__doc__
+    __doc__ += geoip2.records.Location.__doc__  # type: ignore
+
+    local_time: Optional[str]
 
     def __init__(self, *args, **kwargs):
         self.local_time = kwargs.get("local_time", None)
@@ -110,7 +113,9 @@ class GeoIP2Country(geoip2.records.Country):
 
     """
 
-    __doc__ += geoip2.records.Country.__doc__
+    __doc__ += geoip2.records.Country.__doc__  # type: ignore
+
+    is_high_risk: bool
 
     def __init__(self, *args, **kwargs):
         self.is_high_risk = kwargs.get("is_high_risk", False)
@@ -187,6 +192,10 @@ class IPAddress(geoip2.models.Insights):
 
     """
 
+    country: GeoIP2Country
+    location: GeoIP2Location
+    risk: Optional[float]
+
     def __init__(self, ip_address):
         if ip_address is None:
             ip_address = {}
@@ -219,6 +228,8 @@ class ScoreIPAddress:
       :type: float | None
     """
 
+    risk: Optional[float]
+
     __slots__ = ()
     _fields = {
         "risk": None,
@@ -243,14 +254,14 @@ class Issuer:
       no issuer ID number (IIN) was provided in the request or if MaxMind does
       not have a name associated with the IIN.
 
-      :type: bool
+      :type: bool | None
 
     .. attribute:: phone_number
 
       The phone number of the bank which issued the credit
       card. In some cases the phone number we return may be out of date.
 
-      :type: str
+      :type: str | None
 
     .. attribute:: matches_provided_phone_number
 
@@ -260,9 +271,14 @@ class Issuer:
       phone number or no issuer ID number (IIN) was provided in the request or
       if MaxMind does not have a phone number associated with the IIN.
 
-      :type: bool
+      :type: bool | None
 
     """
+
+    name: Optional[str]
+    matches_provided_name: Optional[bool]
+    phone_number: Optional[str]
+    matches_provided_phone_number: Optional[bool]
 
     __slots__ = ()
     _fields = {
@@ -317,6 +333,11 @@ class Device:
 
     """
 
+    confidence: Optional[float]
+    id: Optional[str]
+    last_seen: Optional[str]
+    local_time: Optional[str]
+
     __slots__ = ()
     _fields = {
         "confidence": None,
@@ -350,6 +371,9 @@ class Disposition:
       :type: str | None
     """
 
+    action: Optional[str]
+    reason: Optional[str]
+
     __slots__ = ()
     _fields = {
         "action": None,
@@ -367,9 +391,11 @@ class EmailDomain:
       was first seen by MaxMind. This is expressed using the ISO 8601 date
       format.
 
-      :type: str
+      :type: str | None
 
     """
+
+    first_seen: Optional[str]
 
     __slots__ = ()
     _fields = {
@@ -393,7 +419,7 @@ class Email:
       was first seen by MaxMind. This is expressed using the ISO 8601 date
       format.
 
-      :type: str
+      :type: str | None
 
     .. attribute:: is_disposable
 
@@ -419,6 +445,12 @@ class Email:
       :type: bool | None
 
     """
+
+    domain: EmailDomain
+    first_seen: Optional[str]
+    is_disposable: Optional[bool]
+    is_free: Optional[bool]
+    is_high_risk: Optional[bool]
 
     __slots__ = ()
     _fields = {
@@ -494,6 +526,15 @@ class CreditCard:
 
     """
 
+    issuer: Issuer
+    country: Optional[str]
+    brand: Optional[str]
+    is_business: Optional[bool]
+    is_issued_in_billing_address_country: Optional[bool]
+    is_prepaid: Optional[bool]
+    is_virtual: Optional[bool]
+    type: Optional[str]
+
     __slots__ = ()
     _fields = {
         "issuer": Issuer,
@@ -550,6 +591,12 @@ class BillingAddress:
       :type: float | None
 
     """
+
+    is_postal_in_city: Optional[bool]
+    latitude: Optional[float]
+    longitude: Optional[float]
+    distance_to_ip_location: Optional[int]
+    is_in_ip_country: Optional[bool]
 
     __slots__ = ()
     _fields = {
@@ -622,6 +669,14 @@ class ShippingAddress:
 
     """
 
+    is_postal_in_city: Optional[bool]
+    latitude: Optional[float]
+    longitude: Optional[float]
+    distance_to_ip_location: Optional[int]
+    is_in_ip_country: Optional[bool]
+    is_high_risk: Optional[bool]
+    distance_to_billing_address: Optional[int]
+
     __slots__ = ()
     _fields = {
         "is_postal_in_city": None,
@@ -645,7 +700,7 @@ class ServiceWarning:
       <https://dev.maxmind.com/minfraud/#Warning>`_
       for the current list of of warning codes.
 
-      :type: str
+      :type: str | None
 
     .. attribute:: warning
 
@@ -653,7 +708,7 @@ class ServiceWarning:
       warning. The description may change at any time and should not be matched
       against.
 
-      :type: str
+      :type: str | None
 
     .. attribute:: input_pointer
 
@@ -661,9 +716,13 @@ class ServiceWarning:
       the warning is associated with. For instance, if the warning was about
       the billing city, the string would be ``"/billing/city"``.
 
-      :type: str
+      :type: str | None
 
     """
+
+    code: Optional[str]
+    warning: Optional[str]
+    input_pointer: Optional[str]
 
     __slots__ = ()
     _fields = {
@@ -843,6 +902,27 @@ class Subscores:
 
     """
 
+    avs_result: Optional[float]
+    billing_address: Optional[float]
+    billing_address_distance_to_ip_location: Optional[float]
+    browser: Optional[float]
+    chargeback: Optional[float]
+    country: Optional[float]
+    country_mismatch: Optional[float]
+    cvv_result: Optional[float]
+    device: Optional[float]
+    email_address: Optional[float]
+    email_domain: Optional[float]
+    email_local_part: Optional[float]
+    email_tenure: Optional[float]
+    ip_tenure: Optional[float]
+    issuer_id_number: Optional[float]
+    order_amount: Optional[float]
+    phone_number: Optional[float]
+    shipping_address: Optional[float]
+    shipping_address_distance_to_ip_location: Optional[float]
+    time_of_day: Optional[float]
+
     __slots__ = ()
     _fields = {
         "avs_result": None,
@@ -966,6 +1046,20 @@ class Factors:
       individual components that are used to calculate the overall risk score.
     """
 
+    billing_address: BillingAddress
+    credit_card: CreditCard
+    disposition: Disposition
+    funds_remaining: Optional[float]
+    device: Device
+    email: Email
+    id: Optional[str]
+    ip_address: IPAddress
+    queries_remaining: Optional[int]
+    risk_score: Optional[float]
+    shipping_address: ShippingAddress
+    subscores: Subscores
+    warnings: List[ServiceWarning]
+
     __slots__ = ()
     _fields = {
         "billing_address": BillingAddress,
@@ -1077,6 +1171,19 @@ class Insights:
       minFraud data related to the shipping address used in the transaction.
     """
 
+    billing_address: BillingAddress
+    credit_card: CreditCard
+    device: Device
+    disposition: Disposition
+    email: Email
+    funds_remaining: Optional[float]
+    id: Optional[str]
+    ip_address: IPAddress
+    queries_remaining: Optional[int]
+    risk_score: Optional[float]
+    shipping_address: ShippingAddress
+    warnings: List[ServiceWarning]
+
     __slots__ = ()
     _fields = {
         "billing_address": BillingAddress,
@@ -1152,6 +1259,14 @@ class Score:
 
       :type: IPAddress
     """
+
+    disposition: Disposition
+    funds_remaining: Optional[float]
+    id: Optional[str]
+    ip_address: ScoreIPAddress
+    queries_remaining: Optional[int]
+    risk_score: Optional[float]
+    warnings: List[ServiceWarning]
 
     __slots__ = ()
     _fields = {
