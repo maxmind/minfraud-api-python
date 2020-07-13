@@ -729,7 +729,7 @@ class ServiceWarning:
 def _create_warnings(warnings: List[Dict[str, str]]) -> Tuple[ServiceWarning, ...]:
     if not warnings:
         return ()
-    return tuple([ServiceWarning(x) for x in warnings])
+    return tuple([ServiceWarning(x) for x in warnings])  # type: ignore
 
 
 @_inflate_to_namedtuple

@@ -1,7 +1,7 @@
 import os
 
 import json
-import requests_mock
+import requests_mock  # type: ignore
 from io import open
 from minfraud.errors import (
     HTTPError,

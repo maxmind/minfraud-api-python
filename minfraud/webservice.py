@@ -218,7 +218,7 @@ class Client:
             )
         if "ip_address" in body:
             body["ip_address"]["_locales"] = self._locales
-        return model_class(body)
+        return model_class(body)  # type: ignore
 
     def _exception_for_error(
         self, response: Response, uri: str

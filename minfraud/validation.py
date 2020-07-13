@@ -18,7 +18,7 @@ from decimal import Decimal
 # It is failing on pylint 1.8.3 on Travis. We should try removing this
 # when a new version of pylint is released.
 # pylint: disable=wrong-import-order
-from email_validator import validate_email
+from email_validator import validate_email  # type: ignore
 from voluptuous import All, Any, In, Match, Range, Required, Schema
 from voluptuous.error import UrlInvalid
 from typing import Optional
