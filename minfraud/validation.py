@@ -1,4 +1,12 @@
-"""This is an internal module used for validating the minFraud request."""
+"""This is an internal module used for validating the minFraud request.
+
+Internal code for validating the transaction dictionary.
+
+This code is only intended for internal use and is subject to change in ways
+that may break any direct use of it.
+
+"""
+
 
 import ipaddress
 import re
@@ -14,14 +22,6 @@ from strict_rfc3339 import validate_rfc3339
 # pylint: disable=wrong-import-order
 from validate_email import validate_email
 from voluptuous import All, Any, In, Match, Range, Required, Schema
-
-"""
-Internal code for validating the transaction dictionary.
-
-This code is only intended for internal use and is subject to change in ways
-that may break any direct use of it.
-
-"""
 
 # Pylint doesn't like the private function type naming for the callable
 # objects below. Given the consistent use of them, the current names seem

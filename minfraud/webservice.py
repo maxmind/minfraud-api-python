@@ -195,7 +195,8 @@ class Client:
             return [self._copy_and_clean(x) for x in data if x is not None]
         return data
 
-    def _user_agent(self):
+    @staticmethod
+    def _user_agent():
         """Create User-Agent header."""
         return "minFraud-API/%s %s" % (__version__, default_user_agent())
 
@@ -261,7 +262,8 @@ class Client:
                 uri,
             )
 
-    def _exception_for_web_service_error(self, message, code, status, uri):
+    @staticmethod
+    def _exception_for_web_service_error(message, code, status, uri):
         """Returns exception for error responses with the JSON body."""
         if code in (
             "ACCOUNT_ID_REQUIRED",
@@ -277,7 +279,8 @@ class Client:
 
         return InvalidRequestError(message, code, status, uri)
 
-    def _exception_for_5xx_status(self, status, uri):
+    @staticmethod
+    def _exception_for_5xx_status(status, uri):
         """Returns exception for error response with 5xx status codes."""
         return HTTPError(
             u"Received a server error ({0}) for " u"{1}".format(status, uri),
@@ -285,7 +288,8 @@ class Client:
             uri,
         )
 
-    def _exception_for_unexpected_status(self, status, uri):
+    @staticmethod
+    def _exception_for_unexpected_status(status, uri):
         """Returns exception for responses with unexpected status codes."""
         return HTTPError(
             u"Received an unexpected HTTP status " u"({0}) for {1}".format(status, uri),
