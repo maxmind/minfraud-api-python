@@ -23,7 +23,7 @@ from .models import Factors, Insights, Score
 from .validation import validate_report, validate_transaction
 
 
-class Client(object):
+class Client:
     """Client for accessing the minFraud Score and Insights web services."""
 
     def __init__(

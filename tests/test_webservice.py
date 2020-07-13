@@ -25,7 +25,7 @@ if sys.version_info[0] == 2:
     unittest.TestCase.assertRegex = unittest.TestCase.assertRegexpMatches
 
 
-class BaseTest(object):
+class BaseTest:
     def setUp(self):
         self.client = Client(42, "abcdef123456")
 

@@ -208,7 +208,7 @@ class IPAddress(geoip2.models.Insights):
 
 
 @_inflate_to_namedtuple
-class ScoreIPAddress(object):
+class ScoreIPAddress:
     """Information about the IP address for minFraud Score.
 
     .. attribute:: risk
@@ -226,7 +226,7 @@ class ScoreIPAddress(object):
 
 
 @_inflate_to_namedtuple
-class Issuer(object):
+class Issuer:
     """Information about the credit card issuer.
 
     .. attribute:: name
@@ -274,7 +274,7 @@ class Issuer(object):
 
 
 @_inflate_to_namedtuple
-class Device(object):
+class Device:
     """Information about the device associated with the IP address.
 
     In order to receive device output from minFraud Insights or minFraud
@@ -327,7 +327,7 @@ class Device(object):
 
 
 @_inflate_to_namedtuple
-class Disposition(object):
+class Disposition:
     """Information about disposition for the request as set by custom rules.
 
     In order to receive a disposition, you must be use the minFraud custom
@@ -358,7 +358,7 @@ class Disposition(object):
 
 
 @_inflate_to_namedtuple
-class EmailDomain(object):
+class EmailDomain:
     """Information about the email domain passed in the request.
 
     .. attribute:: first_seen
@@ -378,7 +378,7 @@ class EmailDomain(object):
 
 
 @_inflate_to_namedtuple
-class Email(object):
+class Email:
     """Information about the email address passed in the request.
 
     .. attribute:: domain
@@ -431,7 +431,7 @@ class Email(object):
 
 
 @_inflate_to_namedtuple
-class CreditCard(object):
+class CreditCard:
     """Information about the credit card based on the issuer ID number.
 
     .. attribute:: country
@@ -508,7 +508,7 @@ class CreditCard(object):
 
 
 @_inflate_to_namedtuple
-class BillingAddress(object):
+class BillingAddress:
     """Information about the billing address.
 
     .. attribute:: distance_to_ip_location
@@ -562,7 +562,7 @@ class BillingAddress(object):
 
 
 @_inflate_to_namedtuple
-class ShippingAddress(object):
+class ShippingAddress:
     """Information about the shipping address.
 
     .. attribute:: distance_to_ip_location
@@ -635,7 +635,7 @@ class ShippingAddress(object):
 
 
 @_inflate_to_namedtuple
-class ServiceWarning(object):
+class ServiceWarning:
     """Warning from the web service.
 
     .. attribute:: code
@@ -674,7 +674,7 @@ class ServiceWarning(object):
 
 
 @_inflate_to_namedtuple
-class Subscores(object):
+class Subscores:
     """Subscores used in calculating the overall risk score.
 
     .. attribute:: avs_result
@@ -869,7 +869,7 @@ class Subscores(object):
 
 
 @_inflate_to_namedtuple
-class Factors(object):
+class Factors:
     """Model for Factors response.
 
     .. attribute:: id
@@ -985,7 +985,7 @@ class Factors(object):
 
 
 @_inflate_to_namedtuple
-class Insights(object):
+class Insights:
     """Model for Insights response.
 
     .. attribute:: id
@@ -1095,7 +1095,7 @@ class Insights(object):
 
 
 @_inflate_to_namedtuple
-class Score(object):
+class Score:
     """Model for Score response.
 
     .. attribute:: id

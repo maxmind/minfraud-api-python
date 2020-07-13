@@ -14,7 +14,7 @@ if sys.version_info[0] == 2:
     unittest.TestCase.assertRegex = unittest.TestCase.assertRegexpMatches
 
 
-class ValidationBase(object):
+class ValidationBase:
     def setup_transaction(self, transaction):
         if "device" not in transaction:
             transaction["device"] = {}
