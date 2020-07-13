@@ -8,7 +8,7 @@ This module contains models for the minFraud response object.
 # pylint:disable=too-many-lines
 from collections import namedtuple
 from functools import update_wrapper
-from typing import List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import geoip2.models
 import geoip2.records
@@ -59,12 +59,6 @@ def _inflate_to_namedtuple(orig_cls):
     return new_cls
 
 
-def _create_warnings(warnings):
-    if not warnings:
-        return ()
-    return tuple([ServiceWarning(x) for x in warnings])
-
-
 class GeoIP2Location(geoip2.records.Location):
     """Location information for the IP address.
 
@@ -89,7 +83,7 @@ class GeoIP2Location(geoip2.records.Location):
 
     local_time: Optional[str]
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         self.local_time = kwargs.get("local_time", None)
         super(GeoIP2Location, self).__init__(*args, **kwargs)
 
@@ -117,7 +111,7 @@ class GeoIP2Country(geoip2.records.Country):
 
     is_high_risk: bool
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         self.is_high_risk = kwargs.get("is_high_risk", False)
         super(GeoIP2Country, self).__init__(*args, **kwargs)
 
@@ -196,7 +190,7 @@ class IPAddress(geoip2.models.Insights):
     location: GeoIP2Location
     risk: Optional[float]
 
-    def __init__(self, ip_address):
+    def __init__(self, ip_address: Dict[str, Any]) -> None:
         if ip_address is None:
             ip_address = {}
         locales = ip_address.get("_locales")
@@ -210,7 +204,7 @@ class IPAddress(geoip2.models.Insights):
 
     # Unfortunately the GeoIP2 models are not immutable, only the records. This
     # corrects that for minFraud
-    def __setattr__(self, name, value):
+    def __setattr__(self, name: str, value: Any) -> None:
         if hasattr(self, "_finalized") and self._finalized:
             raise AttributeError("can't set attribute")
         super(IPAddress, self).__setattr__(name, value)
@@ -730,6 +724,12 @@ class ServiceWarning:
         "warning": None,
         "input_pointer": None,
     }
+
+
+def _create_warnings(warnings: List[Dict[str, str]]) -> Tuple[ServiceWarning, ...]:
+    if not warnings:
+        return ()
+    return tuple([ServiceWarning(x) for x in warnings])
 
 
 @_inflate_to_namedtuple

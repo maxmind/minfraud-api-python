@@ -6,6 +6,8 @@ This module contains errors that are raised by this package.
 
 """
 
+from typing import Optional
+
 
 class MinFraudError(RuntimeError):
     """There was a non-specific error in minFraud.
@@ -39,7 +41,9 @@ class HTTPError(MinFraudError):
 
     """
 
-    def __init__(self, message, http_status=None, uri=None):
+    def __init__(
+        self, message: str, http_status: Optional[int] = None, uri: Optional[str] = None
+    ) -> None:
         super(HTTPError, self).__init__(message)
         self.http_status = http_status
         self.uri = uri

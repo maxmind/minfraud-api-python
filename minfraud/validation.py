@@ -22,6 +22,7 @@ from strict_rfc3339 import validate_rfc3339
 # pylint: disable=wrong-import-order
 from validate_email import validate_email
 from voluptuous import All, Any, In, Match, Range, Required, Schema
+from typing import Optional
 
 # Pylint doesn't like the private function type naming for the callable
 # objects below. Given the consistent use of them, the current names seem
@@ -52,14 +53,14 @@ _telephone_country_code = Any(
 _subdivision_iso_code = All(str, Match(r"^[0-9A-Z]{1,4}$"))
 
 
-def _ip_address(s):
+def _ip_address(s: Optional[str]) -> str:
     # ipaddress accepts numeric IPs, which we don't want.
     if isinstance(s, str) and not re.match(r"^\d+$", s):
         return str(ipaddress.ip_address(s))
     raise ValueError
 
 
-def _email_or_md5(s):
+def _email_or_md5(s: str) -> str:
     if validate_email(s) or re.match(r"^[0-9A-Fa-f]{32}$", s):
         return s
     raise ValueError
@@ -67,7 +68,7 @@ def _email_or_md5(s):
 
 # based off of:
 # http://stackoverflow.com/questions/2532053/validate-a-hostname-string
-def _hostname(hostname):
+def _hostname(hostname: str) -> str:
     if len(hostname) > 255:
         raise ValueError
     allowed = re.compile(r"(?!-)[A-Z\d-]{1,63}(?<!-)$", re.IGNORECASE)
@@ -238,13 +239,13 @@ _iin = Match("^[0-9]{6}$")
 _credit_card_last_4 = Match("^[0-9]{4}$")
 
 
-def _credit_card_token(s):
+def _credit_card_token(s: str) -> str:
     if re.match("^[\x21-\x7E]{1,255}$", s) and not re.match("^[0-9]{1,19}$", s):
         return s
     raise ValueError
 
 
-def _rfc3339_datetime(s):
+def _rfc3339_datetime(s: str) -> str:
     if validate_rfc3339(s):
         return s
     raise ValueError
@@ -269,7 +270,7 @@ _currency_code = Match("^[A-Z]{3}$")
 _price = All(_any_number, Range(min=0, min_included=False))
 
 
-def _uri(s):
+def _uri(s: str) -> str:
     if rfc3987.parse(s).get("scheme") in ["http", "https"]:
         return s
     raise ValueError
@@ -332,7 +333,7 @@ validate_transaction = Schema(
 )
 
 
-def _maxmind_id(s):
+def _maxmind_id(s: Optional[str]) -> str:
     if isinstance(s, str) and len(s) == 8:
         return s
     raise ValueError
@@ -341,7 +342,7 @@ def _maxmind_id(s):
 _tag = In(["chargeback", "not_fraud", "spam_or_abuse", "suspected_fraud"])
 
 
-def _uuid(s):
+def _uuid(s: str) -> str:
     if isinstance(s, uuid.UUID):
         return str(s)
     if isinstance(s, str):

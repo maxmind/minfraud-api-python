@@ -27,7 +27,7 @@ class TestModels(unittest.TestCase):
                 with self.assertRaises(
                     AttributeError, msg="{0!s} - {0}".format(model.obj, attr)
                 ):
-                    setattr(model.obj, attr, 5)
+                    setattr(model.obj, attr, 5)  # type: ignore
 
     def test_billing_address(self):
         address = BillingAddress(self.address_dict)
