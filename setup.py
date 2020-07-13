@@ -20,7 +20,6 @@ requirements = [
     "email_validator",
     "geoip2>=4.0.0,<5.0.0",
     "requests>=2.22.0",
-    "strict-rfc3339",
     "urllib3>=1.25.2",
     "voluptuous",
 ]

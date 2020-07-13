@@ -14,8 +14,6 @@ import uuid
 import urllib.parse
 from decimal import Decimal
 
-from strict_rfc3339 import validate_rfc3339
-
 # I can't reproduce the failure locally and the order looks right to me.
 # It is failing on pylint 1.8.3 on Travis. We should try removing this
 # when a new version of pylint is released.
@@ -246,10 +244,9 @@ def _credit_card_token(s: str) -> str:
     raise ValueError
 
 
-def _rfc3339_datetime(s: str) -> str:
-    if validate_rfc3339(s):
-        return s
-    raise ValueError
+_rfc3339_datetime = Match(
+    r"\A\d{4}-\d{2}-\d{2}[Tt]\d{2}:\d{2}:\d{2}(\.\d+)?(?:[Zz]|[+-]\d{2}:\d{2})\Z"
+)
 
 
 _event_type = In(
