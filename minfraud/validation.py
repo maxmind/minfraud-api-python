@@ -11,9 +11,9 @@ that may break any direct use of it.
 import ipaddress
 import re
 import uuid
+import urllib.parse
 from decimal import Decimal
 
-import rfc3987
 from strict_rfc3339 import validate_rfc3339
 
 # I can't reproduce the failure locally and the order looks right to me.
@@ -22,6 +22,7 @@ from strict_rfc3339 import validate_rfc3339
 # pylint: disable=wrong-import-order
 from email_validator import validate_email
 from voluptuous import All, Any, In, Match, Range, Required, Schema
+from voluptuous.error import UrlInvalid
 from typing import Optional
 
 # Pylint doesn't like the private function type naming for the callable
@@ -271,9 +272,10 @@ _price = All(_any_number, Range(min=0, min_included=False))
 
 
 def _uri(s: str) -> str:
-    if rfc3987.parse(s).get("scheme") in ["http", "https"]:
-        return s
-    raise ValueError
+    parsed = urllib.parse.urlparse(s)
+    if parsed.scheme not in ["http", "https"] or not parsed.netloc:
+        raise UrlInvalid("URL is invalid")
+    return s
 
 
 validate_transaction = Schema(

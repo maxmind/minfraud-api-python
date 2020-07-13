@@ -10,6 +10,7 @@ History
 * Type hints have been added.
 * Email validation is now done with ``email_validator`` rather than
   ``validate_email``.
+* URL validation is now done with ``urllib.parse`` rather than ``rfc3987``.
 
 1.13.0 (2020-07-14)
 +++++++++++++++++++
