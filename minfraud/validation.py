@@ -1,12 +1,12 @@
 """This is an internal module used for validating the minFraud request."""
 
+import ipaddress
 import re
 import sys
 import uuid
 from decimal import Decimal
 
 import rfc3987
-from geoip2.compat import compat_ip_address
 from strict_rfc3339 import validate_rfc3339
 
 # I can't reproduce the failure locally and the order looks right to me.
@@ -65,7 +65,7 @@ _subdivision_iso_code = All(_any_string, Match(r"^[0-9A-Z]{1,4}$"))
 def _ip_address(s):
     # ipaddress accepts numeric IPs, which we don't want.
     if isinstance(s, (str, _unicode)) and not re.match(r"^\d+$", s):
-        return str(compat_ip_address(s))
+        return str(ipaddress.ip_address(s))
     raise ValueError
 
 
