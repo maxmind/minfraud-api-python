@@ -35,7 +35,7 @@ if [ -n "$(git status --porcelain)" ]; then
 fi
 
 # Make sure release deps are installed with the current python
-pip install -U sphinx wheel voluptuous email_validator
+pip install -U sphinx wheel voluptuous email_validator twine
 
 perl -pi -e "s/(?<=__version__ = \").+?(?=\")/$version/g" minfraud/version.py
 
