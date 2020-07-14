@@ -1049,13 +1049,13 @@ class Factors:
     billing_address: BillingAddress
     credit_card: CreditCard
     disposition: Disposition
-    funds_remaining: Optional[float]
+    funds_remaining: float
     device: Device
     email: Email
-    id: Optional[str]
+    id: str
     ip_address: IPAddress
-    queries_remaining: Optional[int]
-    risk_score: Optional[float]
+    queries_remaining: int
+    risk_score: float
     shipping_address: ShippingAddress
     subscores: Subscores
     warnings: List[ServiceWarning]
@@ -1176,11 +1176,11 @@ class Insights:
     device: Device
     disposition: Disposition
     email: Email
-    funds_remaining: Optional[float]
-    id: Optional[str]
+    funds_remaining: float
+    id: str
     ip_address: IPAddress
-    queries_remaining: Optional[int]
-    risk_score: Optional[float]
+    queries_remaining: int
+    risk_score: float
     shipping_address: ShippingAddress
     warnings: List[ServiceWarning]
 
@@ -1261,11 +1261,11 @@ class Score:
     """
 
     disposition: Disposition
-    funds_remaining: Optional[float]
-    id: Optional[str]
+    funds_remaining: float
+    id: str
     ip_address: ScoreIPAddress
-    queries_remaining: Optional[int]
-    risk_score: Optional[float]
+    queries_remaining: int
+    risk_score: float
     warnings: List[ServiceWarning]
 
     __slots__ = ()
