@@ -27,7 +27,7 @@ from .validation import validate_report, validate_transaction
 
 
 class Client:
-    """Client for accessing the minFraud Score and Insights web services."""
+    """Client for accessing the minFraud web services."""
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
