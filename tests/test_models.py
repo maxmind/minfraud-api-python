@@ -1,15 +1,6 @@
-import sys
-
 from minfraud.models import *
 
-if sys.version_info[:2] == (2, 6):
-    import unittest2 as unittest
-else:
-    import unittest
-
-if sys.version_info[0] == 2:
-    unittest.TestCase.assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
-    unittest.TestCase.assertRegex = unittest.TestCase.assertRegexpMatches
+import unittest
 
 
 class TestModels(unittest.TestCase):
@@ -32,9 +23,9 @@ class TestModels(unittest.TestCase):
         for model in models:
             for attr in (model.attr, "does_not_exist"):
                 with self.assertRaises(
-                    AttributeError, msg="{0!s} - {0}".format(model.obj, attr)
+                    AttributeError, msg="{0!s} - {1}".format(model.obj, attr)
                 ):
-                    setattr(model.obj, attr, 5)
+                    setattr(model.obj, attr, 5)  # type: ignore
 
     def test_billing_address(self):
         address = BillingAddress(self.address_dict)

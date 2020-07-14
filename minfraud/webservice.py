@@ -6,7 +6,10 @@ This module contains the webservice client class.
 
 """
 
+from typing import Any, cast, Dict, Optional, Tuple, Type, Union
+
 import requests
+from requests.models import Response
 from requests.utils import default_user_agent
 from voluptuous import MultipleInvalid
 
@@ -23,20 +26,17 @@ from .models import Factors, Insights, Score
 from .validation import validate_report, validate_transaction
 
 
-class Client(object):
-    """Client for accessing the minFraud Score and Insights web services."""
+class Client:
+    """Client for accessing the minFraud web services."""
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
-        account_id=None,
-        license_key=None,
-        host="minfraud.maxmind.com",
-        locales=("en",),
-        timeout=None,
-        # This is deprecated and not documented for that reason.
-        # It can be removed if we do a major release in the future.
-        user_id=None,
-    ):
+        account_id: int,
+        license_key: str,
+        host: str = "minfraud.maxmind.com",
+        locales: Tuple[str] = ("en",),
+        timeout: Optional[float] = None,
+    ) -> None:
         """Constructor for Client.
 
         :param account_id: Your MaxMind account ID
@@ -52,27 +52,16 @@ class Client(object):
         :return: Client object
         :rtype: Client
         """
-        # pylint: disable=too-many-arguments
-        if account_id is None:
-            account_id = user_id
 
-        if account_id is None:
-            raise TypeError("The account_id is a required parameter")
-        if license_key is None:
-            raise TypeError("The license_key is a required parameter")
-
-        # pylint: disable=too-many-arguments
         self._locales = locales
         # requests 2.12.2 requires that the username passed to auth be a
         # string
-        self._account_id = (
-            account_id if isinstance(account_id, bytes) else str(account_id)
-        )
+        self._account_id = str(account_id)
         self._license_key = license_key
         self._base_uri = u"https://{0:s}/minfraud/v2.0".format(host)
         self._timeout = timeout
 
-    def factors(self, transaction, validate=True):
+    def factors(self, transaction: Dict[str, Any], validate: bool = True) -> Factors:
         """Query Factors endpoint with transaction data.
 
         :param transaction: A dictionary containing the transaction to be
@@ -90,9 +79,11 @@ class Client(object):
         :raises: AuthenticationError, InsufficientFundsError,
           InvalidRequestError, HTTPError, MinFraudError,
         """
-        return self._response_for("factors", Factors, transaction, validate)
+        return cast(
+            Factors, self._response_for("factors", Factors, transaction, validate)
+        )
 
-    def insights(self, transaction, validate=True):
+    def insights(self, transaction: Dict[str, Any], validate: bool = True) -> Insights:
         """Query Insights endpoint with transaction data.
 
         :param transaction: A dictionary containing the transaction to be
@@ -110,9 +101,11 @@ class Client(object):
         :raises: AuthenticationError, InsufficientFundsError,
           InvalidRequestError, HTTPError, MinFraudError,
         """
-        return self._response_for("insights", Insights, transaction, validate)
+        return cast(
+            Insights, self._response_for("insights", Insights, transaction, validate)
+        )
 
-    def score(self, transaction, validate=True):
+    def score(self, transaction: Dict[str, Any], validate: bool = True) -> Score:
         """Query Score endpoint with transaction data.
 
         :param transaction: A dictionary containing the transaction to be
@@ -130,9 +123,15 @@ class Client(object):
         :raises: AuthenticationError, InsufficientFundsError,
           InvalidRequestError, HTTPError, MinFraudError,
         """
-        return self._response_for("score", Score, transaction, validate)
+        return cast(Score, self._response_for("score", Score, transaction, validate))
 
-    def _response_for(self, path, model_class, request, validate):
+    def _response_for(
+        self,
+        path: str,
+        model_class: Union[Type[Factors], Type[Score], Type[Insights]],
+        request: Dict[str, Any],
+        validate: bool,
+    ) -> Union[Score, Factors, Insights]:
         """Send request and create response object."""
         cleaned_request = self._copy_and_clean(request)
         if validate:
@@ -146,7 +145,7 @@ class Client(object):
             raise self._exception_for_error(response, uri)
         return self._handle_success(response, uri, model_class)
 
-    def report(self, report, validate=True):
+    def report(self, report: Dict[str, Optional[str]], validate: bool = True) -> None:
         """Send a transaction report to the Report Transaction endpoint.
 
         :param report: A dictionary containing the transaction report to be sent
@@ -176,7 +175,7 @@ class Client(object):
         if response.status_code != 204:
             raise self._exception_for_error(response, uri)
 
-    def _do_request(self, uri, data):
+    def _do_request(self, uri: str, data: Dict[str, Any]) -> Response:
         return requests.post(
             uri,
             json=data,
@@ -185,7 +184,7 @@ class Client(object):
             timeout=self._timeout,
         )
 
-    def _copy_and_clean(self, data):
+    def _copy_and_clean(self, data: Any) -> Any:
         """Create a copy of the data structure with Nones removed."""
         if isinstance(data, dict):
             return dict(
@@ -195,11 +194,17 @@ class Client(object):
             return [self._copy_and_clean(x) for x in data if x is not None]
         return data
 
-    def _user_agent(self):
+    @staticmethod
+    def _user_agent() -> str:
         """Create User-Agent header."""
         return "minFraud-API/%s %s" % (__version__, default_user_agent())
 
-    def _handle_success(self, response, uri, model_class):
+    def _handle_success(
+        self,
+        response: Response,
+        uri: str,
+        model_class: Union[Type[Factors], Type[Score], Type[Insights]],
+    ) -> Union[Score, Factors, Insights]:
         """Handle successful response."""
         try:
             body = response.json()
@@ -207,15 +212,23 @@ class Client(object):
             raise MinFraudError(
                 "Received a 200 response"
                 " but could not decode the response as "
-                "JSON: {0}".format(response.content),
+                "JSON: {0}".format(str(response.content)),
                 200,
                 uri,
             )
         if "ip_address" in body:
             body["ip_address"]["_locales"] = self._locales
-        return model_class(body)
+        return model_class(body)  # type: ignore
 
-    def _exception_for_error(self, response, uri):
+    def _exception_for_error(
+        self, response: Response, uri: str
+    ) -> Union[
+        AuthenticationError,
+        InsufficientFundsError,
+        InvalidRequestError,
+        HTTPError,
+        PermissionRequiredError,
+    ]:
         """Returns the exception for the error responses."""
         status = response.status_code
 
@@ -225,7 +238,15 @@ class Client(object):
             return self._exception_for_5xx_status(status, uri)
         return self._exception_for_unexpected_status(status, uri)
 
-    def _exception_for_4xx_status(self, response, status, uri):
+    def _exception_for_4xx_status(
+        self, response: Response, status: int, uri: str
+    ) -> Union[
+        AuthenticationError,
+        InsufficientFundsError,
+        InvalidRequestError,
+        HTTPError,
+        PermissionRequiredError,
+    ]:
         """Returns exception for error responses with 4xx status codes."""
         if not response.content:
             return HTTPError(
@@ -234,7 +255,7 @@ class Client(object):
         if response.headers.get("Content-Type", "").find("json") == -1:
             return HTTPError(
                 "Received a {0} with the following "
-                "body: {1}".format(status, response.content),
+                "body: {1}".format(status, str(response.content)),
                 status,
                 uri,
             )
@@ -244,7 +265,7 @@ class Client(object):
             return HTTPError(
                 "Received a {status:d} error but it did not include"
                 " the expected JSON body: {content}".format(
-                    status=status, content=response.content
+                    status=status, content=str(response.content)
                 ),
                 status,
                 uri,
@@ -256,12 +277,20 @@ class Client(object):
                 )
             return HTTPError(
                 "Error response contains JSON but it does not specify code"
-                " or error keys: {0}".format(response.content),
+                " or error keys: {0}".format(str(response.content)),
                 status,
                 uri,
             )
 
-    def _exception_for_web_service_error(self, message, code, status, uri):
+    @staticmethod
+    def _exception_for_web_service_error(
+        message: str, code: str, status: int, uri: str
+    ) -> Union[
+        InvalidRequestError,
+        AuthenticationError,
+        PermissionRequiredError,
+        InsufficientFundsError,
+    ]:
         """Returns exception for error responses with the JSON body."""
         if code in (
             "ACCOUNT_ID_REQUIRED",
@@ -277,7 +306,8 @@ class Client(object):
 
         return InvalidRequestError(message, code, status, uri)
 
-    def _exception_for_5xx_status(self, status, uri):
+    @staticmethod
+    def _exception_for_5xx_status(status: int, uri: str) -> HTTPError:
         """Returns exception for error response with 5xx status codes."""
         return HTTPError(
             u"Received a server error ({0}) for " u"{1}".format(status, uri),
@@ -285,7 +315,8 @@ class Client(object):
             uri,
         )
 
-    def _exception_for_unexpected_status(self, status, uri):
+    @staticmethod
+    def _exception_for_unexpected_status(status: int, uri: str) -> HTTPError:
         """Returns exception for responses with unexpected status codes."""
         return HTTPError(
             u"Received an unexpected HTTP status " u"({0}) for {1}".format(status, uri),

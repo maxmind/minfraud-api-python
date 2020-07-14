@@ -1,8 +1,7 @@
 import os
-import sys
 
 import json
-import requests_mock
+import requests_mock  # type: ignore
 from io import open
 from minfraud.errors import (
     HTTPError,
@@ -15,17 +14,10 @@ from minfraud.errors import (
 from minfraud.models import Factors, Insights, Score
 from minfraud.webservice import Client
 
-if sys.version_info[:2] == (2, 6):
-    import unittest2 as unittest
-else:
-    import unittest
-
-if sys.version_info[0] == 2:
-    unittest.TestCase.assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
-    unittest.TestCase.assertRegex = unittest.TestCase.assertRegexpMatches
+import unittest
 
 
-class BaseTest(object):
+class BaseTest:
     def setUp(self):
         self.client = Client(42, "abcdef123456")
 
@@ -152,7 +144,7 @@ class BaseTest(object):
         key = "1234567890ab"
         for client in (
             Client(account_id=id, license_key=key),
-            Client(user_id=id, license_key=key),
+            Client(account_id=id, license_key=key),
         ):
             self.assertEqual(client._account_id, id)
             self.assertEqual(client._license_key, key)

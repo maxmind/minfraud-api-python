@@ -5,7 +5,7 @@ minFraud Score, Insights, Factors and Report Transaction Python API
 Description
 -----------
 
-This package provides an API for the `MaxMind minFraud Score, Insights, and 
+This package provides an API for the `MaxMind minFraud Score, Insights, and
 Factors web services <https://dev.maxmind.com/minfraud/>`_ as well as the
 `Report Transaction web service
 <https://dev.maxmind.com/minfraud/report_transaction>`_.
@@ -252,8 +252,7 @@ Report Transactions Example
 Requirements
 ------------
 
-This code requires Python 2.7+ or 3.5+. Older versions are not supported.
-This library has been tested with CPython and PyPy.
+Python 3.6 or greater is required. Older versions are not supported.
 
 Versioning
 ----------

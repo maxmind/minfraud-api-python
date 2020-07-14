@@ -3,32 +3,25 @@ sudo: false
 language: python
 matrix:
   include:
-    - python: 2.7
-      dist: trusty
-    - python: 3.5
-      dist: trusty
     - python: 3.6
-      dist: trusty
     - python: 3.7
-      dist: xenial
     - python: 3.8
-      dist: xenial
       env:
         - RUN_LINTER=1
         - RUN_SNYK=1
     - python: nightly
       dist: xenial
-    - python: pypy
-      dist: trusty
   allow_failures:
     - python: nightly
 
 before_install:
   - "if [[ $RUN_SNYK && $SNYK_TOKEN ]]; then sudo apt-get install -y nodejs; npm install -g snyk; fi"
 install:
-  - "if [[ $RUN_LINTER ]]; then pip install --upgrade pylint black; fi"
+  - pip install -e git+https://github.com/maxmind/GeoIP2-python#egg=geoip2
+  - "if [[ $RUN_LINTER ]]; then pip install --upgrade pylint black mypy voluptuous-stubs; fi"
 script:
   - python setup.py test
+  - "if [[ $RUN_LINTER ]]; then mypy minfraud tests; fi"
   - "if [[ $RUN_LINTER ]]; then ./.travis-pylint.sh; fi"
   - "if [[ $RUN_LINTER ]]; then ./.travis-black.sh; fi"
   - "if [[ $RUN_SNYK && $SNYK_TOKEN ]]; then snyk test --org=maxmind --file=requirements.txt; fi"

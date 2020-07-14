@@ -8,6 +8,7 @@ This module contains models for the minFraud response object.
 # pylint:disable=too-many-lines
 from collections import namedtuple
 from functools import update_wrapper
+from typing import Any, Dict, List, Optional, Tuple
 
 import geoip2.models
 import geoip2.records
@@ -58,12 +59,6 @@ def _inflate_to_namedtuple(orig_cls):
     return new_cls
 
 
-def _create_warnings(warnings):
-    if not warnings:
-        return ()
-    return tuple([ServiceWarning(x) for x in warnings])
-
-
 class GeoIP2Location(geoip2.records.Location):
     """Location information for the IP address.
 
@@ -84,9 +79,11 @@ class GeoIP2Location(geoip2.records.Location):
 
     """
 
-    __doc__ += geoip2.records.Location.__doc__
+    __doc__ += geoip2.records.Location.__doc__  # type: ignore
 
-    def __init__(self, *args, **kwargs):
+    local_time: Optional[str]
+
+    def __init__(self, *args, **kwargs) -> None:
         self.local_time = kwargs.get("local_time", None)
         super(GeoIP2Location, self).__init__(*args, **kwargs)
 
@@ -110,9 +107,11 @@ class GeoIP2Country(geoip2.records.Country):
 
     """
 
-    __doc__ += geoip2.records.Country.__doc__
+    __doc__ += geoip2.records.Country.__doc__  # type: ignore
 
-    def __init__(self, *args, **kwargs):
+    is_high_risk: bool
+
+    def __init__(self, *args, **kwargs) -> None:
         self.is_high_risk = kwargs.get("is_high_risk", False)
         super(GeoIP2Country, self).__init__(*args, **kwargs)
 
@@ -187,7 +186,11 @@ class IPAddress(geoip2.models.Insights):
 
     """
 
-    def __init__(self, ip_address):
+    country: GeoIP2Country
+    location: GeoIP2Location
+    risk: Optional[float]
+
+    def __init__(self, ip_address: Dict[str, Any]) -> None:
         if ip_address is None:
             ip_address = {}
         locales = ip_address.get("_locales")
@@ -201,14 +204,14 @@ class IPAddress(geoip2.models.Insights):
 
     # Unfortunately the GeoIP2 models are not immutable, only the records. This
     # corrects that for minFraud
-    def __setattr__(self, name, value):
+    def __setattr__(self, name: str, value: Any) -> None:
         if hasattr(self, "_finalized") and self._finalized:
             raise AttributeError("can't set attribute")
         super(IPAddress, self).__setattr__(name, value)
 
 
 @_inflate_to_namedtuple
-class ScoreIPAddress(object):
+class ScoreIPAddress:
     """Information about the IP address for minFraud Score.
 
     .. attribute:: risk
@@ -219,6 +222,8 @@ class ScoreIPAddress(object):
       :type: float | None
     """
 
+    risk: Optional[float]
+
     __slots__ = ()
     _fields = {
         "risk": None,
@@ -226,7 +231,7 @@ class ScoreIPAddress(object):
 
 
 @_inflate_to_namedtuple
-class Issuer(object):
+class Issuer:
     """Information about the credit card issuer.
 
     .. attribute:: name
@@ -243,14 +248,14 @@ class Issuer(object):
       no issuer ID number (IIN) was provided in the request or if MaxMind does
       not have a name associated with the IIN.
 
-      :type: bool
+      :type: bool | None
 
     .. attribute:: phone_number
 
       The phone number of the bank which issued the credit
       card. In some cases the phone number we return may be out of date.
 
-      :type: str
+      :type: str | None
 
     .. attribute:: matches_provided_phone_number
 
@@ -260,9 +265,14 @@ class Issuer(object):
       phone number or no issuer ID number (IIN) was provided in the request or
       if MaxMind does not have a phone number associated with the IIN.
 
-      :type: bool
+      :type: bool | None
 
     """
+
+    name: Optional[str]
+    matches_provided_name: Optional[bool]
+    phone_number: Optional[str]
+    matches_provided_phone_number: Optional[bool]
 
     __slots__ = ()
     _fields = {
@@ -274,7 +284,7 @@ class Issuer(object):
 
 
 @_inflate_to_namedtuple
-class Device(object):
+class Device:
     """Information about the device associated with the IP address.
 
     In order to receive device output from minFraud Insights or minFraud
@@ -317,6 +327,11 @@ class Device(object):
 
     """
 
+    confidence: Optional[float]
+    id: Optional[str]
+    last_seen: Optional[str]
+    local_time: Optional[str]
+
     __slots__ = ()
     _fields = {
         "confidence": None,
@@ -327,7 +342,7 @@ class Device(object):
 
 
 @_inflate_to_namedtuple
-class Disposition(object):
+class Disposition:
     """Information about disposition for the request as set by custom rules.
 
     In order to receive a disposition, you must be use the minFraud custom
@@ -350,6 +365,9 @@ class Disposition(object):
       :type: str | None
     """
 
+    action: Optional[str]
+    reason: Optional[str]
+
     __slots__ = ()
     _fields = {
         "action": None,
@@ -358,7 +376,7 @@ class Disposition(object):
 
 
 @_inflate_to_namedtuple
-class EmailDomain(object):
+class EmailDomain:
     """Information about the email domain passed in the request.
 
     .. attribute:: first_seen
@@ -367,9 +385,11 @@ class EmailDomain(object):
       was first seen by MaxMind. This is expressed using the ISO 8601 date
       format.
 
-      :type: str
+      :type: str | None
 
     """
+
+    first_seen: Optional[str]
 
     __slots__ = ()
     _fields = {
@@ -378,7 +398,7 @@ class EmailDomain(object):
 
 
 @_inflate_to_namedtuple
-class Email(object):
+class Email:
     """Information about the email address passed in the request.
 
     .. attribute:: domain
@@ -393,7 +413,7 @@ class Email(object):
       was first seen by MaxMind. This is expressed using the ISO 8601 date
       format.
 
-      :type: str
+      :type: str | None
 
     .. attribute:: is_disposable
 
@@ -420,6 +440,12 @@ class Email(object):
 
     """
 
+    domain: EmailDomain
+    first_seen: Optional[str]
+    is_disposable: Optional[bool]
+    is_free: Optional[bool]
+    is_high_risk: Optional[bool]
+
     __slots__ = ()
     _fields = {
         "domain": EmailDomain,
@@ -431,7 +457,7 @@ class Email(object):
 
 
 @_inflate_to_namedtuple
-class CreditCard(object):
+class CreditCard:
     """Information about the credit card based on the issuer ID number.
 
     .. attribute:: country
@@ -494,6 +520,15 @@ class CreditCard(object):
 
     """
 
+    issuer: Issuer
+    country: Optional[str]
+    brand: Optional[str]
+    is_business: Optional[bool]
+    is_issued_in_billing_address_country: Optional[bool]
+    is_prepaid: Optional[bool]
+    is_virtual: Optional[bool]
+    type: Optional[str]
+
     __slots__ = ()
     _fields = {
         "issuer": Issuer,
@@ -508,7 +543,7 @@ class CreditCard(object):
 
 
 @_inflate_to_namedtuple
-class BillingAddress(object):
+class BillingAddress:
     """Information about the billing address.
 
     .. attribute:: distance_to_ip_location
@@ -551,6 +586,12 @@ class BillingAddress(object):
 
     """
 
+    is_postal_in_city: Optional[bool]
+    latitude: Optional[float]
+    longitude: Optional[float]
+    distance_to_ip_location: Optional[int]
+    is_in_ip_country: Optional[bool]
+
     __slots__ = ()
     _fields = {
         "is_postal_in_city": None,
@@ -562,7 +603,7 @@ class BillingAddress(object):
 
 
 @_inflate_to_namedtuple
-class ShippingAddress(object):
+class ShippingAddress:
     """Information about the shipping address.
 
     .. attribute:: distance_to_ip_location
@@ -622,6 +663,14 @@ class ShippingAddress(object):
 
     """
 
+    is_postal_in_city: Optional[bool]
+    latitude: Optional[float]
+    longitude: Optional[float]
+    distance_to_ip_location: Optional[int]
+    is_in_ip_country: Optional[bool]
+    is_high_risk: Optional[bool]
+    distance_to_billing_address: Optional[int]
+
     __slots__ = ()
     _fields = {
         "is_postal_in_city": None,
@@ -635,7 +684,7 @@ class ShippingAddress(object):
 
 
 @_inflate_to_namedtuple
-class ServiceWarning(object):
+class ServiceWarning:
     """Warning from the web service.
 
     .. attribute:: code
@@ -645,7 +694,7 @@ class ServiceWarning(object):
       <https://dev.maxmind.com/minfraud/#Warning>`_
       for the current list of of warning codes.
 
-      :type: str
+      :type: str | None
 
     .. attribute:: warning
 
@@ -653,7 +702,7 @@ class ServiceWarning(object):
       warning. The description may change at any time and should not be matched
       against.
 
-      :type: str
+      :type: str | None
 
     .. attribute:: input_pointer
 
@@ -661,9 +710,13 @@ class ServiceWarning(object):
       the warning is associated with. For instance, if the warning was about
       the billing city, the string would be ``"/billing/city"``.
 
-      :type: str
+      :type: str | None
 
     """
+
+    code: Optional[str]
+    warning: Optional[str]
+    input_pointer: Optional[str]
 
     __slots__ = ()
     _fields = {
@@ -673,8 +726,14 @@ class ServiceWarning(object):
     }
 
 
+def _create_warnings(warnings: List[Dict[str, str]]) -> Tuple[ServiceWarning, ...]:
+    if not warnings:
+        return ()
+    return tuple([ServiceWarning(x) for x in warnings])  # type: ignore
+
+
 @_inflate_to_namedtuple
-class Subscores(object):
+class Subscores:
     """Subscores used in calculating the overall risk score.
 
     .. attribute:: avs_result
@@ -843,6 +902,27 @@ class Subscores(object):
 
     """
 
+    avs_result: Optional[float]
+    billing_address: Optional[float]
+    billing_address_distance_to_ip_location: Optional[float]
+    browser: Optional[float]
+    chargeback: Optional[float]
+    country: Optional[float]
+    country_mismatch: Optional[float]
+    cvv_result: Optional[float]
+    device: Optional[float]
+    email_address: Optional[float]
+    email_domain: Optional[float]
+    email_local_part: Optional[float]
+    email_tenure: Optional[float]
+    ip_tenure: Optional[float]
+    issuer_id_number: Optional[float]
+    order_amount: Optional[float]
+    phone_number: Optional[float]
+    shipping_address: Optional[float]
+    shipping_address_distance_to_ip_location: Optional[float]
+    time_of_day: Optional[float]
+
     __slots__ = ()
     _fields = {
         "avs_result": None,
@@ -869,7 +949,7 @@ class Subscores(object):
 
 
 @_inflate_to_namedtuple
-class Factors(object):
+class Factors:
     """Model for Factors response.
 
     .. attribute:: id
@@ -966,6 +1046,20 @@ class Factors(object):
       individual components that are used to calculate the overall risk score.
     """
 
+    billing_address: BillingAddress
+    credit_card: CreditCard
+    disposition: Disposition
+    funds_remaining: float
+    device: Device
+    email: Email
+    id: str
+    ip_address: IPAddress
+    queries_remaining: int
+    risk_score: float
+    shipping_address: ShippingAddress
+    subscores: Subscores
+    warnings: List[ServiceWarning]
+
     __slots__ = ()
     _fields = {
         "billing_address": BillingAddress,
@@ -985,7 +1079,7 @@ class Factors(object):
 
 
 @_inflate_to_namedtuple
-class Insights(object):
+class Insights:
     """Model for Insights response.
 
     .. attribute:: id
@@ -1077,6 +1171,19 @@ class Insights(object):
       minFraud data related to the shipping address used in the transaction.
     """
 
+    billing_address: BillingAddress
+    credit_card: CreditCard
+    device: Device
+    disposition: Disposition
+    email: Email
+    funds_remaining: float
+    id: str
+    ip_address: IPAddress
+    queries_remaining: int
+    risk_score: float
+    shipping_address: ShippingAddress
+    warnings: List[ServiceWarning]
+
     __slots__ = ()
     _fields = {
         "billing_address": BillingAddress,
@@ -1095,7 +1202,7 @@ class Insights(object):
 
 
 @_inflate_to_namedtuple
-class Score(object):
+class Score:
     """Model for Score response.
 
     .. attribute:: id
@@ -1152,6 +1259,14 @@ class Score(object):
 
       :type: IPAddress
     """
+
+    disposition: Disposition
+    funds_remaining: float
+    id: str
+    ip_address: ScoreIPAddress
+    queries_remaining: int
+    risk_score: float
+    warnings: List[ServiceWarning]
 
     __slots__ = ()
     _fields = {

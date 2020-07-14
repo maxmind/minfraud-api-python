@@ -17,12 +17,10 @@ with io.open("README.rst", "r", encoding="utf-8") as f:
     _readme = f.read()
 
 requirements = [
-    "geoip2>=3.0.0,<4.0.0",
+    "email_validator",
+    "geoip2>=4.0.0,<5.0.0",
     "requests>=2.22.0",
-    "rfc3987",
-    "strict-rfc3339",
     "urllib3>=1.25.2",
-    "validate_email",
     "voluptuous",
 ]
 
@@ -54,9 +52,7 @@ setup(
         "Environment :: Web Environment",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: Apache Software License",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",

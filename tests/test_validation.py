@@ -1,20 +1,12 @@
 from decimal import Decimal
-import sys
 from voluptuous import MultipleInvalid
 
 from minfraud.validation import validate_transaction, validate_report
 
-if sys.version_info[:2] == (2, 6):
-    import unittest2 as unittest
-else:
-    import unittest
-
-if sys.version_info[0] == 2:
-    unittest.TestCase.assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
-    unittest.TestCase.assertRegex = unittest.TestCase.assertRegexpMatches
+import unittest
 
 
-class ValidationBase(object):
+class ValidationBase:
     def setup_transaction(self, transaction):
         if "device" not in transaction:
             transaction["device"] = {}

@@ -1,22 +1,5 @@
-"""This is an internal module used for validating the minFraud request."""
+"""This is an internal module used for validating the minFraud request.
 
-import re
-import sys
-import uuid
-from decimal import Decimal
-
-import rfc3987
-from geoip2.compat import compat_ip_address
-from strict_rfc3339 import validate_rfc3339
-
-# I can't reproduce the failure locally and the order looks right to me.
-# It is failing on pylint 1.8.3 on Travis. We should try removing this
-# when a new version of pylint is released.
-# pylint: disable=wrong-import-order
-from validate_email import validate_email
-from voluptuous import All, Any, In, Match, Range, Required, Schema
-
-"""
 Internal code for validating the transaction dictionary.
 
 This code is only intended for internal use and is subject to change in ways
@@ -24,60 +7,63 @@ that may break any direct use of it.
 
 """
 
+
+import ipaddress
+import re
+import uuid
+import urllib.parse
+from decimal import Decimal
+from typing import Optional
+
+from email_validator import validate_email  # type: ignore
+from voluptuous import All, Any, In, Match, Range, Required, Schema
+from voluptuous.error import UrlInvalid
+
 # Pylint doesn't like the private function type naming for the callable
 # objects below. Given the consistent use of them, the current names seem
 # preferable to blindly following pylint.
 #
 # pylint: disable=invalid-name,undefined-variable
 
-if sys.version_info[0] >= 3:
-    _unicode = str
-    _unicode_or_printable_ascii = str
-    long = int
-else:
-    _unicode = unicode
-    _unicode_or_printable_ascii = Any(unicode, Match(r"^[\x20-\x7E]*$"))
+_any_number = Any(float, int, Decimal)
 
-_any_string = Any(_unicode_or_printable_ascii, str)
-_any_number = Any(float, int, long, Decimal)
-
-_custom_input_key = All(_any_string, Match(r"^[a-z0-9_]{1,25}$"))
+_custom_input_key = All(str, Match(r"^[a-z0-9_]{1,25}$"))
 
 _custom_input_value = Any(
-    All(_any_string, Match(r"^[^\n]{1,255}\Z")),
+    All(str, Match(r"^[^\n]{1,255}\Z")),
     All(
         _any_number, Range(min=-1e13, max=1e13, min_included=False, max_included=False)
     ),
     bool,
 )
 
-_md5 = All(_any_string, Match(r"^[0-9A-Fa-f]{32}$"))
+_md5 = All(str, Match(r"^[0-9A-Fa-f]{32}$"))
 
-_country_code = All(_any_string, Match(r"^[A-Z]{2}$"))
+_country_code = All(str, Match(r"^[A-Z]{2}$"))
 
 _telephone_country_code = Any(
-    All(_any_string, Match("^[0-9]{1,4}$")), All(int, Range(min=1, max=9999))
+    All(str, Match("^[0-9]{1,4}$")), All(int, Range(min=1, max=9999))
 )
 
-_subdivision_iso_code = All(_any_string, Match(r"^[0-9A-Z]{1,4}$"))
+_subdivision_iso_code = All(str, Match(r"^[0-9A-Z]{1,4}$"))
 
 
-def _ip_address(s):
+def _ip_address(s: Optional[str]) -> str:
     # ipaddress accepts numeric IPs, which we don't want.
-    if isinstance(s, (str, _unicode)) and not re.match(r"^\d+$", s):
-        return str(compat_ip_address(s))
+    if isinstance(s, str) and not re.match(r"^\d+$", s):
+        return str(ipaddress.ip_address(s))
     raise ValueError
 
 
-def _email_or_md5(s):
-    if validate_email(s) or re.match(r"^[0-9A-Fa-f]{32}$", s):
+def _email_or_md5(s: str) -> str:
+    if re.match(r"^[0-9A-Fa-f]{32}$", s):
         return s
-    raise ValueError
+    return validate_email(s, check_deliverability=False).email
 
 
 # based off of:
 # http://stackoverflow.com/questions/2532053/validate-a-hostname-string
-def _hostname(hostname):
+def _hostname(hostname: str) -> str:
     if len(hostname) > 255:
         raise ValueError
     allowed = re.compile(r"(?!-)[A-Z\d-]{1,63}(?<!-)$", re.IGNORECASE)
@@ -89,16 +75,16 @@ def _hostname(hostname):
 _delivery_speed = In(["same_day", "overnight", "expedited", "standard"])
 
 _address = {
-    "address": _unicode_or_printable_ascii,
-    "address_2": _unicode_or_printable_ascii,
-    "city": _unicode_or_printable_ascii,
-    "company": _unicode_or_printable_ascii,
+    "address": str,
+    "address_2": str,
+    "city": str,
+    "company": str,
     "country": _country_code,
-    "first_name": _unicode_or_printable_ascii,
-    "last_name": _unicode_or_printable_ascii,
+    "first_name": str,
+    "last_name": str,
     "phone_country_code": _telephone_country_code,
-    "phone_number": _unicode_or_printable_ascii,
-    "postal": _unicode_or_printable_ascii,
+    "phone_number": str,
+    "postal": str,
     "region": _subdivision_iso_code,
 }
 
@@ -248,16 +234,15 @@ _iin = Match("^[0-9]{6}$")
 _credit_card_last_4 = Match("^[0-9]{4}$")
 
 
-def _credit_card_token(s):
+def _credit_card_token(s: str) -> str:
     if re.match("^[\x21-\x7E]{1,255}$", s) and not re.match("^[0-9]{1,19}$", s):
         return s
     raise ValueError
 
 
-def _rfc3339_datetime(s):
-    if validate_rfc3339(s):
-        return s
-    raise ValueError
+_rfc3339_datetime = Match(
+    r"(?a)\A\d{4}-\d{2}-\d{2}[Tt]\d{2}:\d{2}:\d{2}(\.\d+)?(?:[Zz]|[+-]\d{2}:\d{2})\Z"
+)
 
 
 _event_type = In(
@@ -279,26 +264,27 @@ _currency_code = Match("^[A-Z]{3}$")
 _price = All(_any_number, Range(min=0, min_included=False))
 
 
-def _uri(s):
-    if rfc3987.parse(s).get("scheme") in ["http", "https"]:
-        return s
-    raise ValueError
+def _uri(s: str) -> str:
+    parsed = urllib.parse.urlparse(s)
+    if parsed.scheme not in ["http", "https"] or not parsed.netloc:
+        raise UrlInvalid("URL is invalid")
+    return s
 
 
 validate_transaction = Schema(
     {
-        "account": {"user_id": _unicode_or_printable_ascii, "username_md5": _md5,},
+        "account": {"user_id": str, "username_md5": _md5,},
         "billing": _address,
         "payment": {
             "processor": _payment_processor,
             "was_authorized": bool,
-            "decline_code": _unicode_or_printable_ascii,
+            "decline_code": str,
         },
         "credit_card": {
             "avs_result": _single_char,
-            "bank_name": _unicode_or_printable_ascii,
+            "bank_name": str,
             "bank_phone_country_code": _telephone_country_code,
-            "bank_phone_number": _unicode_or_printable_ascii,
+            "bank_phone_number": str,
             "cvv_result": _single_char,
             "issuer_id_number": _iin,
             "last_4_digits": _credit_card_last_4,
@@ -306,34 +292,34 @@ validate_transaction = Schema(
         },
         "custom_inputs": {_custom_input_key: _custom_input_value},
         Required("device"): {
-            "accept_language": _unicode_or_printable_ascii,
+            "accept_language": str,
             Required("ip_address"): _ip_address,
             "session_age": All(_any_number, Range(min=0)),
-            "session_id": _unicode_or_printable_ascii,
-            "user_agent": _unicode_or_printable_ascii,
+            "session_id": str,
+            "user_agent": str,
         },
         "email": {"address": _email_or_md5, "domain": _hostname,},
         "event": {
-            "shop_id": _unicode_or_printable_ascii,
+            "shop_id": str,
             "time": _rfc3339_datetime,
             "type": _event_type,
-            "transaction_id": _unicode_or_printable_ascii,
+            "transaction_id": str,
         },
         "order": {
-            "affiliate_id": _unicode_or_printable_ascii,
+            "affiliate_id": str,
             "amount": _price,
             "currency": _currency_code,
-            "discount_code": _unicode_or_printable_ascii,
+            "discount_code": str,
             "has_gift_message": bool,
             "is_gift": bool,
             "referrer_uri": _uri,
-            "subaffiliate_id": _unicode_or_printable_ascii,
+            "subaffiliate_id": str,
         },
         "shipping": _shipping_address,
         "shopping_cart": [
             {
-                "category": _unicode_or_printable_ascii,
-                "item_id": _unicode_or_printable_ascii,
+                "category": str,
+                "item_id": str,
                 "price": _price,
                 "quantity": All(int, Range(min=1)),
             },
@@ -342,8 +328,8 @@ validate_transaction = Schema(
 )
 
 
-def _maxmind_id(s):
-    if isinstance(s, (str, _unicode)) and len(s) == 8:
+def _maxmind_id(s: Optional[str]) -> str:
+    if isinstance(s, str) and len(s) == 8:
         return s
     raise ValueError
 
@@ -351,22 +337,22 @@ def _maxmind_id(s):
 _tag = In(["chargeback", "not_fraud", "spam_or_abuse", "suspected_fraud"])
 
 
-def _uuid(s):
+def _uuid(s: str) -> str:
     if isinstance(s, uuid.UUID):
         return str(s)
-    if isinstance(s, (str, _unicode)):
+    if isinstance(s, str):
         return str(uuid.UUID(s))
     raise ValueError
 
 
 validate_report = Schema(
     {
-        "chargeback_code": _unicode_or_printable_ascii,
+        "chargeback_code": str,
         Required("ip_address"): _ip_address,
         "maxmind_id": _maxmind_id,
         "minfraud_id": _uuid,
-        "notes": _unicode_or_printable_ascii,
+        "notes": str,
         Required("tag"): _tag,
-        "transaction_id": _unicode_or_printable_ascii,
+        "transaction_id": str,
     },
 )
