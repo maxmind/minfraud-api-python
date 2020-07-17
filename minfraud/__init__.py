@@ -13,7 +13,7 @@ from .errors import (
     InsufficientFundsError,
 )
 
-from .webservice import Client
+from .webservice import AsyncClient, Client
 from .version import __version__
 
 __author__ = "Gregory Oschwald"

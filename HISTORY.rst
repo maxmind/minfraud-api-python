@@ -4,9 +4,16 @@ History
 -------
 
 2.0.0
++++++++++++++++++++
 
 * IMPORTANT: Python 2.7 and 3.5 support has been dropped. Python 3.6 or greater
   is required.
+* Asyncio support has been added for web service requests. To make async
+  requests, use ``minfraud.AsyncClient``.
+* ``minfraud.Client`` now provides a ``close()`` method and an associated
+  context manager to be used in ``with`` statements.
+* For both ``Client`` and ``AsyncClient`` requests, the default timeout is
+  now 60 seconds.
 * Type hints have been added.
 * Email validation is now done with ``email_validator`` rather than
   ``validate_email``.
