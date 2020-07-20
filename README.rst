@@ -35,12 +35,14 @@ Complete API documentation is available on `Read the Docs
 Usage
 -----
 
-To use this API, create a new ``minfraud.Client`` object. The constructor
-takes your MaxMind account ID and license key:
+To use this API, create a new ``minfraud.Client`` object for a synchronous
+request or ``minfraud.AsyncClient`` for an asynchronous request. The
+constructors take your MaxMind account ID and license key:
 
 .. code-block:: pycon
 
     >>> client = Client(42, 'licensekey')
+    >>> async_client = AsyncClient(42, 'licensekey')
 
 Score, Insights and Factors Usage
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -49,19 +51,22 @@ The Factors service is called with the ``factors()`` method:
 
 .. code-block:: pycon
 
-    >>> factors = client.factors({'device': {'ip_address': '81.2.69.160'}})
+    >>> client.factors({'device': {'ip_address': '81.2.69.160'}})
+    >>> await async_client.factors({'device': {'ip_address': '81.2.69.160'}})
 
 The Insights service is called with the ``insights()`` method:
 
 .. code-block:: pycon
 
-    >>> insights = client.insights({'device': {'ip_address': '81.2.69.160'}})
+    >>> client.insights({'device': {'ip_address': '81.2.69.160'}})
+    >>> await async_client.insights({'device': {'ip_address': '81.2.69.160'}})
 
 The Score web service is called with the ``score()`` method:
 
 .. code-block:: pycon
 
-    >>> score = client.score({'device': {'ip_address': '81.2.69.160'}})
+    >>> client.score({'device': {'ip_address': '81.2.69.160'}})
+    >>> await async_client.score({'device': {'ip_address': '81.2.69.160'}})
 
 Each of these methods takes a dictionary representing the transaction to be sent
 to the web service. The structure of this dictionary should be in `the format
@@ -80,6 +85,7 @@ Report Transaction web service is called with the ``report()`` method:
 .. code-block:: pycon
 
     >>> client.report({'ip_address': '81.2.69.160', 'tag': 'chargeback'})
+    >>> await async_client.report({'ip_address': '81.2.69.160', 'tag': 'chargeback'})
 
 The method takes a dictionary representing the report to be sent to the web
 service. The structure of this dictionary should be in `the format specified
@@ -130,9 +136,8 @@ Score, Insights and Factors Example
 
 .. code-block:: pycon
 
-    >>> from minfraud import Client
-    >>>
-    >>> client = Client(42, 'licensekey')
+    >>> import asyncio
+    >>> from minfraud import AsyncClient, Client
     >>>
     >>> request = {
     >>>     'device': {
@@ -224,30 +229,69 @@ Score, Insights and Factors Example
     >>>     }
     >>> }
     >>>
-    >>> client.score(request)
+    >>> # This example function uses a synchronous Client object. The object
+    >>> # can be used across multiple requests.
+    >>> def client(account_id, license_key):
+    >>>     with Client(account_id, license_key) as client:
+    >>>
+    >>>         print(client.score(request))
     Score(...)
     >>>
-    >>> client.insights(request)
+    >>>         print(client.insights(request))
     Insights(...)
     >>>
-    >>> client.factors(request)
+    >>>         print(client.factors(request))
     Factors(...)
+    >>>
+    >>> # This example function uses an asynchronous AsyncClient object. The
+    >>> # object can be used across multiple requests.
+    >>> async def async_client(account_id, license_key):
+    >>>     with Client(account_id, license_key) as client:
+    >>>
+    >>>         print(client.score(request))
+    Score(...)
+    >>>
+    >>>         print(client.insights(request))
+    Insights(...)
+    >>>
+    >>>         print(client.factors(request))
+    Factors(...)
+    >>>
+    >>> client(42, 'license_key')
+    >>> asyncio.run(async_client(42, 'license_key'))
 
 Report Transactions Example
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. code-block:: pycon
+For synchronous reporting:
 
+.. code-block:: pycon
     >>> from minfraud import Client
     >>>
-    >>> client = Client(42, 'licensekey')
+    >>> with Client(42, 'licensekey') as client
+    >>>     transaction_report = {
+    >>>         'ip_address': '81.2.69.160',
+    >>>         'tag': 'chargeback',
+    >>>         'minfraud_id': '2c69df73-01c0-45a5-b218-ed85f40b17aa',
+    >>>      }
+    >>>      client.report(transaction_report)
+
+For asynchronous reporting:
+
+.. code-block:: pycon
+    >>> import asyncio
+    >>> from minfraud import AsyncClient
     >>>
-    >>> transaction_report = {
-    >>>     'ip_address': '81.2.69.160',
-    >>>     'tag': 'chargeback',
-    >>>     'minfraud_id': '2c69df73-01c0-45a5-b218-ed85f40b17aa',
-    >>> }
-    >>> client.report(transaction_report)
+    >>> async def report():
+    >>>     async with AsyncClient(42, 'licensekey') as client
+    >>>         transaction_report = {
+    >>>             'ip_address': '81.2.69.160',
+    >>>             'tag': 'chargeback',
+    >>>             'minfraud_id': '2c69df73-01c0-45a5-b218-ed85f40b17aa',
+    >>>          }
+    >>>          await async_client.report(transaction_report)
+    >>>
+    >>> asyncio.run(report())
 
 Requirements
 ------------
