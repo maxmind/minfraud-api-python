@@ -12,14 +12,14 @@ from minfraud.errors import (
     PermissionRequiredError,
 )
 from minfraud.models import Factors, Insights, Score
-from minfraud.webservice import Client
+from minfraud.webservice import AsyncClient, Client
 
 import unittest
 
 
-class BaseTest:
+class BaseTest(unittest.TestCase):
     def setUp(self):
-        self.client = Client(42, "abcdef123456")
+        self.client = self.client_class(42, "abcdef123456")
 
         test_dir = os.path.join(os.path.dirname(__file__), "data")
         with open(os.path.join(test_dir, self.request_file), encoding="utf-8") as file:
@@ -217,28 +217,32 @@ class BaseTransactionTest(BaseTest):
             )
 
 
-class TestFactors(BaseTransactionTest, unittest.TestCase):
+class TestFactors(BaseTransactionTest):
     type = "factors"
     cls = Factors
+    client_class = Client
     request_file = "full-transaction-request.json"
     response_file = "factors-response.json"
 
 
-class TestInsights(BaseTransactionTest, unittest.TestCase):
+class TestInsights(BaseTransactionTest):
     type = "insights"
     cls = Insights
+    client_class = Client
     request_file = "full-transaction-request.json"
     response_file = "insights-response.json"
 
 
-class TestScore(BaseTransactionTest, unittest.TestCase):
+class TestScore(BaseTransactionTest):
     type = "score"
     cls = Score
+    client_class = Client
     request_file = "full-transaction-request.json"
     response_file = "score-response.json"
 
 
-class TestReportTransaction(BaseTest, unittest.TestCase):
+class TestReportTransaction(BaseTest):
+    client_class = Client
     type = "report"
     request_file = "full-report-request.json"
     response_file = "report-response.json"
@@ -257,3 +261,6 @@ class TestReportTransaction(BaseTest, unittest.TestCase):
                 "notes": None,
             }
         )
+
+
+del BaseTest, BaseTransactionTest
