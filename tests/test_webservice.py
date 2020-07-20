@@ -1,7 +1,8 @@
-import os
-
+import asyncio
 import json
+import os
 from io import open
+from typing import Type, Union
 
 # httpretty currently doesn't work, but mocket with the compat interface
 # does.
@@ -22,6 +23,8 @@ import unittest
 
 
 class BaseTest(unittest.TestCase):
+    client_class: Union[Type[AsyncClient], Type[Client]] = Client
+
     def setUp(self):
         self.client = self.client_class(42, "abcdef123456")
 
@@ -132,7 +135,7 @@ class BaseTest(unittest.TestCase):
             body=text,
             content_type=content_type,
         )
-        return getattr(self.client, self.type)(self.full_request)
+        return self.run_client(getattr(self.client, self.type)(self.full_request))
 
     def create_success(self, text=None, client=None, request=None):
         uri = "/".join(
@@ -154,15 +157,18 @@ class BaseTest(unittest.TestCase):
         if request is None:
             request = self.full_request
         print(client)
-        return getattr(client, self.type)(request)
+        return self.run_client(getattr(client, self.type)(request))
+
+    def run_client(self, v):
+        return v
 
     @httprettified
     def test_named_constructor_args(self):
         id = "47"
         key = "1234567890ab"
         for client in (
-            Client(account_id=id, license_key=key),
-            Client(account_id=id, license_key=key),
+            self.client_class(account_id=id, license_key=key),
+            self.client_class(account_id=id, license_key=key),
         ):
             self.assertEqual(client._account_id, id)
             self.assertEqual(client._license_key, key)
@@ -170,10 +176,10 @@ class BaseTest(unittest.TestCase):
     @httprettified
     def test_missing_constructor_args(self):
         with self.assertRaises(TypeError):
-            Client(license_key="1234567890ab")
+            self.client_class(license_key="1234567890ab")
 
         with self.assertRaises(TypeError):
-            Client("47")
+            self.client_class("47")
 
 
 class BaseTransactionTest(BaseTest):
@@ -205,7 +211,7 @@ class BaseTransactionTest(BaseTest):
     @httprettified
     def test_200_with_locales(self):
         locales = ("fr",)
-        client = Client(42, "abcdef123456", locales=locales)
+        client = self.client_class(42, "abcdef123456", locales=locales)
         model = self.create_success(client=client)
         response = json.loads(self.response)
         if self.has_ip_location():
@@ -245,7 +251,6 @@ class BaseTransactionTest(BaseTest):
 class TestFactors(BaseTransactionTest):
     type = "factors"
     cls = Factors
-    client_class = Client
     request_file = "full-transaction-request.json"
     response_file = "factors-response.json"
 
@@ -253,7 +258,6 @@ class TestFactors(BaseTransactionTest):
 class TestInsights(BaseTransactionTest):
     type = "insights"
     cls = Insights
-    client_class = Client
     request_file = "full-transaction-request.json"
     response_file = "insights-response.json"
 
@@ -261,13 +265,11 @@ class TestInsights(BaseTransactionTest):
 class TestScore(BaseTransactionTest):
     type = "score"
     cls = Score
-    client_class = Client
     request_file = "full-transaction-request.json"
     response_file = "score-response.json"
 
 
 class TestReportTransaction(BaseTest):
-    client_class = Client
     type = "report"
     request_file = "full-report-request.json"
     response_file = "report-response.json"
@@ -288,6 +290,36 @@ class TestReportTransaction(BaseTest):
                 "notes": None,
             }
         )
+
+
+class AsyncBase:
+    def setUp(self):
+        self._loop = asyncio.new_event_loop()
+        super().setUp()
+
+    def tearDown(self):
+        self._loop.run_until_complete(self.client.close())
+        self._loop.close()
+        super().tearDown()
+
+    def run_client(self, v):
+        return self._loop.run_until_complete(v)
+
+
+class TestAsyncFactors(AsyncBase, TestFactors):
+    client_class = AsyncClient
+
+
+class TestAsyncInsights(AsyncBase, TestInsights):
+    client_class = AsyncClient
+
+
+class TestAsyncScore(AsyncBase, TestScore):
+    client_class = AsyncClient
+
+
+class TestAsyncReportTransaction(AsyncBase, TestReportTransaction):
+    client_class = AsyncClient
 
 
 del BaseTest, BaseTransactionTest
