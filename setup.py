@@ -17,9 +17,10 @@ with io.open("README.rst", "r", encoding="utf-8") as f:
     _readme = f.read()
 
 requirements = [
+    "aiohttp>=3.6.2",
     "email_validator",
     "geoip2>=4.0.0,<5.0.0",
-    "requests>=2.22.0",
+    "requests>=2.24.0",
     "urllib3>=1.25.2",
     "voluptuous",
 ]
@@ -41,10 +42,9 @@ setup(
     packages=["minfraud"],
     include_package_data=True,
     platforms="any",
-    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*",
+    python_requires=">=3.6",
     install_requires=requirements,
-    extras_require={':python_version=="2.7"': ["ipaddress"]},
-    tests_require=["requests_mock"],
+    tests_require=["mocket>=3.8.6"],
     test_suite="tests",
     license="Apache License 2.0 ",
     classifiers=[
