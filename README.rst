@@ -266,6 +266,7 @@ Report Transactions Example
 For synchronous reporting:
 
 .. code-block:: pycon
+
     >>> from minfraud import Client
     >>>
     >>> with Client(42, 'licensekey') as client
@@ -279,6 +280,7 @@ For synchronous reporting:
 For asynchronous reporting:
 
 .. code-block:: pycon
+
     >>> import asyncio
     >>> from minfraud import AsyncClient
     >>>
