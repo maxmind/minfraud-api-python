@@ -38,7 +38,7 @@ _REQUEST_UA = "minFraud-API/%s %s" % (__version__, requests.utils.default_user_a
 class BaseClient:
     _account_id: str
     _license_key: str
-    _locales: Tuple[str]
+    _locales: Tuple[str, ...]
     _timeout: float
 
     _score_uri: str
@@ -51,7 +51,7 @@ class BaseClient:
         account_id: int,
         license_key: str,
         host: str = "minfraud.maxmind.com",
-        locales: Tuple[str] = ("en",),
+        locales: Tuple[str, ...] = ("en",),
         timeout: float = 60,
     ) -> None:
         self._locales = locales
@@ -227,7 +227,7 @@ class AsyncClient(BaseClient):
         account_id: int,
         license_key: str,
         host: str = "minfraud.maxmind.com",
-        locales: Tuple[str] = ("en",),
+        locales: Tuple[str, ...] = ("en",),
         timeout: float = 60,
     ) -> None:
         """Constructor for AsyncClient.
@@ -413,7 +413,7 @@ class Client(BaseClient):
         account_id: int,
         license_key: str,
         host: str = "minfraud.maxmind.com",
-        locales: Tuple[str] = ("en",),
+        locales: Tuple[str, ...] = ("en",),
         timeout: float = 60,
     ) -> None:
         """Constructor for Client.

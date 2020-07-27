@@ -3,6 +3,12 @@
 History
 -------
 
+2.0.2
+++++++++++++++++++
+
+* Fixed type annotation for ``locales`` in ``minfraud.webservice`` to allow
+  tuples of arbitrary length. Reported by Árni Már Jónsson. GitHub #60.
+
 2.0.1 (2020-07-21)
 ++++++++++++++++++
 
