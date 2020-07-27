@@ -3,7 +3,7 @@
 History
 -------
 
-2.0.2
+2.0.2 (2020-07-27)
 ++++++++++++++++++
 
 * Fixed type annotation for ``locales`` in ``minfraud.webservice`` to allow
