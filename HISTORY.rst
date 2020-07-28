@@ -3,7 +3,7 @@
 History
 -------
 
-2.0.3
+2.0.3 (2020-07-28)
 ++++++++++++++++++
 
 * Added ``py.typed`` file per PEP 561. Reported by Árni Már Jónsson. GitHub
