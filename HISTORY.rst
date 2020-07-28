@@ -8,6 +8,8 @@ History
 
 * Added ``py.typed`` file per PEP 561. Reported by Árni Már Jónsson. GitHub
   #62.
+* Tightened ``install_requirements`` for dependencies to prevent a new
+  major version from being installed.
 
 2.0.2 (2020-07-27)
 ++++++++++++++++++
