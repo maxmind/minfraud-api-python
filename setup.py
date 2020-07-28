@@ -40,6 +40,7 @@ setup(
     author_email="goschwald@maxmind.com",
     url="http://www.maxmind.com/",
     packages=["minfraud"],
+    package_data={"minfraud": ["py.typed"]},
     include_package_data=True,
     platforms="any",
     python_requires=">=3.6",
