@@ -200,7 +200,7 @@ class BaseTransactionTest(BaseTest):
     def test_200_on_request_with_nones(self):
         model = self.create_success(
             request={
-                "device": {"ip_address": "81.2.69.160", "accept_language": None},
+                "device": {"ip_address": "152.216.7.110", "accept_language": None},
                 "event": {"shop_id": None},
                 "shopping_cart": [{"category": None, "quantity": 2,}, None],
             }

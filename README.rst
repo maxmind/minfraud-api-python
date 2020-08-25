@@ -51,22 +51,22 @@ The Factors service is called with the ``factors()`` method:
 
 .. code-block:: pycon
 
-    >>> client.factors({'device': {'ip_address': '81.2.69.160'}})
-    >>> await async_client.factors({'device': {'ip_address': '81.2.69.160'}})
+    >>> client.factors({'device': {'ip_address': '152.216.7.110'}})
+    >>> await async_client.factors({'device': {'ip_address': '152.216.7.110'}})
 
 The Insights service is called with the ``insights()`` method:
 
 .. code-block:: pycon
 
-    >>> client.insights({'device': {'ip_address': '81.2.69.160'}})
-    >>> await async_client.insights({'device': {'ip_address': '81.2.69.160'}})
+    >>> client.insights({'device': {'ip_address': '152.216.7.110'}})
+    >>> await async_client.insights({'device': {'ip_address': '152.216.7.110'}})
 
 The Score web service is called with the ``score()`` method:
 
 .. code-block:: pycon
 
-    >>> client.score({'device': {'ip_address': '81.2.69.160'}})
-    >>> await async_client.score({'device': {'ip_address': '81.2.69.160'}})
+    >>> client.score({'device': {'ip_address': '152.216.7.110'}})
+    >>> await async_client.score({'device': {'ip_address': '152.216.7.110'}})
 
 Each of these methods takes a dictionary representing the transaction to be sent
 to the web service. The structure of this dictionary should be in `the format
@@ -84,8 +84,8 @@ Report Transaction web service is called with the ``report()`` method:
 
 .. code-block:: pycon
 
-    >>> client.report({'ip_address': '81.2.69.160', 'tag': 'chargeback'})
-    >>> await async_client.report({'ip_address': '81.2.69.160', 'tag': 'chargeback'})
+    >>> client.report({'ip_address': '152.216.7.110', 'tag': 'chargeback'})
+    >>> await async_client.report({'ip_address': '152.216.7.110', 'tag': 'chargeback'})
 
 The method takes a dictionary representing the report to be sent to the web
 service. The structure of this dictionary should be in `the format specified
@@ -141,7 +141,7 @@ Score, Insights and Factors Example
     >>>
     >>> request = {
     >>>     'device': {
-    >>>         'ip_address': '81.2.69.160',
+    >>>         'ip_address': '152.216.7.110',
     >>>         'accept_language': 'en-US,en;q=0.8',
     >>>         'session_age': 3600,
     >>>         'session_id': 'a333a4e127f880d8820e56a66f40717c',
@@ -271,7 +271,7 @@ For synchronous reporting:
     >>>
     >>> with Client(42, 'licensekey') as client
     >>>     transaction_report = {
-    >>>         'ip_address': '81.2.69.160',
+    >>>         'ip_address': '152.216.7.110',
     >>>         'tag': 'chargeback',
     >>>         'minfraud_id': '2c69df73-01c0-45a5-b218-ed85f40b17aa',
     >>>      }
@@ -287,7 +287,7 @@ For asynchronous reporting:
     >>> async def report():
     >>>     async with AsyncClient(42, 'licensekey') as client
     >>>         transaction_report = {
-    >>>             'ip_address': '81.2.69.160',
+    >>>             'ip_address': '152.216.7.110',
     >>>             'tag': 'chargeback',
     >>>             'minfraud_id': '2c69df73-01c0-45a5-b218-ed85f40b17aa',
     >>>          }
