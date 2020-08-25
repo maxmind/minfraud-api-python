@@ -85,7 +85,7 @@ class GeoIP2Location(geoip2.records.Location):
 
     def __init__(self, *args, **kwargs) -> None:
         self.local_time = kwargs.get("local_time", None)
-        super(GeoIP2Location, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class GeoIP2Country(geoip2.records.Country):
@@ -113,7 +113,7 @@ class GeoIP2Country(geoip2.records.Country):
 
     def __init__(self, *args, **kwargs) -> None:
         self.is_high_risk = kwargs.get("is_high_risk", False)
-        super(GeoIP2Country, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class IPAddress(geoip2.models.Insights):
@@ -196,7 +196,7 @@ class IPAddress(geoip2.models.Insights):
         locales = ip_address.get("_locales")
         if "_locales" in ip_address:
             del ip_address["_locales"]
-        super(IPAddress, self).__init__(ip_address, locales=locales)
+        super().__init__(ip_address, locales=locales)
         self.country = GeoIP2Country(locales, **ip_address.get("country", {}))
         self.location = GeoIP2Location(**ip_address.get("location", {}))
         self.risk = ip_address.get("risk", None)
@@ -207,7 +207,7 @@ class IPAddress(geoip2.models.Insights):
     def __setattr__(self, name: str, value: Any) -> None:
         if hasattr(self, "_finalized") and self._finalized:
             raise AttributeError("can't set attribute")
-        super(IPAddress, self).__setattr__(name, value)
+        super().__setattr__(name, value)
 
 
 @_inflate_to_namedtuple
