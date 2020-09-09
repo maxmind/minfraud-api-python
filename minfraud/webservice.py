@@ -77,7 +77,7 @@ class BaseClient:
             try:
                 validate_report(cleaned_request)
             except MultipleInvalid as ex:
-                raise InvalidRequestError("Invalid report data: {0}".format(ex))
+                raise InvalidRequestError("Invalid report data: {0}".format(ex)) from ex
         return cleaned_request
 
     def _prepare_transaction(self, request: Dict[str, Any], validate: bool):
@@ -86,7 +86,7 @@ class BaseClient:
             try:
                 validate_transaction(cleaned_request)
             except MultipleInvalid as ex:
-                raise InvalidRequestError("Invalid transaction data: {0}".format(ex))
+                raise InvalidRequestError("Invalid transaction data: {0}".format(ex)) from ex
         return cleaned_request
 
     def _copy_and_clean(self, data: Any) -> Any:
@@ -108,14 +108,14 @@ class BaseClient:
         """Handle successful response."""
         try:
             decoded_body = json.loads(body)
-        except ValueError:
+        except ValueError as ex:
             raise MinFraudError(
                 "Received a 200 response"
                 " but could not decode the response as "
                 "JSON: {0}".format(body),
                 200,
                 uri,
-            )
+            ) from ex
         if "ip_address" in body:
             decoded_body["ip_address"]["_locales"] = self._locales
         return model_class(decoded_body)  # type: ignore
