@@ -202,7 +202,13 @@ class BaseTransactionTest(BaseTest):
             request={
                 "device": {"ip_address": "81.2.69.160", "accept_language": None},
                 "event": {"shop_id": None},
-                "shopping_cart": [{"category": None, "quantity": 2,}, None],
+                "shopping_cart": [
+                    {
+                        "category": None,
+                        "quantity": 2,
+                    },
+                    None,
+                ],
             }
         )
         response = self.response

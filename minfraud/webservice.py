@@ -29,9 +29,15 @@ from .models import Factors, Insights, Score
 from .validation import validate_report, validate_transaction
 
 
-_AIOHTTP_UA = "minFraud-API/%s %s" % (__version__, aiohttp.http.SERVER_SOFTWARE,)
+_AIOHTTP_UA = "minFraud-API/%s %s" % (
+    __version__,
+    aiohttp.http.SERVER_SOFTWARE,
+)
 
-_REQUEST_UA = "minFraud-API/%s %s" % (__version__, requests.utils.default_user_agent(),)
+_REQUEST_UA = "minFraud-API/%s %s" % (
+    __version__,
+    requests.utils.default_user_agent(),
+)
 
 
 # pylint: disable=too-many-instance-attributes, missing-class-docstring

@@ -273,7 +273,10 @@ def _uri(s: str) -> str:
 
 validate_transaction = Schema(
     {
-        "account": {"user_id": str, "username_md5": _md5,},
+        "account": {
+            "user_id": str,
+            "username_md5": _md5,
+        },
         "billing": _address,
         "payment": {
             "processor": _payment_processor,
@@ -298,7 +301,10 @@ validate_transaction = Schema(
             "session_id": str,
             "user_agent": str,
         },
-        "email": {"address": _email_or_md5, "domain": _hostname,},
+        "email": {
+            "address": _email_or_md5,
+            "domain": _hostname,
+        },
         "event": {
             "shop_id": str,
             "time": _rfc3339_datetime,

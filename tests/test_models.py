@@ -123,7 +123,11 @@ class TestModels(unittest.TestCase):
 
     def test_email_domain(self):
         first_seen = "2016-01-01"
-        domain = EmailDomain({"first_seen": first_seen,})
+        domain = EmailDomain(
+            {
+                "first_seen": first_seen,
+            }
+        )
 
         self.assertEqual(first_seen, domain.first_seen)
 
@@ -142,8 +146,13 @@ class TestModels(unittest.TestCase):
         time = "2015-04-19T12:59:23-01:00"
         address = IPAddress(
             {
-                "country": {"is_high_risk": True, "is_in_european_union": True,},
-                "location": {"local_time": time,},
+                "country": {
+                    "is_high_risk": True,
+                    "is_in_european_union": True,
+                },
+                "location": {
+                    "local_time": time,
+                },
                 "risk": 99,
                 "traits": {
                     "is_anonymous": True,
