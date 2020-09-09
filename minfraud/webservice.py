@@ -86,7 +86,9 @@ class BaseClient:
             try:
                 validate_transaction(cleaned_request)
             except MultipleInvalid as ex:
-                raise InvalidRequestError("Invalid transaction data: {0}".format(ex)) from ex
+                raise InvalidRequestError(
+                    "Invalid transaction data: {0}".format(ex)
+                ) from ex
         return cleaned_request
 
     def _copy_and_clean(self, data: Any) -> Any:
