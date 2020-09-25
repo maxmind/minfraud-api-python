@@ -195,6 +195,7 @@ class BaseTransactionTest(BaseTest):
         self.assertEqual(self.cls(response), model)
         if self.has_ip_location():
             self.assertEqual("United Kingdom", model.ip_address.country.name)
+            self.assertEqual(True, model.ip_address.traits.is_residential_proxy)
 
     @httprettified
     def test_200_on_request_with_nones(self):
