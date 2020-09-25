@@ -48,7 +48,7 @@ class BaseTest(unittest.TestCase):
         ):
             with self.assertRaisesRegex(AuthenticationError, "Invalid auth"):
                 self.create_error(
-                    text=u'{{"code":"{0:s}","error":"Invalid auth"}}'.format(error),
+                    text=f'{{"code":"{error}","error":"Invalid auth"}}',
                     status_code=401,
                 )
 
@@ -148,9 +148,7 @@ class BaseTest(unittest.TestCase):
             uri=uri,
             status=204 if self.type == "report" else 200,
             body=self.response if text is None else text,
-            content_type="application/vnd.maxmind.com-minfraud-{0}+json; charset=UTF-8; version=2.0".format(
-                self.type
-            ),
+            content_type=f"application/vnd.maxmind.com-minfraud-{self.type}+json; charset=UTF-8; version=2.0",
         )
         if client is None:
             client = self.client

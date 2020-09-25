@@ -16,9 +16,7 @@ class ValidationBase:
 
     def check_invalid_transaction(self, transaction):
         self.setup_transaction(transaction)
-        with self.assertRaises(
-            MultipleInvalid, msg="{0!s} is invalid".format(transaction)
-        ):
+        with self.assertRaises(MultipleInvalid, msg=f"{transaction} is invalid"):
             validate_transaction(transaction)
 
     def check_transaction(self, transaction):
@@ -26,7 +24,7 @@ class ValidationBase:
         try:
             validate_transaction(transaction)
         except MultipleInvalid as e:
-            self.fail("MultipleInvalid {0} thrown for {1}".format(e.msg, transaction))
+            self.fail(f"MultipleInvalid {e.msg} thrown for {transaction}")
 
     def check_transaction_str_type(self, object, key):
         self.check_transaction({object: {key: "string"}})
@@ -53,7 +51,7 @@ class ValidationBase:
 
     def check_invalid_report(self, report):
         self.setup_report(report)
-        with self.assertRaises(MultipleInvalid, msg="{0!s} is invalid".format(report)):
+        with self.assertRaises(MultipleInvalid, msg=f"{report} is invalid"):
             validate_report(report)
 
     def check_report(self, report):
@@ -61,7 +59,7 @@ class ValidationBase:
         try:
             validate_report(report)
         except MultipleInvalid as e:
-            self.fail("MultipleInvalid {0} thrown for {1}".format(e.msg, report))
+            self.fail(f"MultipleInvalid {e.msg} thrown for {report}")
 
     def check_report_str_type(self, key):
         self.check_report({key: "string"})
