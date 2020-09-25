@@ -3,7 +3,7 @@
 History
 -------
 
-2.1.0
+2.1.0 (2020-09-25)
 ++++++++++++++++++
 
 * Added ``response.ip_address.traits.is_residential_proxy`` to the
