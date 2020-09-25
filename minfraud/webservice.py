@@ -136,8 +136,8 @@ class BaseClient:
         if 400 <= status < 500:
             return self._exception_for_4xx_status(status, content_type, body, uri)
         if 500 <= status < 600:
-            return self._exception_for_5xx_status(status, uri)
-        return self._exception_for_unexpected_status(status, uri)
+            return self._exception_for_5xx_status(status, body, uri)
+        return self._exception_for_unexpected_status(status, body, uri)
 
     def _exception_for_4xx_status(
         self, status: int, content_type: str, body: str, uri: str
@@ -151,13 +151,14 @@ class BaseClient:
         """Returns exception for error responses with 4xx status codes."""
         if not body:
             return HTTPError(
-                "Received a {0} error with no body".format(status), status, uri
+                "Received a {0} error with no body".format(status), status, uri, body
             )
         if content_type.find("json") == -1:
             return HTTPError(
                 "Received a {0} with the following " "body: {1}".format(status, body),
                 status,
                 uri,
+                body,
             )
         try:
             decoded_body = json.loads(body)
@@ -169,6 +170,7 @@ class BaseClient:
                 ),
                 status,
                 uri,
+                body,
             )
         else:
             if "code" in decoded_body and "error" in decoded_body:
@@ -180,6 +182,7 @@ class BaseClient:
                 " or error keys: {0}".format(body),
                 status,
                 uri,
+                body,
             )
 
     @staticmethod
@@ -207,21 +210,31 @@ class BaseClient:
         return InvalidRequestError(message, code, status, uri)
 
     @staticmethod
-    def _exception_for_5xx_status(status: int, uri: str) -> HTTPError:
+    def _exception_for_5xx_status(
+        status: int,
+        body: Optional[str],
+        uri: str,
+    ) -> HTTPError:
         """Returns exception for error response with 5xx status codes."""
         return HTTPError(
             u"Received a server error ({0}) for " u"{1}".format(status, uri),
             status,
             uri,
+            body,
         )
 
     @staticmethod
-    def _exception_for_unexpected_status(status: int, uri: str) -> HTTPError:
+    def _exception_for_unexpected_status(
+        status: int,
+        body: Optional[str],
+        uri: str,
+    ) -> HTTPError:
         """Returns exception for responses with unexpected status codes."""
         return HTTPError(
             u"Received an unexpected HTTP status " u"({0}) for {1}".format(status, uri),
             status,
             uri,
+            body,
         )
 
 

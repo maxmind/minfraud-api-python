@@ -10,6 +10,8 @@ History
   minFraud Insights and Factors models. This indicates whether the IP
   address is on a suspected anonymizing network and belongs to a
   residential ISP.
+* ``HTTPError`` now provides the decoded response content in the
+  ``decoded_content`` attribute.
 
 2.0.3 (2020-07-28)
 ++++++++++++++++++

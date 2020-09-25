@@ -39,14 +39,29 @@ class HTTPError(MinFraudError):
 
       :type: str
 
+    .. attribute:: decoded_content:
+
+      The decoded response content
+
+      :type: str
+
     """
 
+    http_status: Optional[int]
+    uri: Optional[str]
+    decoded_content: Optional[str]
+
     def __init__(
-        self, message: str, http_status: Optional[int] = None, uri: Optional[str] = None
+        self,
+        message: str,
+        http_status: Optional[int] = None,
+        uri: Optional[str] = None,
+        decoded_content: Optional[str] = None,
     ) -> None:
         super().__init__(message)
         self.http_status = http_status
         self.uri = uri
+        self.decoded_content = decoded_content
 
 
 class InvalidRequestError(MinFraudError):
