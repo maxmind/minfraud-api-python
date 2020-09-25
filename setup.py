@@ -19,7 +19,7 @@ with io.open("README.rst", "r", encoding="utf-8") as f:
 requirements = [
     "aiohttp>=3.6.2,<4.0.0",
     "email_validator>=1.1.1,<2.0.0",
-    "geoip2>=4.0.0,<5.0.0",
+    "geoip2>=4.1.0,<5.0.0",
     "requests>=2.24.0,<3.0.0",
     "urllib3>=1.25.2,<2.0.0",
     "voluptuous",

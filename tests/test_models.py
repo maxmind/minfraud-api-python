@@ -160,6 +160,7 @@ class TestModels(unittest.TestCase):
                     "is_anonymous_vpn": True,
                     "is_hosting_provider": True,
                     "is_public_proxy": True,
+                    "is_residential_proxy": True,
                     "is_satellite_provider": True,
                     "is_tor_exit_node": True,
                 },
@@ -175,6 +176,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual(True, address.traits.is_anonymous_vpn)
         self.assertEqual(True, address.traits.is_hosting_provider)
         self.assertEqual(True, address.traits.is_public_proxy)
+        self.assertEqual(True, address.traits.is_residential_proxy)
         self.assertEqual(True, address.traits.is_satellite_provider)
         self.assertEqual(True, address.traits.is_tor_exit_node)
         self.assertEqual(True, address.country.is_high_risk)
