@@ -22,9 +22,7 @@ class TestModels(unittest.TestCase):
         ]
         for model in models:
             for attr in (model.attr, "does_not_exist"):
-                with self.assertRaises(
-                    AttributeError, msg="{0!s} - {1}".format(model.obj, attr)
-                ):
+                with self.assertRaises(AttributeError, msg=f"{model.obj} - {attr}"):
                     setattr(model.obj, attr, 5)  # type: ignore
 
     def test_billing_address(self):

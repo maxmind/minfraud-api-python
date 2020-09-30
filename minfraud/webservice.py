@@ -29,15 +29,9 @@ from .models import Factors, Insights, Score
 from .validation import validate_report, validate_transaction
 
 
-_AIOHTTP_UA = "minFraud-API/%s %s" % (
-    __version__,
-    aiohttp.http.SERVER_SOFTWARE,
-)
+_AIOHTTP_UA = f"minFraud-API/{__version__} {aiohttp.http.SERVER_SOFTWARE}"
 
-_REQUEST_UA = "minFraud-API/%s %s" % (
-    __version__,
-    requests.utils.default_user_agent(),
-)
+_REQUEST_UA = f"minFraud-API/{__version__} {requests.utils.default_user_agent()}"
 
 
 # pylint: disable=too-many-instance-attributes, missing-class-docstring
@@ -65,7 +59,7 @@ class BaseClient:
         self._license_key = license_key
         self._timeout = timeout
 
-        base_uri = u"https://{0:s}/minfraud/v2.0".format(host)
+        base_uri = f"https://{host}/minfraud/v2.0"
         self._score_uri = "/".join([base_uri, "score"])
         self._insights_uri = "/".join([base_uri, "insights"])
         self._factors_uri = "/".join([base_uri, "factors"])
@@ -77,7 +71,7 @@ class BaseClient:
             try:
                 validate_report(cleaned_request)
             except MultipleInvalid as ex:
-                raise InvalidRequestError("Invalid report data: {0}".format(ex)) from ex
+                raise InvalidRequestError(f"Invalid report data: {ex}") from ex
         return cleaned_request
 
     def _prepare_transaction(self, request: Dict[str, Any], validate: bool):
@@ -86,9 +80,7 @@ class BaseClient:
             try:
                 validate_transaction(cleaned_request)
             except MultipleInvalid as ex:
-                raise InvalidRequestError(
-                    "Invalid transaction data: {0}".format(ex)
-                ) from ex
+                raise InvalidRequestError(f"Invalid transaction data: {ex}") from ex
         return cleaned_request
 
     def _copy_and_clean(self, data: Any) -> Any:
@@ -112,9 +104,7 @@ class BaseClient:
             decoded_body = json.loads(body)
         except ValueError as ex:
             raise MinFraudError(
-                "Received a 200 response"
-                " but could not decode the response as "
-                "JSON: {0}".format(body),
+                f"Received a 200 response but could not decode the response as JSON: {body}",
                 200,
                 uri,
             ) from ex
@@ -151,11 +141,11 @@ class BaseClient:
         """Returns exception for error responses with 4xx status codes."""
         if not body:
             return HTTPError(
-                "Received a {0} error with no body".format(status), status, uri, body
+                f"Received a {status} error with no body", status, uri, body
             )
         if content_type.find("json") == -1:
             return HTTPError(
-                "Received a {0} with the following " "body: {1}".format(status, body),
+                f"Received a {status} with the following body: {body}",
                 status,
                 uri,
                 body,
@@ -164,10 +154,7 @@ class BaseClient:
             decoded_body = json.loads(body)
         except ValueError:
             return HTTPError(
-                "Received a {status:d} error but it did not include"
-                " the expected JSON body: {content}".format(
-                    status=status, content=body
-                ),
+                f"Received a {status} error but it did not include the expected JSON body: {body}",
                 status,
                 uri,
                 body,
@@ -178,8 +165,7 @@ class BaseClient:
                     decoded_body.get("error"), decoded_body.get("code"), status, uri
                 )
             return HTTPError(
-                "Error response contains JSON but it does not specify code"
-                " or error keys: {0}".format(body),
+                f"Error response contains JSON but it does not specify code or error keys: {body}",
                 status,
                 uri,
                 body,
@@ -217,7 +203,7 @@ class BaseClient:
     ) -> HTTPError:
         """Returns exception for error response with 5xx status codes."""
         return HTTPError(
-            u"Received a server error ({0}) for " u"{1}".format(status, uri),
+            f"Received a server error ({status}) for {uri}",
             status,
             uri,
             body,
@@ -231,7 +217,7 @@ class BaseClient:
     ) -> HTTPError:
         """Returns exception for responses with unexpected status codes."""
         return HTTPError(
-            u"Received an unexpected HTTP status " u"({0}) for {1}".format(status, uri),
+            f"Received an unexpected HTTP status ({status}) for {uri}",
             status,
             uri,
             body,
