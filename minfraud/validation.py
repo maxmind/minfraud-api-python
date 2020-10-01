@@ -214,6 +214,7 @@ _payment_processor = In(
         "telerecargas",
         "towah",
         "transact_pro",
+        "tsys",
         "usa_epay",
         "vantiv",
         "verepay",
