@@ -11,7 +11,9 @@ jobs:
 
     strategy:
       matrix:
-        platform: [ubuntu-latest, windows-latest, macos-latest]
+        # We don't test on Windows currently as it appears mocket may not
+        # work there.
+        platform: [ubuntu-latest, macos-latest]
         python-version: [3.6, 3.7, 3.8, 3.9]
 
     name: Python ${{ matrix.python-version }} on ${{ matrix.platform }}
