@@ -294,9 +294,9 @@ validate_transaction = Schema(
             "token": _credit_card_token,
         },
         "custom_inputs": {_custom_input_key: _custom_input_value},
-        Required("device"): {
+        "device": {
             "accept_language": str,
-            Required("ip_address"): _ip_address,
+            "ip_address": _ip_address,
             "session_age": All(_any_number, Range(min=0)),
             "session_id": str,
             "user_agent": str,

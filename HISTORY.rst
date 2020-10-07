@@ -3,6 +3,11 @@
 History
 -------
 
+2.2.0
+++++++++++++++++++
+
+* The device IP address is no longer a required input.
+
 2.1.0 (2020-09-25)
 ++++++++++++++++++
 

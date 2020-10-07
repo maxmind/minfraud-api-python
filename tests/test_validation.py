@@ -66,6 +66,16 @@ class ValidationBase:
         self.check_invalid_report({key: 12})
 
 
+class TestTransaction(unittest.TestCase, ValidationBase):
+    def test_transaction_without_device(self):
+        transaction = {
+            "account": {
+                "user_id": "usr",
+            }
+        }
+        validate_transaction(transaction)
+
+
 class TestAccount(unittest.TestCase, ValidationBase):
     def test_account_user_id(self):
         self.check_transaction({"account": {"user_id": "usr"}})
@@ -209,12 +219,17 @@ class TestDevice(ValidationBase, unittest.TestCase):
             self.check_invalid_transaction({"device": {"ip_address": invalid}})
 
     def test_missing_ip(self):
-        with self.assertRaises(MultipleInvalid):
-            validate_transaction({"device": {}})
+        validate_transaction({"device": {}})
+        validate_transaction(
+            {
+                "device": {
+                    "user_agent": "foo",
+                }
+            }
+        )
 
     def test_missing_device(self):
-        with self.assertRaises(MultipleInvalid):
-            validate_transaction({})
+        validate_transaction({})
 
     def test_user_agent(self):
         self.check_transaction_str_type("device", "user_agent")

@@ -72,8 +72,7 @@ Each of these methods takes a dictionary representing the transaction to be sent
 to the web service. The structure of this dictionary should be in `the format
 specified in the REST API documentation
 <https://dev.maxmind.com/minfraud/#Request_Body>`__.
-The ``ip_address`` in the ``device`` sub-dictionary is required. All other
-fields are optional.
+All fields are optional.
 
 Report Transactions Usage
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -114,9 +113,9 @@ The possible errors are:
   is unable to authenticate the request, e.g., if the license key or account
   ID is invalid.
 * ``minfraud.InvalidRequestError`` - This will be raised when the server
-  rejects the request as invalid for another reason, such as a missing or
-  reserved IP address. It is also raised if validation of the request before
-  it is sent to the server fails.
+  rejects the request as invalid for another reason, such as a reserved IP
+  address. It is also raised if validation of the request before it is sent to
+  the server fails.
 * ``minfraud.HttpError`` - This will be raised when an unexpected HTTP
   error occurs such as a firewall interfering with the request to the server.
 * ``minfraud.MinFraudError`` - This will be raised when some other error
