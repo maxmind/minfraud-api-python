@@ -73,7 +73,7 @@ History
 +++++++++++++++++++
 
 * Added support for the Report Transactions API. We encourage use of this API
-  as we use data recieved through this channel to continually improve the
+  as we use data received through this channel to continually improve the
   accuracy of our fraud detection algorithms.
 
 1.11.0 (2020-04-06)
