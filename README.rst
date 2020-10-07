@@ -30,7 +30,7 @@ Documentation
 -------------
 
 Complete API documentation is available on `Read the Docs
-<http://minfraud.readthedocs.io/>`_.
+<https://minfraud.readthedocs.io/>`_.
 
 Usage
 -----
@@ -303,7 +303,7 @@ Python 3.6 or greater is required. Older versions are not supported.
 Versioning
 ----------
 
-The minFraud Python API uses `Semantic Versioning <http://semver.org/>`_.
+The minFraud Python API uses `Semantic Versioning <https://semver.org/>`_.
 
 Support
 -------
@@ -312,7 +312,7 @@ Please report all issues with this code using the `GitHub issue tracker
 <https://github.com/maxmind/minfraud-api-python/issues>`_.
 
 If you are having an issue with a MaxMind service that is not specific to the
-client API, please contact `MaxMind support <http://www.maxmind.com/en/support>`_
+client API, please contact `MaxMind support <https://www.maxmind.com/en/support>`_
 for assistance.
 
 Copyright and License

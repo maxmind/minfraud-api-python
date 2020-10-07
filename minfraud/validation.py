@@ -62,7 +62,7 @@ def _email_or_md5(s: str) -> str:
 
 
 # based off of:
-# http://stackoverflow.com/questions/2532053/validate-a-hostname-string
+# https://stackoverflow.com/questions/2532053/validate-a-hostname-string
 def _hostname(hostname: str) -> str:
     if len(hostname) > 255:
         raise ValueError

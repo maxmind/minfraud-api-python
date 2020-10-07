@@ -69,7 +69,7 @@ class GeoIP2Location(geoip2.records.Location):
 
       The date and time of the transaction in the time
       zone associated with the IP address. The value is formatted according to
-      `RFC 3339 <http://tools.ietf.org/html/rfc3339>`_. For instance, the
+      `RFC 3339 <https://tools.ietf.org/html/rfc3339>`_. For instance, the
       local time in Boston might be returned as 2015-04-27T19:17:24-04:00.
 
       :type: str | None
@@ -463,7 +463,7 @@ class CreditCard:
     .. attribute:: country
 
       This property contains the `ISO 3166-1 alpha-2 country code
-      <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ associated with the
+      <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ associated with the
       location of the majority of customers using this credit card as
       determined by their billing address. In cases where the location of
       customers is highly mixed, this defaults to the country of the bank
