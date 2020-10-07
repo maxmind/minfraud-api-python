@@ -3,6 +3,11 @@
 History
 -------
 
+2.2.0
+++++++++++++++++++
+
+* The device IP address is no longer a required input.
+
 2.1.0 (2020-09-25)
 ++++++++++++++++++
 
@@ -73,7 +78,7 @@ History
 +++++++++++++++++++
 
 * Added support for the Report Transactions API. We encourage use of this API
-  as we use data recieved through this channel to continually improve the
+  as we use data received through this channel to continually improve the
   accuracy of our fraud detection algorithms.
 
 1.11.0 (2020-04-06)
