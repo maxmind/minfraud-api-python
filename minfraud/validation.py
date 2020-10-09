@@ -62,7 +62,7 @@ def _email_or_md5(s: str) -> str:
 
 
 # based off of:
-# http://stackoverflow.com/questions/2532053/validate-a-hostname-string
+# https://stackoverflow.com/questions/2532053/validate-a-hostname-string
 def _hostname(hostname: str) -> str:
     if len(hostname) > 255:
         raise ValueError
@@ -295,9 +295,9 @@ validate_transaction = Schema(
             "token": _credit_card_token,
         },
         "custom_inputs": {_custom_input_key: _custom_input_value},
-        Required("device"): {
+        "device": {
             "accept_language": str,
-            Required("ip_address"): _ip_address,
+            "ip_address": _ip_address,
             "session_age": All(_any_number, Range(min=0)),
             "session_id": str,
             "user_agent": str,

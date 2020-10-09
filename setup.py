@@ -38,7 +38,7 @@ setup(
     long_description=_readme,
     author="Gregory Oschwald",
     author_email="goschwald@maxmind.com",
-    url="http://www.maxmind.com/",
+    url="https://www.maxmind.com/",
     packages=["minfraud"],
     package_data={"minfraud": ["py.typed"]},
     include_package_data=True,

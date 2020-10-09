@@ -30,7 +30,7 @@ Documentation
 -------------
 
 Complete API documentation is available on `Read the Docs
-<http://minfraud.readthedocs.io/>`_.
+<https://minfraud.readthedocs.io/>`_.
 
 Usage
 -----
@@ -72,8 +72,7 @@ Each of these methods takes a dictionary representing the transaction to be sent
 to the web service. The structure of this dictionary should be in `the format
 specified in the REST API documentation
 <https://dev.maxmind.com/minfraud/#Request_Body>`__.
-The ``ip_address`` in the ``device`` sub-dictionary is required. All other
-fields are optional.
+All fields are optional.
 
 Report Transactions Usage
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -114,9 +113,9 @@ The possible errors are:
   is unable to authenticate the request, e.g., if the license key or account
   ID is invalid.
 * ``minfraud.InvalidRequestError`` - This will be raised when the server
-  rejects the request as invalid for another reason, such as a missing or
-  reserved IP address. It is also raised if validation of the request before
-  it is sent to the server fails.
+  rejects the request as invalid for another reason, such as a reserved IP
+  address. It is also raised if validation of the request before it is sent to
+  the server fails.
 * ``minfraud.HttpError`` - This will be raised when an unexpected HTTP
   error occurs such as a firewall interfering with the request to the server.
 * ``minfraud.MinFraudError`` - This will be raised when some other error
@@ -303,7 +302,7 @@ Python 3.6 or greater is required. Older versions are not supported.
 Versioning
 ----------
 
-The minFraud Python API uses `Semantic Versioning <http://semver.org/>`_.
+The minFraud Python API uses `Semantic Versioning <https://semver.org/>`_.
 
 Support
 -------
@@ -312,7 +311,7 @@ Please report all issues with this code using the `GitHub issue tracker
 <https://github.com/maxmind/minfraud-api-python/issues>`_.
 
 If you are having an issue with a MaxMind service that is not specific to the
-client API, please contact `MaxMind support <http://www.maxmind.com/en/support>`_
+client API, please contact `MaxMind support <https://www.maxmind.com/en/support>`_
 for assistance.
 
 Copyright and License
