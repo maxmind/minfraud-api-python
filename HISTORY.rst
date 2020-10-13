@@ -3,7 +3,7 @@
 History
 -------
 
-2.2.0
+2.2.0 (2020-10-13)
 ++++++++++++++++++
 
 * Added ``tsys`` to the ``/payment/processor`` validation.
