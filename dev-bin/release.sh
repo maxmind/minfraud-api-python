@@ -40,7 +40,7 @@ pip install -U sphinx wheel voluptuous email_validator twine
 perl -pi -e "s/(?<=__version__ = \").+?(?=\")/$version/g" minfraud/version.py
 
 echo $"Test results:"
-python setup.py test
+tox
 
 echo $'\nDiff:'
 git diff
