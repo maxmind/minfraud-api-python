@@ -228,6 +228,7 @@ class AsyncClient(BaseClient):
     """Async client for accessing the minFraud web services."""
 
     _existing_session: aiohttp.ClientSession
+    _proxy: Optional[str]
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
@@ -236,6 +237,7 @@ class AsyncClient(BaseClient):
         host: str = "minfraud.maxmind.com",
         locales: Tuple[str, ...] = ("en",),
         timeout: float = 60,
+        proxy: Optional[str] = None,
     ) -> None:
         """Constructor for AsyncClient.
 
@@ -251,10 +253,14 @@ class AsyncClient(BaseClient):
           This sets both the connect timeout and the read timeout. The default is
           60.
         :type timeout: float
+        :param proxy: The URL of an HTTP proxy to use. It may optionally include
+          a basic auth username and password, e.g.,
+          ``http://username:password@host:port``.
         :return: Client object
         :rtype: Client
         """
         super().__init__(account_id, license_key, host, locales, timeout)
+        self._proxy = proxy
 
     async def factors(
         self, transaction: Dict[str, Any], validate: bool = True
@@ -383,7 +389,7 @@ class AsyncClient(BaseClient):
         self, uri: str, data: Dict[str, Any]
     ) -> aiohttp.ClientResponse:
         session = await self._session()
-        return await session.post(uri, json=data)
+        return await session.post(uri, json=data, proxy=self._proxy)
 
     async def _session(self) -> aiohttp.ClientSession:
         if not hasattr(self, "_existing_session"):
@@ -413,6 +419,7 @@ class AsyncClient(BaseClient):
 class Client(BaseClient):
     """Synchronous client for accessing the minFraud web services."""
 
+    _proxies: Optional[Dict[str, str]]
     _session: requests.Session
 
     def __init__(  # pylint: disable=too-many-arguments
@@ -422,6 +429,7 @@ class Client(BaseClient):
         host: str = "minfraud.maxmind.com",
         locales: Tuple[str, ...] = ("en",),
         timeout: float = 60,
+        proxy: Optional[str] = None,
     ) -> None:
         """Constructor for Client.
 
@@ -436,6 +444,9 @@ class Client(BaseClient):
         :param timeout: The timeout in seconts to use when waiting on the request.
           This sets both the connect timeout and the read timeout. The default is
           60.
+        :param proxy: The URL of an HTTP proxy to use. It may optionally include
+          a basic auth username and password, e.g.,
+          ``http://username:password@host:port``.
         :type timeout: float
         :return: Client object
         :rtype: Client
@@ -446,6 +457,11 @@ class Client(BaseClient):
         self._session.auth = (self._account_id, self._license_key)
         self._session.headers["Accept"] = "application/json"
         self._session.headers["User-Agent"] = _REQUEST_UA
+
+        if proxy is None:
+            self._proxies = None
+        else:
+            self._proxies = {"https": proxy}
 
     def factors(self, transaction: Dict[str, Any], validate: bool = True) -> Factors:
         """Query Factors endpoint with transaction data.
@@ -562,7 +578,9 @@ class Client(BaseClient):
         return self._handle_success(body, uri, model_class)
 
     def _do_request(self, uri: str, data: Dict[str, Any]) -> Response:
-        return self._session.post(uri, json=data, timeout=self._timeout)
+        return self._session.post(
+            uri, json=data, timeout=self._timeout, proxies=self._proxies
+        )
 
     def close(self):
         """Close underlying session
