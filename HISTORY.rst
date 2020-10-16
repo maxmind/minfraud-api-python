@@ -6,7 +6,7 @@ History
 2.3.0
 ++++++++++++++++++
 
-* You may now set a proxy to use when making web service request by passing
+* You may now set a proxy to use when making web service requests by passing
   the ``proxy`` parameter to the ``AsyncClient`` or ``Client`` constructor.
 
 2.2.0 (2020-10-13)

@@ -249,7 +249,7 @@ class AsyncClient(BaseClient):
         :type host: str
         :param locales: A tuple of locale codes to use in name property
         :type locales: tuple[str]
-        :param timeout: The timeout in seconts to use when waiting on the request.
+        :param timeout: The timeout in seconds to use when waiting on the request.
           This sets both the connect timeout and the read timeout. The default is
           60.
         :type timeout: float
@@ -441,7 +441,7 @@ class Client(BaseClient):
         :type host: str
         :param locales: A tuple of locale codes to use in name property
         :type locales: tuple[str]
-        :param timeout: The timeout in seconts to use when waiting on the request.
+        :param timeout: The timeout in seconds to use when waiting on the request.
           This sets both the connect timeout and the read timeout. The default is
           60.
         :param proxy: The URL of an HTTP proxy to use. It may optionally include
