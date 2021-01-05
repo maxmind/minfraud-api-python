@@ -8,6 +8,8 @@ History
 
 * You may now set a proxy to use when making web service requests by passing
   the ``proxy`` parameter to the ``AsyncClient`` or ``Client`` constructor.
+* Added ``apple_pay`` and ``aps_payments`` to the ``/payment/processor``
+  validation.
 
 2.2.0 (2020-10-13)
 ++++++++++++++++++

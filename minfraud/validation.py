@@ -100,6 +100,8 @@ _payment_processor = In(
         "altapay",
         "amazon_payments",
         "american_express_payment_gateway",
+        "apple_pay",
+        "aps_payments",
         "authorizenet",
         "balanced",
         "beanstream",
