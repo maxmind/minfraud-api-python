@@ -5,8 +5,8 @@ from io import open
 from typing import Type, Union
 
 # httpretty currently doesn't work, but mocket with the compat interface
-# does.
-from mocket.plugins.httpretty import HTTPretty as httpretty, httprettified  # type: ignore
+# does. See, e.g., https://github.com/gabrielfalcao/HTTPretty/issues/220
+from mocket.plugins.httpretty import httpretty, httprettified  # type: ignore
 
 from minfraud.errors import (
     HTTPError,
