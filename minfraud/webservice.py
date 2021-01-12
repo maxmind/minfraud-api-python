@@ -46,7 +46,7 @@ class BaseClient:
     _factors_uri: str
     _report_uri: str
 
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(
         self,
         account_id: int,
         license_key: str,
@@ -230,7 +230,7 @@ class AsyncClient(BaseClient):
     _existing_session: aiohttp.ClientSession
     _proxy: Optional[str]
 
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(
         self,
         account_id: int,
         license_key: str,
@@ -422,7 +422,7 @@ class Client(BaseClient):
     _proxies: Optional[Dict[str, str]]
     _session: requests.Session
 
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(
         self,
         account_id: int,
         license_key: str,
