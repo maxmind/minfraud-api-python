@@ -10,6 +10,12 @@ History
   the ``proxy`` parameter to the ``AsyncClient`` or ``Client`` constructor.
 * Added ``apple_pay`` and ``aps_payments`` to the ``/payment/processor``
   validation.
+* You may now enable client-side email hashing by setting the keyword argument
+  ``hash_email`` to ``True`` in the web-service client request methods (i.e.,
+  ``score``, ``insights``, ``factors``). When set, this normalizes the email
+  address and sends an MD5 hash of it to the web service rather than the
+  plain-text address. Note that the email domain will still be sent in plain
+  text.
 
 2.2.0 (2020-10-13)
 ++++++++++++++++++

@@ -154,7 +154,6 @@ class BaseTest(unittest.TestCase):
             client = self.client
         if request is None:
             request = self.full_request
-        print(client)
         return self.run_client(getattr(client, self.type)(request))
 
     def run_client(self, v):
@@ -212,6 +211,32 @@ class BaseTransactionTest(BaseTest):
         )
         response = self.response
         self.assertEqual(0.01, model.risk_score)
+
+    @httprettified
+    def test_200_with_email_hashing(self):
+
+        uri = "/".join([self.base_uri, self.type])
+
+        httpretty.register_uri(
+            httpretty.POST,
+            uri=uri,
+            status=200,
+            body=self.response,
+            content_type=f"application/vnd.maxmind.com-minfraud-{self.type}+json; charset=UTF-8; version=2.0",
+        )
+
+        request = {"email": {"address": "Test+ignore@maxmind.com"}}
+        self.run_client(getattr(self.client, self.type)(request, hash_email=True))
+
+        self.assertEqual(
+            {
+                "email": {
+                    "address": "977577b140bfb7c516e4746204fbdb01",
+                    "domain": "maxmind.com",
+                }
+            },
+            json.loads(httpretty.last_request.body),
+        )
 
     @httprettified
     def test_200_with_locales(self):
