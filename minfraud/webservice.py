@@ -14,7 +14,6 @@ import aiohttp.http
 import requests
 import requests.utils
 from requests.models import Response
-from voluptuous import MultipleInvalid
 
 from .version import __version__
 from .errors import (
@@ -26,13 +25,12 @@ from .errors import (
     PermissionRequiredError,
 )
 from .models import Factors, Insights, Score
-from .validation import validate_report, validate_transaction
+from .request import prepare_report, prepare_transaction
 
 
 _AIOHTTP_UA = f"minFraud-API/{__version__} {aiohttp.http.SERVER_SOFTWARE}"
 
 _REQUEST_UA = f"minFraud-API/{__version__} {requests.utils.default_user_agent()}"
-
 
 # pylint: disable=too-many-instance-attributes, missing-class-docstring
 class BaseClient:
@@ -46,7 +44,7 @@ class BaseClient:
     _factors_uri: str
     _report_uri: str
 
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(
         self,
         account_id: int,
         license_key: str,
@@ -64,34 +62,6 @@ class BaseClient:
         self._insights_uri = "/".join([base_uri, "insights"])
         self._factors_uri = "/".join([base_uri, "factors"])
         self._report_uri = "/".join([base_uri, "transactions", "report"])
-
-    def _prepare_report(self, request: Dict[str, Any], validate: bool):
-        cleaned_request = self._copy_and_clean(request)
-        if validate:
-            try:
-                validate_report(cleaned_request)
-            except MultipleInvalid as ex:
-                raise InvalidRequestError(f"Invalid report data: {ex}") from ex
-        return cleaned_request
-
-    def _prepare_transaction(self, request: Dict[str, Any], validate: bool):
-        cleaned_request = self._copy_and_clean(request)
-        if validate:
-            try:
-                validate_transaction(cleaned_request)
-            except MultipleInvalid as ex:
-                raise InvalidRequestError(f"Invalid transaction data: {ex}") from ex
-        return cleaned_request
-
-    def _copy_and_clean(self, data: Any) -> Any:
-        """Create a copy of the data structure with Nones removed."""
-        if isinstance(data, dict):
-            return dict(
-                (k, self._copy_and_clean(v)) for (k, v) in data.items() if v is not None
-            )
-        if isinstance(data, (list, set, tuple)):
-            return [self._copy_and_clean(x) for x in data if x is not None]
-        return data
 
     def _handle_success(
         self,
@@ -230,7 +200,7 @@ class AsyncClient(BaseClient):
     _existing_session: aiohttp.ClientSession
     _proxy: Optional[str]
 
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(
         self,
         account_id: int,
         license_key: str,
@@ -263,7 +233,10 @@ class AsyncClient(BaseClient):
         self._proxy = proxy
 
     async def factors(
-        self, transaction: Dict[str, Any], validate: bool = True
+        self,
+        transaction: Dict[str, Any],
+        validate: bool = True,
+        hash_email: bool = False,
     ) -> Factors:
         """Query Factors endpoint with transaction data.
 
@@ -277,6 +250,11 @@ class AsyncClient(BaseClient):
           request is correct before sending it to MaxMind. Validation raises an
           InvalidRequestError.
         :type validate: bool
+        :param hash_email: By default, the email address is sent in plain text.
+          If this is set to ``True``, the email address will be normalized and
+          converted to an MD5 hash before the request is sent. The email domain
+          will continue to be sent in plain text.
+        :type hash_email: bool
         :return: A Factors model object
         :rtype: Factors
         :raises: AuthenticationError, InsufficientFundsError,
@@ -284,11 +262,20 @@ class AsyncClient(BaseClient):
         """
         return cast(
             Factors,
-            await self._response_for(self._factors_uri, Factors, transaction, validate),
+            await self._response_for(
+                self._factors_uri,
+                Factors,
+                transaction,
+                validate,
+                hash_email,
+            ),
         )
 
     async def insights(
-        self, transaction: Dict[str, Any], validate: bool = True
+        self,
+        transaction: Dict[str, Any],
+        validate: bool = True,
+        hash_email: bool = False,
     ) -> Insights:
         """Query Insights endpoint with transaction data.
 
@@ -302,6 +289,11 @@ class AsyncClient(BaseClient):
           request is correct before sending it to MaxMind. Validation raises an
           InvalidRequestError.
         :type validate: bool
+        :param hash_email: By default, the email address is sent in plain text.
+          If this is set to ``True``, the email address will be normalized and
+          converted to an MD5 hash before the request is sent. The email domain
+          will continue to be sent in plain text.
+        :type hash_email: bool
         :return: An Insights model object
         :rtype: Insights
         :raises: AuthenticationError, InsufficientFundsError,
@@ -310,11 +302,20 @@ class AsyncClient(BaseClient):
         return cast(
             Insights,
             await self._response_for(
-                self._insights_uri, Insights, transaction, validate
+                self._insights_uri,
+                Insights,
+                transaction,
+                validate,
+                hash_email,
             ),
         )
 
-    async def score(self, transaction: Dict[str, Any], validate: bool = True) -> Score:
+    async def score(
+        self,
+        transaction: Dict[str, Any],
+        validate: bool = True,
+        hash_email: bool = False,
+    ) -> Score:
         """Query Score endpoint with transaction data.
 
         :param transaction: A dictionary containing the transaction to be
@@ -327,6 +328,11 @@ class AsyncClient(BaseClient):
           request is correct before sending it to MaxMind. Validation raises an
           InvalidRequestError.
         :type validate: bool
+        :param hash_email: By default, the email address is sent in plain text.
+          If this is set to ``True``, the email address will be normalized and
+          converted to an MD5 hash before the request is sent. The email domain
+          will continue to be sent in plain text.
+        :type hash_email: bool
         :return: A Score model object
         :rtype: Score
         :raises: AuthenticationError, InsufficientFundsError,
@@ -334,7 +340,13 @@ class AsyncClient(BaseClient):
         """
         return cast(
             Score,
-            await self._response_for(self._score_uri, Score, transaction, validate),
+            await self._response_for(
+                self._score_uri,
+                Score,
+                transaction,
+                validate,
+                hash_email,
+            ),
         )
 
     async def report(
@@ -357,7 +369,7 @@ class AsyncClient(BaseClient):
         :raises: AuthenticationError, InvalidRequestError, HTTPError,
           MinFraudError,
         """
-        prepared_request = self._prepare_report(report, validate)
+        prepared_request = prepare_report(report, validate)
         uri = self._report_uri
         async with await self._do_request(uri, prepared_request) as response:
             status = response.status
@@ -373,9 +385,10 @@ class AsyncClient(BaseClient):
         model_class: Union[Type[Factors], Type[Score], Type[Insights]],
         request: Dict[str, Any],
         validate: bool,
+        hash_email: bool,
     ) -> Union[Score, Factors, Insights]:
         """Send request and create response object."""
-        prepared_request = self._prepare_transaction(request, validate)
+        prepared_request = prepare_transaction(request, validate, hash_email)
         async with await self._do_request(uri, prepared_request) as response:
             status = response.status
             content_type = response.content_type
@@ -422,7 +435,7 @@ class Client(BaseClient):
     _proxies: Optional[Dict[str, str]]
     _session: requests.Session
 
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(
         self,
         account_id: int,
         license_key: str,
@@ -463,7 +476,12 @@ class Client(BaseClient):
         else:
             self._proxies = {"https": proxy}
 
-    def factors(self, transaction: Dict[str, Any], validate: bool = True) -> Factors:
+    def factors(
+        self,
+        transaction: Dict[str, Any],
+        validate: bool = True,
+        hash_email: bool = False,
+    ) -> Factors:
         """Query Factors endpoint with transaction data.
 
         :param transaction: A dictionary containing the transaction to be
@@ -476,6 +494,11 @@ class Client(BaseClient):
           request is correct before sending it to MaxMind. Validation raises an
           InvalidRequestError.
         :type validate: bool
+        :param hash_email: By default, the email address is sent in plain text.
+          If this is set to ``True``, the email address will be normalized and
+          converted to an MD5 hash before the request is sent. The email domain
+          will continue to be sent in plain text.
+        :type hash_email: bool
         :return: A Factors model object
         :rtype: Factors
         :raises: AuthenticationError, InsufficientFundsError,
@@ -483,10 +506,21 @@ class Client(BaseClient):
         """
         return cast(
             Factors,
-            self._response_for(self._factors_uri, Factors, transaction, validate),
+            self._response_for(
+                self._factors_uri,
+                Factors,
+                transaction,
+                validate,
+                hash_email,
+            ),
         )
 
-    def insights(self, transaction: Dict[str, Any], validate: bool = True) -> Insights:
+    def insights(
+        self,
+        transaction: Dict[str, Any],
+        validate: bool = True,
+        hash_email: bool = False,
+    ) -> Insights:
         """Query Insights endpoint with transaction data.
 
         :param transaction: A dictionary containing the transaction to be
@@ -499,6 +533,11 @@ class Client(BaseClient):
           request is correct before sending it to MaxMind. Validation raises an
           InvalidRequestError.
         :type validate: bool
+        :param hash_email: By default, the email address is sent in plain text.
+          If this is set to ``True``, the email address will be normalized and
+          converted to an MD5 hash before the request is sent. The email domain
+          will continue to be sent in plain text.
+        :type hash_email: bool
         :return: An Insights model object
         :rtype: Insights
         :raises: AuthenticationError, InsufficientFundsError,
@@ -506,10 +545,21 @@ class Client(BaseClient):
         """
         return cast(
             Insights,
-            self._response_for(self._insights_uri, Insights, transaction, validate),
+            self._response_for(
+                self._insights_uri,
+                Insights,
+                transaction,
+                validate,
+                hash_email,
+            ),
         )
 
-    def score(self, transaction: Dict[str, Any], validate: bool = True) -> Score:
+    def score(
+        self,
+        transaction: Dict[str, Any],
+        validate: bool = True,
+        hash_email: bool = False,
+    ) -> Score:
         """Query Score endpoint with transaction data.
 
         :param transaction: A dictionary containing the transaction to be
@@ -522,13 +572,25 @@ class Client(BaseClient):
           request is correct before sending it to MaxMind. Validation raises an
           InvalidRequestError.
         :type validate: bool
+        :param hash_email: By default, the email address is sent in plain text.
+          If this is set to ``True``, the email address will be normalized and
+          converted to an MD5 hash before the request is sent. The email domain
+          will continue to be sent in plain text.
+        :type hash_email: bool
         :return: A Score model object
         :rtype: Score
         :raises: AuthenticationError, InsufficientFundsError,
           InvalidRequestError, HTTPError, MinFraudError,
         """
         return cast(
-            Score, self._response_for(self._score_uri, Score, transaction, validate)
+            Score,
+            self._response_for(
+                self._score_uri,
+                Score,
+                transaction,
+                validate,
+                hash_email,
+            ),
         )
 
     def report(self, report: Dict[str, Optional[str]], validate: bool = True) -> None:
@@ -549,7 +611,7 @@ class Client(BaseClient):
         :raises: AuthenticationError, InvalidRequestError, HTTPError,
           MinFraudError,
         """
-        prepared_request = self._prepare_report(report, validate)
+        prepared_request = prepare_report(report, validate)
         uri = self._report_uri
 
         response = self._do_request(uri, prepared_request)
@@ -565,9 +627,10 @@ class Client(BaseClient):
         model_class: Union[Type[Factors], Type[Score], Type[Insights]],
         request: Dict[str, Any],
         validate: bool,
+        hash_email: bool,
     ) -> Union[Score, Factors, Insights]:
         """Send request and create response object."""
-        prepared_request = self._prepare_transaction(request, validate)
+        prepared_request = prepare_transaction(request, validate, hash_email)
 
         response = self._do_request(uri, prepared_request)
         status = response.status_code
