@@ -59,6 +59,63 @@ def _inflate_to_namedtuple(orig_cls):
     return new_cls
 
 
+@_inflate_to_namedtuple
+class IPRiskReason:
+    """Reason for the IP risk.
+
+    This class provides both a machine-readable code and a human-readable
+    explanation of the reason for the IP risk score.
+
+    Although more codes may be added in the future, the current codes are:
+
+    - ``ANONYMOUS_IP`` - The IP address belongs to an anonymous network. See
+      the object at ``->ipAddress->traits`` for more details.
+    - ``BILLING_POSTAL_VELOCITY`` - Many different billing postal codes have
+      been seen on this IP address.
+    - ``EMAIL_VELOCITY`` - Many different email addresses have been seen on this
+      IP address.
+    - ``HIGH_RISK_DEVICE`` - A high risk device was seen on this IP address.
+    - ``HIGH_RISK_EMAIL`` - A high risk email address was seen on this IP
+      address in your past transactions.
+    - ``ISSUER_ID_NUMBER_VELOCITY`` - Many different issuer ID numbers have been
+      seen on this IP address.
+    - ``MINFRAUD_NETWORK_ACTIVITY`` - Suspicious activity has been seen on this
+      IP address across minFraud customers.
+
+    .. attribute:: code
+
+      This value is a machine-readable code identifying the
+      reason.
+
+      :type: str | None
+
+    .. attribute:: reason
+
+      This property provides a human-readable explanation of the
+      reason. The text may change at any time and should not be matched
+      against.
+
+      :type: str | None
+    """
+
+    code: Optional[str]
+    reason: Optional[str]
+
+    __slots__ = ()
+    _fields = {
+        "code": None,
+        "reason": None,
+    }
+
+
+def _create_ip_risk_reasons(
+    reasons: Optional[List[Dict[str, str]]]
+) -> Tuple[IPRiskReason, ...]:
+    if not reasons:
+        return ()
+    return tuple([IPRiskReason(x) for x in reasons])  # type: ignore
+
+
 class GeoIP2Location(geoip2.records.Location):
     """Location information for the IP address.
 
@@ -126,6 +183,14 @@ class IPAddress(geoip2.models.Insights):
 
       :type: float | None
 
+    .. attribute:: risk_reasons
+
+      This tuple contains :class:`.IPRiskReason` objects identifying the
+      reasons why the IP address received the associated risk. This will be
+      an empty tuple if there are no reasons.
+
+      :type: tuple[IPRiskReason]
+
     .. attribute:: city
 
       City object for the requested IP address.
@@ -189,6 +254,7 @@ class IPAddress(geoip2.models.Insights):
     country: GeoIP2Country
     location: GeoIP2Location
     risk: Optional[float]
+    risk_reasons: Tuple[IPRiskReason, ...]
 
     def __init__(self, ip_address: Dict[str, Any]) -> None:
         if ip_address is None:
@@ -200,6 +266,7 @@ class IPAddress(geoip2.models.Insights):
         self.country = GeoIP2Country(locales, **ip_address.get("country", {}))
         self.location = GeoIP2Location(**ip_address.get("location", {}))
         self.risk = ip_address.get("risk", None)
+        self.risk_reasons = _create_ip_risk_reasons(ip_address.get("risk_reasons"))
         self._finalized = True
 
     # Unfortunately the GeoIP2 models are not immutable, only the records. This
