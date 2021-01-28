@@ -1125,7 +1125,7 @@ class Factors:
     risk_score: float
     shipping_address: ShippingAddress
     subscores: Subscores
-    warnings: List[ServiceWarning]
+    warnings: Tuple[ServiceWarning, ...]
 
     __slots__ = ()
     _fields = {
@@ -1249,7 +1249,7 @@ class Insights:
     queries_remaining: int
     risk_score: float
     shipping_address: ShippingAddress
-    warnings: List[ServiceWarning]
+    warnings: Tuple[ServiceWarning, ...]
 
     __slots__ = ()
     _fields = {
@@ -1333,7 +1333,7 @@ class Score:
     ip_address: ScoreIPAddress
     queries_remaining: int
     risk_score: float
-    warnings: List[ServiceWarning]
+    warnings: Tuple[ServiceWarning, ...]
 
     __slots__ = ()
     _fields = {
