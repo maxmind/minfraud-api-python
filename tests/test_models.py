@@ -8,6 +8,7 @@ class TestModels(unittest.TestCase):
         """This tests some level of _shallow_ immutability for these classes"""
         T = namedtuple("T", ["obj", "attr"])
         models = [
+            T(IPRiskReason(), "code"),
             T(Issuer(), "name"),
             T(CreditCard(), "country"),
             T(Device(), "id"),
@@ -152,6 +153,16 @@ class TestModels(unittest.TestCase):
                     "local_time": time,
                 },
                 "risk": 99,
+                "risk_reasons": [
+                    {
+                        "code": "ANONYMOUS_IP",
+                        "reason": "The IP address belongs to an anonymous network. See /ip_address/traits for more details.",
+                    },
+                    {
+                        "code": "MINFRAUD_NETWORK_ACTIVITY",
+                        "reason": "Suspicious activity has been seen on this IP address across minFraud customers.",
+                    },
+                ],
                 "traits": {
                     "is_anonymous": True,
                     "is_anonymous_proxy": True,
@@ -178,6 +189,22 @@ class TestModels(unittest.TestCase):
         self.assertEqual(True, address.traits.is_satellite_provider)
         self.assertEqual(True, address.traits.is_tor_exit_node)
         self.assertEqual(True, address.country.is_high_risk)
+
+        self.assertEqual("ANONYMOUS_IP", address.risk_reasons[0].code)
+        self.assertEqual(
+            "The IP address belongs to an anonymous network. See /ip_address/traits for more details.",
+            address.risk_reasons[0].reason,
+        )
+
+        self.assertEqual("MINFRAUD_NETWORK_ACTIVITY", address.risk_reasons[1].code)
+        self.assertEqual(
+            "Suspicious activity has been seen on this IP address across minFraud customers.",
+            address.risk_reasons[1].reason,
+        )
+
+    def test_empty_address(self):
+        address = IPAddress({})
+        self.assertEqual((), address.risk_reasons)
 
     def test_score_ip_address(self):
         address = ScoreIPAddress({"risk": 99})

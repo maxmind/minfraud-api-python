@@ -16,6 +16,10 @@ History
   address and sends an MD5 hash of it to the web service rather than the
   plain-text address. Note that the email domain will still be sent in plain
   text.
+* Added support for the IP address risk reasons in the minFraud Insights and
+  Factors responses. This is available at ``.ip_address.risk_reasons``. It is
+  an array of ``IPRiskReason`` objects.
+
 
 2.2.0 (2020-10-13)
 ++++++++++++++++++
