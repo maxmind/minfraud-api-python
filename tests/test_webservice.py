@@ -60,7 +60,7 @@ class BaseTest(unittest.TestCase):
     @httprettified
     def test_300_error(self):
         with self.assertRaisesRegex(
-            HTTPError, "Received an unexpected HTTP status \(300\) for"
+            HTTPError, r"Received an unexpected HTTP status \(300\) for"
         ):
             self.create_error(status_code=300)
 
@@ -113,7 +113,7 @@ class BaseTest(unittest.TestCase):
 
     @httprettified
     def test_500_error(self):
-        with self.assertRaisesRegex(HTTPError, "Received a server error \(500\) for"):
+        with self.assertRaisesRegex(HTTPError, r"Received a server error \(500\) for"):
             self.create_error(status_code=500)
 
     def create_error(self, status_code=400, text="", content_type=None):
