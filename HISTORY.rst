@@ -3,6 +3,14 @@
 History
 -------
 
+2.3.1 (2021-02-12)
+++++++++++++++++++
+
+* In 2.2.0 and 2.3.0, a ``KeyError`` would be thrown if the response from the
+  web service did not have the ``ip_address`` key but did contain the text
+  "ip_address" in the JSON body. Reported and fixed by Justas-iDenfy. GitHub
+  #78.
+
 2.3.0 (2021-02-02)
 ++++++++++++++++++
 
