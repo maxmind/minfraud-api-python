@@ -78,7 +78,7 @@ class BaseClient:
                 200,
                 uri,
             ) from ex
-        if "ip_address" in body:
+        if "ip_address" in decoded_body:
             decoded_body["ip_address"]["_locales"] = self._locales
         return model_class(decoded_body)  # type: ignore
 
