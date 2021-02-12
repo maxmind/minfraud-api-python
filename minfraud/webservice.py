@@ -65,16 +65,16 @@ class BaseClient:
 
     def _handle_success(
         self,
-        body: str,
+        raw_body: str,
         uri: str,
         model_class: Union[Type[Factors], Type[Score], Type[Insights]],
     ) -> Union[Score, Factors, Insights]:
         """Handle successful response."""
         try:
-            decoded_body = json.loads(body)
+            decoded_body = json.loads(raw_body)
         except ValueError as ex:
             raise MinFraudError(
-                f"Received a 200 response but could not decode the response as JSON: {body}",
+                f"Received a 200 response but could not decode the response as JSON: {raw_body}",
                 200,
                 uri,
             ) from ex
@@ -83,7 +83,7 @@ class BaseClient:
         return model_class(decoded_body)  # type: ignore
 
     def _exception_for_error(
-        self, status: int, content_type: str, body: str, uri: str
+        self, status: int, content_type: str, raw_body: str, uri: str
     ) -> Union[
         AuthenticationError,
         InsufficientFundsError,
@@ -94,13 +94,13 @@ class BaseClient:
         """Returns the exception for the error responses."""
 
         if 400 <= status < 500:
-            return self._exception_for_4xx_status(status, content_type, body, uri)
+            return self._exception_for_4xx_status(status, content_type, raw_body, uri)
         if 500 <= status < 600:
-            return self._exception_for_5xx_status(status, body, uri)
-        return self._exception_for_unexpected_status(status, body, uri)
+            return self._exception_for_5xx_status(status, raw_body, uri)
+        return self._exception_for_unexpected_status(status, raw_body, uri)
 
     def _exception_for_4xx_status(
-        self, status: int, content_type: str, body: str, uri: str
+        self, status: int, content_type: str, raw_body: str, uri: str
     ) -> Union[
         AuthenticationError,
         InsufficientFundsError,
@@ -109,25 +109,26 @@ class BaseClient:
         PermissionRequiredError,
     ]:
         """Returns exception for error responses with 4xx status codes."""
-        if not body:
+        if not raw_body:
             return HTTPError(
-                f"Received a {status} error with no body", status, uri, body
+                f"Received a {status} error with no body", status, uri, raw_body
             )
         if content_type.find("json") == -1:
             return HTTPError(
-                f"Received a {status} with the following body: {body}",
+                f"Received a {status} with the following body: {raw_body}",
                 status,
                 uri,
-                body,
+                raw_body,
             )
         try:
-            decoded_body = json.loads(body)
+            decoded_body = json.loads(raw_body)
         except ValueError:
             return HTTPError(
-                f"Received a {status} error but it did not include the expected JSON body: {body}",
+                f"Received a {status} error but it did not "
+                + f"include the expected JSON body: {raw_body}",
                 status,
                 uri,
-                body,
+                raw_body,
             )
         else:
             if "code" in decoded_body and "error" in decoded_body:
@@ -135,10 +136,11 @@ class BaseClient:
                     decoded_body.get("error"), decoded_body.get("code"), status, uri
                 )
             return HTTPError(
-                f"Error response contains JSON but it does not specify code or error keys: {body}",
+                "Error response contains JSON but it does not "
+                + f"specify code or error keys: {raw_body}",
                 status,
                 uri,
-                body,
+                raw_body,
             )
 
     @staticmethod
@@ -168,7 +170,7 @@ class BaseClient:
     @staticmethod
     def _exception_for_5xx_status(
         status: int,
-        body: Optional[str],
+        raw_body: Optional[str],
         uri: str,
     ) -> HTTPError:
         """Returns exception for error response with 5xx status codes."""
@@ -176,13 +178,13 @@ class BaseClient:
             f"Received a server error ({status}) for {uri}",
             status,
             uri,
-            body,
+            raw_body,
         )
 
     @staticmethod
     def _exception_for_unexpected_status(
         status: int,
-        body: Optional[str],
+        raw_body: Optional[str],
         uri: str,
     ) -> HTTPError:
         """Returns exception for responses with unexpected status codes."""
@@ -190,7 +192,7 @@ class BaseClient:
             f"Received an unexpected HTTP status ({status}) for {uri}",
             status,
             uri,
-            body,
+            raw_body,
         )
 
 
@@ -374,10 +376,10 @@ class AsyncClient(BaseClient):
         async with await self._do_request(uri, prepared_request) as response:
             status = response.status
             content_type = response.content_type
-            body = await response.text()
+            raw_body = await response.text()
 
             if status != 204:
-                raise self._exception_for_error(status, content_type, body, uri)
+                raise self._exception_for_error(status, content_type, raw_body, uri)
 
     async def _response_for(
         self,
@@ -392,11 +394,11 @@ class AsyncClient(BaseClient):
         async with await self._do_request(uri, prepared_request) as response:
             status = response.status
             content_type = response.content_type
-            body = await response.text()
+            raw_body = await response.text()
 
             if status != 200:
-                raise self._exception_for_error(status, content_type, body, uri)
-            return self._handle_success(body, uri, model_class)
+                raise self._exception_for_error(status, content_type, raw_body, uri)
+            return self._handle_success(raw_body, uri, model_class)
 
     async def _do_request(
         self, uri: str, data: Dict[str, Any]
@@ -617,9 +619,9 @@ class Client(BaseClient):
         response = self._do_request(uri, prepared_request)
         status = response.status_code
         content_type = response.headers["Content-Type"]
-        body = response.text
+        raw_body = response.text
         if status != 204:
-            raise self._exception_for_error(status, content_type, body, uri)
+            raise self._exception_for_error(status, content_type, raw_body, uri)
 
     def _response_for(
         self,
@@ -635,10 +637,10 @@ class Client(BaseClient):
         response = self._do_request(uri, prepared_request)
         status = response.status_code
         content_type = response.headers["Content-Type"]
-        body = response.text
+        raw_body = response.text
         if status != 200:
-            raise self._exception_for_error(status, content_type, body, uri)
-        return self._handle_success(body, uri, model_class)
+            raise self._exception_for_error(status, content_type, raw_body, uri)
+        return self._handle_success(raw_body, uri, model_class)
 
     def _do_request(self, uri: str, data: Dict[str, Any]) -> Response:
         return self._session.post(
