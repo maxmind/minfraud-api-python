@@ -239,6 +239,7 @@ class BaseTransactionTest(BaseTest):
             json.loads(httpretty.last_request.body),
         )
 
+    # This was fixed in https://github.com/maxmind/minfraud-api-python/pull/78
     @httprettified
     def test_200_with_locales(self):
         locales = ("fr",)
@@ -251,6 +252,27 @@ class BaseTransactionTest(BaseTest):
         if self.has_ip_location():
             self.assertEqual("Royaume-Uni", model.ip_address.country.name)
             self.assertEqual("Londres", model.ip_address.city.name)
+
+    @httprettified
+    def test_200_with_reserved_ip_warning(self):
+        model = self.create_success(
+            """
+                {
+                    "risk_score": 12,
+                    "id": "0e52f5ac-7690-4780-a939-173cb13ecd75",
+                    "warnings": [
+                        {
+                            "code": "IP_ADDRESS_RESERVED",
+                            "warning":
+                                "The IP address supplied is in a reserved network.",
+                            "input_pointer": "/device/ip_address"
+                        }
+                    ]
+                }
+            """
+        )
+
+        self.assertEqual(12, model.risk_score)
 
     @httprettified
     def test_200_with_no_body(self):
