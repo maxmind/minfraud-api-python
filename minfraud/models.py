@@ -113,7 +113,7 @@ def _create_ip_risk_reasons(
 ) -> Tuple[IPRiskReason, ...]:
     if not reasons:
         return ()
-    return tuple([IPRiskReason(x) for x in reasons])  # type: ignore
+    return tuple(IPRiskReason(x) for x in reasons)  # type: ignore
 
 
 class GeoIP2Location(geoip2.records.Location):
@@ -796,7 +796,7 @@ class ServiceWarning:
 def _create_warnings(warnings: List[Dict[str, str]]) -> Tuple[ServiceWarning, ...]:
     if not warnings:
         return ()
-    return tuple([ServiceWarning(x) for x in warnings])  # type: ignore
+    return tuple(ServiceWarning(x) for x in warnings)  # type: ignore
 
 
 @_inflate_to_namedtuple
