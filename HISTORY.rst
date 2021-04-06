@@ -3,6 +3,17 @@
 History
 -------
 
+2.4.0
+++++++++++++++++++
+
+* Added the following new values to the ``/payment/processor`` validation:
+  * ``cardknox``
+  * ``creditguard``
+  * ``credorax``
+  * ``dlocal``
+  * ``onpay``
+  * ``safecharge``
+
 2.3.1 (2021-02-12)
 ++++++++++++++++++
 
