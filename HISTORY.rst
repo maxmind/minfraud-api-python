@@ -10,6 +10,7 @@ History
   * ``cardknox``
   * ``creditguard``
   * ``credorax``
+  * ``datacap``
   * ``dlocal``
   * ``onpay``
   * ``safecharge``
