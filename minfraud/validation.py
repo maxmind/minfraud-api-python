@@ -131,6 +131,7 @@ _payment_processor = In(
         "cybersource",
         "dalenys",
         "dalpay",
+        "datacap",
         "datacash",
         "dibs",
         "digital_river",
