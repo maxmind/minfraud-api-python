@@ -431,15 +431,25 @@ class Disposition:
       rules set up, ``None`` will be returned.
 
       :type: str | None
+
+    .. attribute:: rule_label
+
+      The label of the custom rule that was triggered. If you do not have
+      custom rule set up, or the custom rule that was triggered does not have a
+      label, ``None`` will be returned.
+
+      :type: str | None
     """
 
     action: Optional[str]
     reason: Optional[str]
+    rule_label: Optional[str]
 
     __slots__ = ()
     _fields = {
         "action": None,
         "reason": None,
+        "rule_label": None,
     }
 
 

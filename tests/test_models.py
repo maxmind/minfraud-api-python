@@ -99,10 +99,13 @@ class TestModels(unittest.TestCase):
         self.assertEqual(local_time, device.local_time)
 
     def test_disposition(self):
-        disposition = Disposition({"action": "accept", "reason": "default"})
+        disposition = Disposition(
+            {"action": "accept", "reason": "default", "rule_label": "custom rule label"}
+        )
 
         self.assertEqual("accept", disposition.action)
         self.assertEqual("default", disposition.reason)
+        self.assertEqual("custom rule label", disposition.rule_label)
 
     def test_email(self):
         first_seen = "2016-01-01"
