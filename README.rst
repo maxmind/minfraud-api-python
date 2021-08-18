@@ -195,6 +195,7 @@ Score, Insights and Factors Example
     >>>         'cvv_result': 'N',
     >>>         'bank_name': 'Bank of No Hope',
     >>>         'issuer_id_number': '411111'
+    >>>         'was_3ds_secure_successful': True
     >>>     },
     >>>     'payment': {
     >>>         'decline_code': 'invalid number',
