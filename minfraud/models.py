@@ -435,8 +435,8 @@ class Disposition:
     .. attribute:: rule_label
 
       The label of the custom rule that was triggered. If you do not have
-      custom rule set up, or the custom rule that was triggered does not have a
-      label, ``None`` will be returned.
+      custom rules set up, the triggered custom rule does not have a label, or
+      no custom rule was triggered, ``None`` will be returned.
 
       :type: str | None
     """
