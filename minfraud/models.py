@@ -418,8 +418,9 @@ class Disposition:
     .. attribute:: action
 
       The action to take on the transaction as defined by your custom rules.
-      The current set of values are "accept", "manual_review", and "reject".
-      If you do not have custom rules set up, ``None`` will be returned.
+      The current set of values are "accept", "manual_review", "reject", and
+      "test". If you do not have custom rules set up, ``None`` will be
+      returned.
 
       :type: str | None
 
@@ -430,15 +431,25 @@ class Disposition:
       rules set up, ``None`` will be returned.
 
       :type: str | None
+
+    .. attribute:: rule_label
+
+      The label of the custom rule that was triggered. If you do not have
+      custom rules set up, the triggered custom rule does not have a label, or
+      no custom rule was triggered, ``None`` will be returned.
+
+      :type: str | None
     """
 
     action: Optional[str]
     reason: Optional[str]
+    rule_label: Optional[str]
 
     __slots__ = ()
     _fields = {
         "action": None,
         "reason": None,
+        "rule_label": None,
     }
 
 

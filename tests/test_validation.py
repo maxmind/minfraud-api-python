@@ -185,6 +185,9 @@ class TestCreditCard(ValidationBase, unittest.TestCase):
         for invalid in ("\x20", "123456", "x" * 256):
             self.check_invalid_transaction({"credit_card": {"token": invalid}})
 
+    def test_was_3d_secure_successful(self):
+        self.check_bool("credit_card", "was_3d_secure_successful")
+
 
 class TestCustomInputs(ValidationBase, unittest.TestCase):
     def test_valid_inputs(self):

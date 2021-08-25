@@ -14,6 +14,8 @@ History
   * ``dlocal``
   * ``onpay``
   * ``safecharge``
+* Added ``rule_label`` to minFraud output ``/disposition``.
+* Added ``was_3d_secure_successful`` to ``/credit_card`` validation
 
 2.3.1 (2021-02-12)
 ++++++++++++++++++

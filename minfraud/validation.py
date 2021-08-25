@@ -302,6 +302,7 @@ validate_transaction = Schema(
             "issuer_id_number": _iin,
             "last_4_digits": _credit_card_last_4,
             "token": _credit_card_token,
+            "was_3d_secure_successful": bool,
         },
         "custom_inputs": {_custom_input_key: _custom_input_value},
         "device": {
