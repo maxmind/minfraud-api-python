@@ -318,6 +318,6 @@ for assistance.
 Copyright and License
 ---------------------
 
-This software is Copyright © 2015-2020 by MaxMind, Inc.
+This software is Copyright © 2015-2021 by MaxMind, Inc.
 
 This is free software, licensed under the Apache License, Version 2.0.
