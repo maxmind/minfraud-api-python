@@ -66,6 +66,7 @@ MANIFEST
 .mypy_cache/
 .project
 .pydevproject
+.python-version
 pylint.txt
 *.swp
 violations.pyflakes.txt
