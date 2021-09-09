@@ -426,9 +426,9 @@ class Disposition:
 
     .. attribute:: reason
 
-      The reason for the action. The current possible values are
-      "custom_rule", "block_list", and "default". If you do not have custom
-      rules set up, ``None`` will be returned.
+      The reason for the action. The current possible values are "custom_rule"
+      and "default". If you do not have custom rules set up, ``None`` will be
+      returned.
 
       :type: str | None
 
@@ -863,7 +863,7 @@ class Subscores:
     .. attribute:: country_mismatch
 
       The risk associated with the combination of IP country, card issuer
-      country, billing country, and shipping country.  If present, this is a
+      country, billing country, and shipping country. If present, this is a
       value in the range 0.01 to 99.
 
       :type: float | None
