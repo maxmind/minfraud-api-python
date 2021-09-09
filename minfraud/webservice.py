@@ -243,9 +243,9 @@ class AsyncClient(BaseClient):
         """Query Factors endpoint with transaction data.
 
         :param transaction: A dictionary containing the transaction to be
-          sent to the minFraud Insights web service as specified in the `REST
+          sent to the minFraud Factors web service as specified in the `REST
           API documentation
-          <https://dev.maxmind.com/minfraud/#Request_Body>`_.
+          <https://dev.maxmind.com/minfraud/api-documentation/requests?lang=en>`_.
         :type transaction: dict
         :param validate: If set to false, validation of the transaction
           dictionary will be disabled. This validation helps ensure that your
@@ -284,7 +284,7 @@ class AsyncClient(BaseClient):
         :param transaction: A dictionary containing the transaction to be
           sent to the minFraud Insights web service as specified in the `REST
           API documentation
-          <https://dev.maxmind.com/minfraud/#Request_Body>`_.
+          <https://dev.maxmind.com/minfraud/api-documentation/requests?lang=en>`_.
         :type transaction: dict
         :param validate: If set to false, validation of the transaction
           dictionary will be disabled. This validation helps ensure that your
@@ -323,7 +323,7 @@ class AsyncClient(BaseClient):
         :param transaction: A dictionary containing the transaction to be
           sent to the minFraud Score web service as specified in the `REST API
           documentation
-          <https://dev.maxmind.com/minfraud/#Request_Body>`_.
+          <https://dev.maxmind.com/minfraud/api-documentation/requests?lang=en>`_.
         :type transaction: dict
         :param validate: If set to false, validation of the transaction
           dictionary will be disabled. This validation helps ensure that your
@@ -359,7 +359,7 @@ class AsyncClient(BaseClient):
         :param report: A dictionary containing the transaction report to be sent
           to the Report Transations web service as specified in the `REST API`
           documentation
-          <https://dev.maxmind.com/minfraud/report-transaction/#Request_Body>_.
+          <https://dev.maxmind.com/minfraud/report-a-transaction?lang=en>_.
         :type report: dict
         :param validate: If set to false, validation of the report dictionary
           will be disabled. This validation helps ensure that your request is
@@ -487,9 +487,9 @@ class Client(BaseClient):
         """Query Factors endpoint with transaction data.
 
         :param transaction: A dictionary containing the transaction to be
-          sent to the minFraud Insights web service as specified in the `REST
+          sent to the minFraud Factors web service as specified in the `REST
           API documentation
-          <https://dev.maxmind.com/minfraud/#Request_Body>`_.
+          <https://dev.maxmind.com/minfraud/api-documentation/requests?lang=en>`_.
         :type transaction: dict
         :param validate: If set to false, validation of the transaction
           dictionary will be disabled. This validation helps ensure that your
@@ -528,7 +528,7 @@ class Client(BaseClient):
         :param transaction: A dictionary containing the transaction to be
           sent to the minFraud Insights web service as specified in the `REST
           API documentation
-          <https://dev.maxmind.com/minfraud/#Request_Body>`_.
+          <https://dev.maxmind.com/minfraud/api-documentation/requests?lang=en>`_.
         :type transaction: dict
         :param validate: If set to false, validation of the transaction
           dictionary will be disabled. This validation helps ensure that your
@@ -567,7 +567,7 @@ class Client(BaseClient):
         :param transaction: A dictionary containing the transaction to be
           sent to the minFraud Score web service as specified in the `REST API
           documentation
-          <https://dev.maxmind.com/minfraud/#Request_Body>`_.
+          <https://dev.maxmind.com/minfraud/api-documentation/requests?lang=en>`_.
         :type transaction: dict
         :param validate: If set to false, validation of the transaction
           dictionary will be disabled. This validation helps ensure that your

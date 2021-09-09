@@ -8,7 +8,7 @@ Description
 This package provides an API for the `MaxMind minFraud Score, Insights, and
 Factors web services <https://dev.maxmind.com/minfraud/>`_ as well as the
 `Report Transaction web service
-<https://dev.maxmind.com/minfraud/report_transaction>`_.
+<https://dev.maxmind.com/minfraud/report-a-transaction?lang=en>`_.
 
 Installation
 ------------
@@ -71,7 +71,7 @@ The Score web service is called with the ``score()`` method:
 Each of these methods takes a dictionary representing the transaction to be sent
 to the web service. The structure of this dictionary should be in `the format
 specified in the REST API documentation
-<https://dev.maxmind.com/minfraud/#Request_Body>`__.
+<https://dev.maxmind.com/minfraud/api-documentation/requests?lang=en>`__.
 All fields are optional.
 
 Report Transactions Usage
@@ -89,7 +89,7 @@ Report Transaction web service is called with the ``report()`` method:
 The method takes a dictionary representing the report to be sent to the web
 service. The structure of this dictionary should be in `the format specified
 in the REST API documentation
-<https://dev.maxmind.com/minfraud/report-transaction/#Request_Body>`__. The
+<https://dev.maxmind.com/minfraud/report-a-transaction?lang=en>`__. The
 ``ip_address`` and ``tag`` fields are required. All other fields are optional.
 
 Request Validation (for all request methods)

@@ -356,7 +356,7 @@ class Device:
 
     In order to receive device output from minFraud Insights or minFraud
     Factors, you must be using the `Device Tracking Add-on
-    <https://dev.maxmind.com/minfraud/device/>`_.
+    <https://dev.maxmind.com/minfraud/track-devices?lang=en>`_.
 
     .. attribute:: confidence
 
@@ -769,7 +769,7 @@ class ServiceWarning:
 
       This value is a machine-readable code identifying the
       warning. See the `web service documentation
-      <https://dev.maxmind.com/minfraud/#Warning>`_
+      <https://dev.maxmind.com/minfraud/api-documentation/responses?lang=en#schema--response--warning>`_
       for the current list of of warning codes.
 
       :type: str | None
