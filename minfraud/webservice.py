@@ -243,7 +243,7 @@ class AsyncClient(BaseClient):
         """Query Factors endpoint with transaction data.
 
         :param transaction: A dictionary containing the transaction to be
-          sent to the minFraud Insights web service as specified in the `REST
+          sent to the minFraud Factors web service as specified in the `REST
           API documentation
           <https://dev.maxmind.com/minfraud/api-documentation/requests?lang=en>`_.
         :type transaction: dict
@@ -487,9 +487,9 @@ class Client(BaseClient):
         """Query Factors endpoint with transaction data.
 
         :param transaction: A dictionary containing the transaction to be
-          sent to the minFraud Insights web service as specified in the `REST
+          sent to the minFraud Factors web service as specified in the `REST
           API documentation
-          <https://dev.maxmind.com/minfraud/report-a-transaction?lang=en>`_.
+          <https://dev.maxmind.com/minfraud/api-documentation/requests?lang=en>`_.
         :type transaction: dict
         :param validate: If set to false, validation of the transaction
           dictionary will be disabled. This validation helps ensure that your

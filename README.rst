@@ -89,7 +89,7 @@ Report Transaction web service is called with the ``report()`` method:
 The method takes a dictionary representing the report to be sent to the web
 service. The structure of this dictionary should be in `the format specified
 in the REST API documentation
-<https://dev.maxmind.com/minfraud/api-documentation/requests?lang=en>`__. The
+<https://dev.maxmind.com/minfraud/report-a-transaction?lang=en>`__. The
 ``ip_address`` and ``tag`` fields are required. All other fields are optional.
 
 Request Validation (for all request methods)
