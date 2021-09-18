@@ -1,4 +1,4 @@
-include HISTORY.rst README.rst LICENSE
+include HISTORY.rst README.rst LICENSE minfraud/py.typed
 recursive-include tests *
 recursive-include docs *
 recursive-exclude docs *.pyc
