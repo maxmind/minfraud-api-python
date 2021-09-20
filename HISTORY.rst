@@ -3,6 +3,12 @@
 History
 -------
 
+2.4.1
+++++++++++++++++++
+
+* Previously, the ``py.typed`` file was not being added to the source
+  distribution. It is now explicitly specified in the manifest.
+
 2.4.0 (2021-08-26)
 ++++++++++++++++++
 
