@@ -3,7 +3,7 @@
 History
 -------
 
-2.4.1
+2.5.0 (2021-09-20)
 ++++++++++++++++++
 
 * Previously, the ``py.typed`` file was not being added to the source
