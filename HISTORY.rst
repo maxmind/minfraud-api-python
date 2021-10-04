@@ -3,6 +3,21 @@
 History
 -------
 
+2.6.0
+++++++++++++++++++
+
+* Added the following new values to the ``/payment/processor`` validation:
+  * ``boacompra``
+  * ``boku``
+  * ``coregateway``
+  * ``fiserv``
+  * ``neopay``
+  * ``neosurf``
+  * ``openbucks``
+  * ``paysera``
+  * ``payvision``
+  * ``trustly``
+
 2.5.0 (2021-09-20)
 ++++++++++++++++++
 
