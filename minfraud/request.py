@@ -5,6 +5,7 @@ that may break any direct use of it.
 
 """
 
+import warnings
 import hashlib
 from typing import Any, Dict
 from voluptuous import MultipleInvalid
@@ -53,6 +54,9 @@ def prepare_transaction(
     if hash_email:
         maybe_hash_email(cleaned_request)
 
+    if cleaned_request.get("credit_card", None):
+        clean_credit_card(cleaned_request)
+
     return cleaned_request
 
 
@@ -63,6 +67,17 @@ def _copy_and_clean(data: Any) -> Any:
     if isinstance(data, (list, set, tuple)):
         return [_copy_and_clean(x) for x in data if x is not None]
     return data
+
+
+def clean_credit_card(transaction):
+    """Clean the credit_card input of a transaction request"""
+    last4 = transaction["credit_card"].pop("last_4_digits", None)
+    if last4:
+        warnings.warn(
+            "last_4_digits has been deprecated in favor of last_digits",
+            DeprecationWarning,
+        )
+        transaction["credit_card"]["last_digits"] = last4
 
 
 def maybe_hash_email(transaction):

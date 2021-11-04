@@ -7,7 +7,6 @@ that may break any direct use of it.
 
 """
 
-
 import ipaddress
 import re
 import uuid
@@ -17,7 +16,7 @@ from typing import Optional
 
 from email_validator import validate_email  # type: ignore
 from voluptuous import All, Any, In, Match, Range, Required, Schema
-from voluptuous.error import UrlInvalid
+from voluptuous.error import LengthInvalid, UrlInvalid
 
 # Pylint doesn't like the private function type naming for the callable
 # objects below. Given the consistent use of them, the current names seem
@@ -250,9 +249,9 @@ _payment_processor = In(
 
 _single_char = Match("^[A-Za-z0-9]$")
 
-_iin = Match("^[0-9]{6}$")
+_iin = Match("^(?:[0-9]{6}|[0-9]{8})$")
 
-_credit_card_last_4 = Match("^[0-9]{4}$")
+_credit_card_last_digits = Match("^(?:[0-9]{2}|[0-9]{4})$")
 
 
 def _credit_card_token(s: str) -> str:
@@ -292,67 +291,94 @@ def _uri(s: str) -> str:
     return s
 
 
+def _validate_last_digits(req):
+    cc = req.get("credit_card")
+    if cc is None:
+        return
+
+    iin = cc.get("issuer_id_number")
+    if iin is None:
+        return
+
+    if iin and len(iin) == 8:
+        last_digits = cc.get("last_digits")
+        last_4_digits = cc.get("last_4_digits")
+        if last_digits and len(last_digits) != 2:
+            raise LengthInvalid(
+                "last_digits must be two digits when the issuer_id_number is eight digits."
+            )
+        if last_4_digits and len(last_4_digits) != 2:
+            raise LengthInvalid(
+                "last_4_digits must be two digits when the issuer_id_number is eight digits."
+            )
+    return
+
+
 validate_transaction = Schema(
-    {
-        "account": {
-            "user_id": str,
-            "username_md5": _md5,
-        },
-        "billing": _address,
-        "payment": {
-            "processor": _payment_processor,
-            "was_authorized": bool,
-            "decline_code": str,
-        },
-        "credit_card": {
-            "avs_result": _single_char,
-            "bank_name": str,
-            "bank_phone_country_code": _telephone_country_code,
-            "bank_phone_number": str,
-            "cvv_result": _single_char,
-            "issuer_id_number": _iin,
-            "last_4_digits": _credit_card_last_4,
-            "token": _credit_card_token,
-            "was_3d_secure_successful": bool,
-        },
-        "custom_inputs": {_custom_input_key: _custom_input_value},
-        "device": {
-            "accept_language": str,
-            "ip_address": _ip_address,
-            "session_age": All(_any_number, Range(min=0)),
-            "session_id": str,
-            "user_agent": str,
-        },
-        "email": {
-            "address": _email_or_md5,
-            "domain": _hostname,
-        },
-        "event": {
-            "shop_id": str,
-            "time": _rfc3339_datetime,
-            "type": _event_type,
-            "transaction_id": str,
-        },
-        "order": {
-            "affiliate_id": str,
-            "amount": _price,
-            "currency": _currency_code,
-            "discount_code": str,
-            "has_gift_message": bool,
-            "is_gift": bool,
-            "referrer_uri": _uri,
-            "subaffiliate_id": str,
-        },
-        "shipping": _shipping_address,
-        "shopping_cart": [
-            {
-                "category": str,
-                "item_id": str,
-                "price": _price,
-                "quantity": All(int, Range(min=1)),
+    All(
+        {
+            "account": {
+                "user_id": str,
+                "username_md5": _md5,
             },
-        ],
-    },
+            "billing": _address,
+            "payment": {
+                "processor": _payment_processor,
+                "was_authorized": bool,
+                "decline_code": str,
+            },
+            "credit_card": {
+                "avs_result": _single_char,
+                "bank_name": str,
+                "bank_phone_country_code": _telephone_country_code,
+                "bank_phone_number": str,
+                "cvv_result": _single_char,
+                "issuer_id_number": _iin,
+                "last_digits": _credit_card_last_digits,
+                "last_4_digits": _credit_card_last_digits,
+                "token": _credit_card_token,
+                "was_3d_secure_successful": bool,
+            },
+            "custom_inputs": {_custom_input_key: _custom_input_value},
+            "device": {
+                "accept_language": str,
+                "ip_address": _ip_address,
+                "session_age": All(_any_number, Range(min=0)),
+                "session_id": str,
+                "user_agent": str,
+            },
+            "email": {
+                "address": _email_or_md5,
+                "domain": _hostname,
+            },
+            "event": {
+                "shop_id": str,
+                "time": _rfc3339_datetime,
+                "type": _event_type,
+                "transaction_id": str,
+            },
+            "order": {
+                "affiliate_id": str,
+                "amount": _price,
+                "currency": _currency_code,
+                "discount_code": str,
+                "has_gift_message": bool,
+                "is_gift": bool,
+                "referrer_uri": _uri,
+                "subaffiliate_id": str,
+            },
+            "shipping": _shipping_address,
+            "shopping_cart": [
+                {
+                    "category": str,
+                    "item_id": str,
+                    "price": _price,
+                    "quantity": All(int, Range(min=1)),
+                },
+            ],
+        },
+        _validate_last_digits,
+    )
 )
 
 
