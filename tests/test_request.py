@@ -152,69 +152,34 @@ class TestRequest(unittest.TestCase):
             {
                 "name": "deprecated last_4_digits is cleaned to last_digits",
                 "input": {
-                    "credit_card": {
-                        "issuer_id_number": "123456",
-                        "last_4_digits": "1234",
-                    },
-                    "device": {"ip_address": "1.1.1.1"},
+                    "issuer_id_number": "123456",
+                    "last_4_digits": "1234",
                 },
                 "expected": {
-                    "credit_card": {
-                        "issuer_id_number": "123456",
-                        "last_digits": "1234",
-                    },
-                    "device": {"ip_address": "1.1.1.1"},
+                    "issuer_id_number": "123456",
+                    "last_digits": "1234",
                 },
             },
             {
                 "name": "6 digit iin, 4 digit last_digits",
                 "input": {
-                    "credit_card": {
-                        "issuer_id_number": "123456",
-                        "last_digits": "1234",
-                    },
-                    "device": {"ip_address": "1.1.1.1"},
+                    "issuer_id_number": "123456",
+                    "last_digits": "1234",
                 },
                 "expected": {
-                    "credit_card": {
-                        "issuer_id_number": "123456",
-                        "last_digits": "1234",
-                    },
-                    "device": {"ip_address": "1.1.1.1"},
+                    "issuer_id_number": "123456",
+                    "last_digits": "1234",
                 },
             },
             {
                 "name": "8 digit iin, 2 digit last_digits",
                 "input": {
-                    "credit_card": {
-                        "issuer_id_number": "12345678",
-                        "last_digits": "34",
-                    },
-                    "device": {"ip_address": "1.1.1.1"},
+                    "issuer_id_number": "12345678",
+                    "last_digits": "34",
                 },
                 "expected": {
-                    "credit_card": {
-                        "issuer_id_number": "12345678",
-                        "last_digits": "34",
-                    },
-                    "device": {"ip_address": "1.1.1.1"},
-                },
-            },
-            {
-                "name": "8 digit iin, 4 digit last_digits",
-                "input": {
-                    "credit_card": {
-                        "issuer_id_number": "12345678",
-                        "last_digits": "1234",
-                    },
-                    "device": {"ip_address": "1.1.1.1"},
-                },
-                "expected": {
-                    "credit_card": {
-                        "issuer_id_number": "12345678",
-                        "last_digits": "1234",
-                    },
-                    "device": {"ip_address": "1.1.1.1"},
+                    "issuer_id_number": "12345678",
+                    "last_digits": "34",
                 },
             },
         ]

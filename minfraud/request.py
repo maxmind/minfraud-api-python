@@ -69,15 +69,15 @@ def _copy_and_clean(data: Any) -> Any:
     return data
 
 
-def clean_credit_card(transaction):
+def clean_credit_card(credit_card):
     """Clean the credit_card input of a transaction request"""
-    last4 = transaction["credit_card"].pop("last_4_digits", None)
+    last4 = credit_card.pop("last_4_digits", None)
     if last4:
         warnings.warn(
             "last_4_digits has been deprecated in favor of last_digits",
             DeprecationWarning,
         )
-        transaction["credit_card"]["last_digits"] = last4
+        credit_card["last_digits"] = last4
 
 
 def maybe_hash_email(transaction):
