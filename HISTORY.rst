@@ -6,6 +6,11 @@ History
 2.6.0
 ++++++++++++++++++
 
+* Upgraded ``geoip2`` to 4.5.0. This adds mobile country code (MCC) and mobile
+  network code (MNC) to minFraud Insights and Factors responses. These are
+  available at ``response.ip_address.traits.mobile_country_code`` and
+  ``response.ip_address.traits.mobile_network_code``. We expect this data to be
+  available by late January, 2022.
 * Added the following new values to the ``/payment/processor`` validation:
   * ``boacompra``
   * ``boku``
