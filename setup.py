@@ -19,17 +19,11 @@ with io.open("README.rst", "r", encoding="utf-8") as f:
 requirements = [
     "aiohttp>=3.6.2,<4.0.0",
     "email_validator>=1.1.1,<2.0.0",
-    "geoip2>=4.3.0,<5.0.0",
+    "geoip2>=4.5.0,<5.0.0",
     "requests>=2.24.0,<3.0.0",
     "urllib3>=1.25.2,<2.0.0",
     "voluptuous",
 ]
-
-# Write requirements.txt needed for snyk testing, only for latest release python.
-if os.environ.get("SNYK_TOKEN") and os.environ.get("RUN_SNYK"):
-    with open("requirements.txt", "w") as f:
-        for r in requirements:
-            f.write(r + "\n")
 
 setup(
     name="minfraud",

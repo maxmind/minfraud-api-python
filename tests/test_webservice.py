@@ -193,6 +193,8 @@ class BaseTransactionTest(BaseTest):
         if self.has_ip_location():
             self.assertEqual("United Kingdom", model.ip_address.country.name)
             self.assertEqual(True, model.ip_address.traits.is_residential_proxy)
+            self.assertEqual("310", model.ip_address.traits.mobile_country_code)
+            self.assertEqual("004", model.ip_address.traits.mobile_network_code)
             self.assertEqual("ANONYMOUS_IP", model.ip_address.risk_reasons[0].code)
 
     @httprettified

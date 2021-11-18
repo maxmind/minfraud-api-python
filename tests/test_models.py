@@ -175,6 +175,8 @@ class TestModels(unittest.TestCase):
                     "is_residential_proxy": True,
                     "is_satellite_provider": True,
                     "is_tor_exit_node": True,
+                    "mobile_country_code": "310",
+                    "mobile_network_code": "004",
                 },
             }
         )
@@ -191,6 +193,8 @@ class TestModels(unittest.TestCase):
         self.assertEqual(True, address.traits.is_residential_proxy)
         self.assertEqual(True, address.traits.is_satellite_provider)
         self.assertEqual(True, address.traits.is_tor_exit_node)
+        self.assertEqual("310", address.traits.mobile_country_code)
+        self.assertEqual("004", address.traits.mobile_network_code)
         self.assertEqual(True, address.country.is_high_risk)
 
         self.assertEqual("ANONYMOUS_IP", address.risk_reasons[0].code)
