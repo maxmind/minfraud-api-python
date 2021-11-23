@@ -7,7 +7,7 @@ Steps for doing a release:
    ``docs/index.rst``, if necessary.
 4. Review ``HISTORY.rst`` for completeness and correctness.
 5. Add release date to ``HISTORY.rst``.
-6. Install or update `hub <https://github.com/github/hub`_ as it used by the
+6. Install or update `gh <https://github.com/cli/cli>`_ as it used by the
    release script.
 7. Run ``dev-bin/release.sh`` and follow the prompts.
 8. Verify the release on `GitHub <https://github.com/maxmind/minfraud-api-python/releases>`_
