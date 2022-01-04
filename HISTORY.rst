@@ -22,6 +22,7 @@ History
   * ``paysera``
   * ``payvision``
   * ``trustly``
+  * ``windcave``
 
 2.5.0 (2021-09-20)
 ++++++++++++++++++
