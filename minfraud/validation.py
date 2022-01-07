@@ -242,6 +242,7 @@ _payment_processor = In(
         "virtual_card_services",
         "vme",
         "vpos",
+        "windcave",
         "wirecard",
         "worldpay",
     ]
