@@ -812,7 +812,7 @@ def _create_warnings(warnings: List[Dict[str, str]]) -> Tuple[ServiceWarning, ..
 
 @_inflate_to_namedtuple
 class Subscores:
-    """Subscores used in calculating the overall risk score.
+    """Risk factor scores used in calculating the overall risk score.
 
     .. attribute:: avs_result
 
@@ -912,9 +912,9 @@ class Subscores:
       :type: float | None
 
       .. deprecated:: 1.8.0
-        Deprecated effective August 29, 2019. This subscore will default to 1
-        and will be removed in a future release. The user tenure on email is
-        reflected in the email address subscore output.
+        Deprecated effective August 29, 2019. This risk factor score will
+        default to 1 and will be removed in a future release. The user
+        tenure on email is reflected in the email address risk factor score.
 
       .. seealso::
         :py:attr:`minfraud.models.Subscores.email_address`
@@ -927,9 +927,9 @@ class Subscores:
       :type: float | None
 
       .. deprecated:: 1.8.0
-        Deprecated effective August 29, 2019. This subscore will default to 1
-        and will be removed in a future release. The IP tenure is reflected in
-        the overall risk score.
+        Deprecated effective August 29, 2019. This risk factor score will
+        default to 1 and will be removed in a future release. The IP tenure
+        is reflected in the overall risk score.
 
       .. seealso::
         :py:attr:`minfraud.models.Score.risk_score`
@@ -1120,8 +1120,9 @@ class Factors:
 
     .. attribute:: subscores
 
-      A :class:`.Subscores` object containing subscores for many of the
-      individual components that are used to calculate the overall risk score.
+      A :class:`.Subscores` object containing scores for many of the
+      individual risk factors that are used to calculate the overall risk
+      score.
     """
 
     billing_address: BillingAddress
