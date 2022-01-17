@@ -31,6 +31,6 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-:copyright: © 2015-2021 by MaxMind, Inc.
+:copyright: © 2015-2022 by MaxMind, Inc.
 :license: Apache License, Version 2.0
 
