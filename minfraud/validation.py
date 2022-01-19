@@ -16,7 +16,7 @@ from typing import Optional
 
 from email_validator import validate_email  # type: ignore
 from voluptuous import All, Any, In, Match, Range, Required, Schema
-from voluptuous.error import LengthInvalid, UrlInvalid
+from voluptuous.error import UrlInvalid
 
 # Pylint doesn't like the private function type naming for the callable
 # objects below. Given the consistent use of them, the current names seem
@@ -291,25 +291,6 @@ def _uri(s: str) -> str:
     return s
 
 
-def _validate_last_digits(cc):
-    iin = cc.get("issuer_id_number", None)
-    if iin is None:
-        return
-
-    if iin and len(iin) == 8:
-        last_digits = cc.get("last_digits", None)
-        last_4_digits = cc.get("last_4_digits", None)
-        if last_digits and len(last_digits) != 2:
-            raise LengthInvalid(
-                "last_digits must be two digits when the issuer_id_number is eight digits."
-            )
-        if last_4_digits and len(last_4_digits) != 2:
-            raise LengthInvalid(
-                "last_4_digits must be two digits when the issuer_id_number is eight digits."
-            )
-    return
-
-
 validate_transaction = Schema(
     {
         "account": {
@@ -322,21 +303,18 @@ validate_transaction = Schema(
             "was_authorized": bool,
             "decline_code": str,
         },
-        "credit_card": All(
-            {
-                "avs_result": _single_char,
-                "bank_name": str,
-                "bank_phone_country_code": _telephone_country_code,
-                "bank_phone_number": str,
-                "cvv_result": _single_char,
-                "issuer_id_number": _iin,
-                "last_digits": _credit_card_last_digits,
-                "last_4_digits": _credit_card_last_digits,
-                "token": _credit_card_token,
-                "was_3d_secure_successful": bool,
-            },
-            _validate_last_digits,
-        ),
+        "credit_card": {
+            "avs_result": _single_char,
+            "bank_name": str,
+            "bank_phone_country_code": _telephone_country_code,
+            "bank_phone_number": str,
+            "cvv_result": _single_char,
+            "issuer_id_number": _iin,
+            "last_digits": _credit_card_last_digits,
+            "last_4_digits": _credit_card_last_digits,
+            "token": _credit_card_token,
+            "was_3d_secure_successful": bool,
+        },
         "custom_inputs": {_custom_input_key: _custom_input_value},
         "device": {
             "accept_language": str,

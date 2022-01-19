@@ -158,7 +158,7 @@ class TestCreditCard(ValidationBase, unittest.TestCase):
         self.check_transaction(
             {"credit_card": {"issuer_id_number": "88888888", "last_digits": "12"}}
         )
-        self.check_invalid_transaction(
+        self.check_transaction(
             {"credit_card": {"issuer_id_number": "88888888", "last_digits": "1234"}}
         )
         self.check_transaction(
