@@ -191,10 +191,10 @@ Score, Insights and Factors Example
     >>>         'bank_phone_country_code': '1',
     >>>         'avs_result': 'Y',
     >>>         'bank_phone_number': '123-456-1234',
-    >>>         'last_4_digits': '7643',
+    >>>         'last_digits': '7643',
     >>>         'cvv_result': 'N',
     >>>         'bank_name': 'Bank of No Hope',
-    >>>         'issuer_id_number': '411111'
+    >>>         'issuer_id_number': '411111',
     >>>         'was_3d_secure_successful': True
     >>>     },
     >>>     'payment': {

@@ -23,6 +23,21 @@ History
   * ``payvision``
   * ``trustly``
   * ``windcave``
+* The ``/credit_card/last_4_digits`` input has been deprecated in favor of
+  ``/credit_card/last_digits`` and will be removed in a future release.
+  ``last_digits``/``last_4_digits`` also now supports two digit values in
+  addition to the previous four digit values.
+* Eight digit ``/credit_card/issuer_id_number`` inputs are now supported in
+  addition to the previously accepted six digit ``issuer_id_number``. In most
+  cases, you should send the last four digits for ``last_digits``. If you send
+  an ``issuer_id_number`` that contains an eight digit IIN, and if the credit
+  card brand is not one of the following, you should send the last two digits
+  for ``last_digits``:
+  * ``Discover``
+  * ``JCB``
+  * ``Mastercard``
+  * ``UnionPay``
+  * ``Visa``
 
 2.5.0 (2021-09-20)
 ++++++++++++++++++

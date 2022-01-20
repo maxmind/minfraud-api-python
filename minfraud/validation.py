@@ -7,7 +7,6 @@ that may break any direct use of it.
 
 """
 
-
 import ipaddress
 import re
 import uuid
@@ -250,9 +249,9 @@ _payment_processor = In(
 
 _single_char = Match("^[A-Za-z0-9]$")
 
-_iin = Match("^[0-9]{6}$")
+_iin = Match("^(?:[0-9]{6}|[0-9]{8})$")
 
-_credit_card_last_4 = Match("^[0-9]{4}$")
+_credit_card_last_digits = Match("^(?:[0-9]{2}|[0-9]{4})$")
 
 
 def _credit_card_token(s: str) -> str:
@@ -311,7 +310,8 @@ validate_transaction = Schema(
             "bank_phone_number": str,
             "cvv_result": _single_char,
             "issuer_id_number": _iin,
-            "last_4_digits": _credit_card_last_4,
+            "last_digits": _credit_card_last_digits,
+            "last_4_digits": _credit_card_last_digits,
             "token": _credit_card_token,
             "was_3d_secure_successful": bool,
         },

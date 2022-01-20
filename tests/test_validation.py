@@ -143,16 +143,34 @@ class TestShippingAddress(unittest.TestCase, AddressBase):
 
 class TestCreditCard(ValidationBase, unittest.TestCase):
     def test_issuer_id_number(self):
-        for iin in ("123456", "532313"):
+        for iin in ("123456", "532313", "88888888"):
             self.check_transaction({"credit_card": {"issuer_id_number": iin}})
         for invalid in ("12345", "1234567", 123456, "12345a"):
             self.check_invalid_transaction(
                 {"credit_card": {"issuer_id_number": invalid}}
             )
 
+    def test_last_digits(self):
+        for last_digits in ("1234", "9323", "34"):
+            self.check_transaction({"credit_card": {"last_digits": last_digits}})
+        for invalid in ("12345", "123", 1234, "123a"):
+            self.check_invalid_transaction({"credit_card": {"last_digits": invalid}})
+        self.check_transaction(
+            {"credit_card": {"issuer_id_number": "88888888", "last_digits": "12"}}
+        )
+        self.check_transaction(
+            {"credit_card": {"issuer_id_number": "88888888", "last_digits": "1234"}}
+        )
+        self.check_transaction(
+            {"credit_card": {"issuer_id_number": "666666", "last_digits": "1234"}}
+        )
+        self.check_transaction(
+            {"credit_card": {"issuer_id_number": "666666", "last_digits": "34"}}
+        )
+
     def test_last_4_digits(self):
-        for iin in ("1234", "9323"):
-            self.check_transaction({"credit_card": {"last_4_digits": iin}})
+        for last_digits in ("1234", "9323", "34"):
+            self.check_transaction({"credit_card": {"last_4_digits": last_digits}})
         for invalid in ("12345", "123", 1234, "123a"):
             self.check_invalid_transaction({"credit_card": {"last_4_digits": invalid}})
 

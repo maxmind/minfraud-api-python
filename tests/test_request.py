@@ -1,6 +1,6 @@
 import unittest
 
-from minfraud.request import maybe_hash_email
+from minfraud.request import maybe_hash_email, clean_credit_card
 
 
 class TestRequest(unittest.TestCase):
@@ -144,5 +144,50 @@ class TestRequest(unittest.TestCase):
                 transaction = test["input"]
 
                 maybe_hash_email(transaction)
+
+                self.assertEqual(test["expected"], transaction)
+
+    def test_clean_credit_card(self):
+        tests = [
+            {
+                "name": "deprecated last_4_digits is cleaned to last_digits",
+                "input": {
+                    "issuer_id_number": "123456",
+                    "last_4_digits": "1234",
+                },
+                "expected": {
+                    "issuer_id_number": "123456",
+                    "last_digits": "1234",
+                },
+            },
+            {
+                "name": "6 digit iin, 4 digit last_digits",
+                "input": {
+                    "issuer_id_number": "123456",
+                    "last_digits": "1234",
+                },
+                "expected": {
+                    "issuer_id_number": "123456",
+                    "last_digits": "1234",
+                },
+            },
+            {
+                "name": "8 digit iin, 2 digit last_digits",
+                "input": {
+                    "issuer_id_number": "12345678",
+                    "last_digits": "34",
+                },
+                "expected": {
+                    "issuer_id_number": "12345678",
+                    "last_digits": "34",
+                },
+            },
+        ]
+
+        for test in tests:
+            with self.subTest(test["name"]):
+                transaction = test["input"]
+
+                clean_credit_card(transaction)
 
                 self.assertEqual(test["expected"], transaction)
