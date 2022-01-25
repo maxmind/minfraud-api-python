@@ -3,7 +3,7 @@
 History
 -------
 
-2.6.0
+2.6.0 (2022-01-25)
 ++++++++++++++++++
 
 * Upgraded ``geoip2`` to 4.5.0. This adds mobile country code (MCC) and mobile
