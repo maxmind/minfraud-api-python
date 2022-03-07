@@ -308,6 +308,7 @@ validate_transaction = Schema(
             "bank_name": str,
             "bank_phone_country_code": _telephone_country_code,
             "bank_phone_number": str,
+            "country": _country_code,
             "cvv_result": _single_char,
             "issuer_id_number": _iin,
             "last_digits": _credit_card_last_digits,

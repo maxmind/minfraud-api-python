@@ -142,6 +142,12 @@ class TestShippingAddress(unittest.TestCase, AddressBase):
 
 
 class TestCreditCard(ValidationBase, unittest.TestCase):
+    def test_country(self):
+        for code in ("CA", "US"):
+            self.check_transaction({"credit_card": {"country": code}})
+        for invalid in (1, None, "", "A1", "Canada"):
+            self.check_invalid_transaction({"credit_card": {"country": invalid}})
+
     def test_issuer_id_number(self):
         for iin in ("123456", "532313", "88888888"):
             self.check_transaction({"credit_card": {"issuer_id_number": iin}})
