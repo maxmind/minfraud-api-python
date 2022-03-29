@@ -3,6 +3,12 @@
 History
 -------
 
+2.7.1 (2022-03-29)
+++++++++++++++++++
+
+* Fixed ``KeyError`` when using the ``report()`` method. Reported by siang.
+  GitHub #99.
+
 2.7.0 (2022-03-28)
 ++++++++++++++++++
 

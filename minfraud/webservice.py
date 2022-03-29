@@ -618,7 +618,7 @@ class Client(BaseClient):
 
         response = self._do_request(uri, prepared_request)
         status = response.status_code
-        content_type = response.headers["Content-Type"]
+        content_type = response.headers.get("Content-Type")
         raw_body = response.text
         if status != 204:
             raise self._exception_for_error(status, content_type, raw_body, uri)
@@ -636,7 +636,7 @@ class Client(BaseClient):
 
         response = self._do_request(uri, prepared_request)
         status = response.status_code
-        content_type = response.headers["Content-Type"]
+        content_type = response.headers.get("Content-Type")
         raw_body = response.text
         if status != 200:
             raise self._exception_for_error(status, content_type, raw_body, uri)
