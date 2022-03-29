@@ -3,6 +3,13 @@
 History
 -------
 
+2.7.2 (2022-03-29)
+++++++++++++++++++
+
+* Updated code to correctly handle ``None`` ``Content-Type`` from minFraud
+  web service. This should never happen, but if it does, the correct
+  exception will now be thrown.
+
 2.7.1 (2022-03-29)
 ++++++++++++++++++
 
