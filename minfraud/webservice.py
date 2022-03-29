@@ -83,7 +83,7 @@ class BaseClient:
         return model_class(decoded_body)  # type: ignore
 
     def _exception_for_error(
-        self, status: int, content_type: str, raw_body: str, uri: str
+        self, status: int, content_type: Optional[str], raw_body: str, uri: str
     ) -> Union[
         AuthenticationError,
         InsufficientFundsError,
@@ -100,7 +100,7 @@ class BaseClient:
         return self._exception_for_unexpected_status(status, raw_body, uri)
 
     def _exception_for_4xx_status(
-        self, status: int, content_type: str, raw_body: str, uri: str
+        self, status: int, content_type: Optional[str], raw_body: str, uri: str
     ) -> Union[
         AuthenticationError,
         InsufficientFundsError,
@@ -113,7 +113,7 @@ class BaseClient:
             return HTTPError(
                 f"Received a {status} error with no body", status, uri, raw_body
             )
-        if content_type.find("json") == -1:
+        if content_type is None or content_type.find("json") == -1:
             return HTTPError(
                 f"Received a {status} with the following body: {raw_body}",
                 status,
@@ -618,7 +618,7 @@ class Client(BaseClient):
 
         response = self._do_request(uri, prepared_request)
         status = response.status_code
-        content_type = response.headers["Content-Type"]
+        content_type = response.headers.get("Content-Type")
         raw_body = response.text
         if status != 204:
             raise self._exception_for_error(status, content_type, raw_body, uri)
@@ -636,7 +636,7 @@ class Client(BaseClient):
 
         response = self._do_request(uri, prepared_request)
         status = response.status_code
-        content_type = response.headers["Content-Type"]
+        content_type = response.headers.get("Content-Type")
         raw_body = response.text
         if status != 200:
             raise self._exception_for_error(status, content_type, raw_body, uri)
