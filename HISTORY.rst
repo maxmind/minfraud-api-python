@@ -3,6 +3,11 @@
 History
 -------
 
+2.8.0
+++++++++++++++++++
+
+* Added ``shopify_payments`` to the ``/payment/processor`` validation.
+
 2.7.2 (2022-03-29)
 ++++++++++++++++++
 

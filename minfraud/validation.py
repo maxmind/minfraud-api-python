@@ -219,6 +219,7 @@ _payment_processor = In(
         "safecharge",
         "sagepay",
         "securetrading",
+        "shopify_payments",
         "simplify_commerce",
         "skrill",
         "smartcoin",
