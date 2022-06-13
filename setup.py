@@ -57,4 +57,9 @@ setup(
         "Topic :: Internet :: WWW/HTTP",
         "Topic :: Internet",
     ],
+    project_urls={
+        "Documentation": "https://minfraud.readthedocs.org/",
+        "Source Code": "https://github.com/maxmind/minfraud-api-python",
+        "Issue Tracker": "https://github.com/maxmind/minfraud-api-python/issues",
+    },
 )
