@@ -7,6 +7,7 @@ History
 ++++++++++++++++++
 
 * Added ``shopify_payments`` to the ``/payment/processor`` validation.
+* Added ``google_pay`` to the ``/payment/processor`` validation.
 
 2.7.2 (2022-03-29)
 ++++++++++++++++++
