@@ -246,15 +246,15 @@ Score, Insights and Factors Example
     >>> # This example function uses an asynchronous AsyncClient object. The
     >>> # object can be used across multiple requests.
     >>> async def async_client(account_id, license_key):
-    >>>     with Client(account_id, license_key) as client:
+    >>>     async with AsyncClient(account_id, license_key) as client:
     >>>
-    >>>         print(client.score(request))
+    >>>         print(await client.score(request))
     Score(...)
     >>>
-    >>>         print(client.insights(request))
+    >>>         print(await client.insights(request))
     Insights(...)
     >>>
-    >>>         print(client.factors(request))
+    >>>         print(await client.factors(request))
     Factors(...)
     >>>
     >>> client(42, 'license_key')
