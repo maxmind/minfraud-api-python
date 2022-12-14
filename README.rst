@@ -298,7 +298,7 @@ For asynchronous reporting:
 Requirements
 ------------
 
-Python 3.6 or greater is required. Older versions are not supported.
+Python 3.7 or greater is required. Older versions are not supported.
 
 Versioning
 ----------
