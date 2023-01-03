@@ -207,6 +207,7 @@ _payment_processor = In(
         "payway",
         "payza",
         "pinpayments",
+        "placetopay",
         "posconnect",
         "princeton_payment_solutions",
         "psigate",

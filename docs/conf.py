@@ -46,7 +46,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "minfraud"
-copyright = "2015-2022, MaxMind, Inc"
+copyright = "2015-2023, MaxMind, Inc"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
