@@ -8,6 +8,7 @@ History
 
 * IMPORTANT: Python 3.7 or greater is required. If you are using an older
   version, please use an earlier release.
+* Added ``placetopay`` to the ``/payment/processor`` validation.
 
 2.8.0
 ++++++++++++++++++
