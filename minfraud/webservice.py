@@ -32,6 +32,7 @@ _AIOHTTP_UA = f"minFraud-API/{__version__} {aiohttp.http.SERVER_SOFTWARE}"
 
 _REQUEST_UA = f"minFraud-API/{__version__} {requests.utils.default_user_agent()}"
 
+
 # pylint: disable=too-many-instance-attributes, missing-class-docstring
 class BaseClient:
     _account_id: str
@@ -74,7 +75,8 @@ class BaseClient:
             decoded_body = json.loads(raw_body)
         except ValueError as ex:
             raise MinFraudError(
-                f"Received a 200 response but could not decode the response as JSON: {raw_body}",
+                "Received a 200 response but could not decode the "
+                f"response as JSON: {raw_body}",
                 200,
                 uri,
             ) from ex
