@@ -97,7 +97,7 @@ def maybe_hash_email(transaction):
     if at_idx == -1:
         return
 
-    domain = _clean_domain(address[at_idx + 1 :])
+    domain = _clean_domain(address[at_idx + 1 :]) # noqa
     local_part = address[:at_idx]
 
     if domain != "" and "domain" not in email:
