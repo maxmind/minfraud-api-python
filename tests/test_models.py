@@ -218,7 +218,6 @@ class TestModels(unittest.TestCase):
         self.assertEqual(99, address.risk)
 
     def test_ip_address_locales(self):
-
         loc = IPAddress(
             {
                 "_locales": ["fr"],

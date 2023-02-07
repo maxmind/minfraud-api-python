@@ -217,7 +217,6 @@ class BaseTransactionTest(BaseTest):
 
     @httprettified
     def test_200_with_email_hashing(self):
-
         uri = "/".join([self.base_uri, self.type])
 
         httpretty.register_uri(
