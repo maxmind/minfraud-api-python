@@ -132,18 +132,18 @@ class BaseClient:
                 uri,
                 raw_body,
             )
-        else:
-            if "code" in decoded_body and "error" in decoded_body:
-                return self._exception_for_web_service_error(
-                    decoded_body.get("error"), decoded_body.get("code"), status, uri
-                )
-            return HTTPError(
-                "Error response contains JSON but it does not "
-                + f"specify code or error keys: {raw_body}",
-                status,
-                uri,
-                raw_body,
+
+        if "code" in decoded_body and "error" in decoded_body:
+            return self._exception_for_web_service_error(
+                decoded_body.get("error"), decoded_body.get("code"), status, uri
             )
+        return HTTPError(
+            "Error response contains JSON but it does not "
+            + f"specify code or error keys: {raw_body}",
+            status,
+            uri,
+            raw_body,
+        )
 
     @staticmethod
     def _exception_for_web_service_error(
