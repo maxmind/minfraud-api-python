@@ -3,14 +3,15 @@
 History
 -------
 
-2.8.0
+2.8.0 (2023-05-09)
 ++++++++++++++++++
 
 * IMPORTANT: Python 3.7 or greater is required. If you are using an older
   version, please use an earlier release.
-* Added ``shopify_payments`` to the ``/payment/processor`` validation.
-* Added ``google_pay`` to the ``/payment/processor`` validation.
-* Added ``placetopay`` to the ``/payment/processor`` validation.
+* Added the following new values to the ``/payment/processor`` validation:
+  * ``google_pay``
+  * ``placetopay``
+  * ``shopify_payments``
 
 2.7.2 (2022-03-29)
 ++++++++++++++++++
