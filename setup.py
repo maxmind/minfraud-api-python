@@ -2,9 +2,7 @@
 
 import ast
 import io
-import os
 import re
-import sys
 
 from setuptools import setup
 
@@ -13,52 +11,6 @@ _version_re = re.compile(r"__version__\s+=\s+(.*)")
 with io.open("minfraud/version.py", "r", encoding="utf-8") as f:
     _version = str(ast.literal_eval(_version_re.search(f.read()).group(1)))
 
-with io.open("README.rst", "r", encoding="utf-8") as f:
-    _readme = f.read()
-
-requirements = [
-    "aiohttp>=3.6.2,<4.0.0",
-    "email_validator>=1.1.1,<3.0.0",
-    "geoip2>=4.7.0,<5.0.0",
-    "requests>=2.24.0,<3.0.0",
-    "voluptuous",
-]
-
 setup(
-    name="minfraud",
     version=_version,
-    description="MaxMind minFraud Score, Insights, Factors and Report Transactions API",
-    long_description=_readme,
-    author="Gregory Oschwald",
-    author_email="goschwald@maxmind.com",
-    url="https://www.maxmind.com/",
-    packages=["minfraud"],
-    package_data={"minfraud": ["py.typed"]},
-    include_package_data=True,
-    platforms="any",
-    python_requires=">=3.7",
-    install_requires=requirements,
-    tests_require=["mocket>=3.11.1"],
-    test_suite="tests",
-    license="Apache License 2.0 ",
-    classifiers=[
-        "Development Status :: 5 - Production/Stable",
-        "Environment :: Web Environment",
-        "Intended Audience :: Developers",
-        "License :: OSI Approved :: Apache Software License",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python",
-        "Topic :: Internet :: Proxy Servers",
-        "Topic :: Internet :: WWW/HTTP",
-        "Topic :: Internet",
-    ],
-    project_urls={
-        "Documentation": "https://minfraud.readthedocs.org/",
-        "Source Code": "https://github.com/maxmind/minfraud-api-python",
-        "Issue Tracker": "https://github.com/maxmind/minfraud-api-python/issues",
-    },
 )
