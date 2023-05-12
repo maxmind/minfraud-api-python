@@ -38,7 +38,7 @@ setup(
     platforms="any",
     python_requires=">=3.7",
     install_requires=requirements,
-    tests_require=["mocket>=3.8.6"],
+    tests_require=["mocket>=3.11.1"],
     test_suite="tests",
     license="Apache License 2.0 ",
     classifiers=[
