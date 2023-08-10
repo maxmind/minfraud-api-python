@@ -455,6 +455,11 @@ class Client(BaseClient):
         :param license_key: Your MaxMind license key
         :type license_key: str
         :param host: The host to use when connecting to the web service.
+          By default, the client connects to the production host. However,
+          during testing and development, you can set this option to
+          'sandbox.maxmind.com' to use the Sandbox environment's host. The
+          sandbox allows you to experiment with the API without affecting your
+          production data.
         :type host: str
         :param locales: A tuple of locale codes to use in name property
         :type locales: tuple[str]
