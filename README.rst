@@ -49,7 +49,8 @@ you can provide the host argument:
 
 .. code-block:: pycon
 
-$mf = new MinFraud(1, 'ABCD567890', [ 'host' => 'sandbox.maxmind.com' ]);
+    >>> client = Client(42, 'licensekey', 'sandbox.maxmind.com')
+    >>> async_client = AsyncClient(42, 'licensekey', 'sandbox.maxmind.com')
 
 Score, Insights and Factors Usage
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
