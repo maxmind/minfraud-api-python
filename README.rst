@@ -44,6 +44,14 @@ constructors take your MaxMind account ID and license key:
     >>> client = Client(42, 'licensekey')
     >>> async_client = AsyncClient(42, 'licensekey')
 
+To use the Sandbox web service instead of the production web service,
+you can provide the host argument:
+
+.. code-block:: pycon
+
+    >>> client = Client(42, 'licensekey', 'sandbox.maxmind.com')
+    >>> async_client = AsyncClient(42, 'licensekey', 'sandbox.maxmind.com')
+
 Score, Insights and Factors Usage
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
