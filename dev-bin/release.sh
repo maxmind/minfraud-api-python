@@ -38,6 +38,7 @@ fi
 pip install -U sphinx wheel voluptuous email_validator twine geoip2
 
 perl -pi -e "s/(?<=__version__ = \").+?(?=\")/$version/g" minfraud/version.py
+perl -pi -e "s/(?<=^version = \").+?(?=\")/$version/gsm" pyproject.toml
 
 echo $"Test results:"
 tox
@@ -65,5 +66,5 @@ git push --tags
 
 rm -fr build dist
 python -m sphinx -M html ./docs ./build/sphinx -W
-python setup.py sdist bdist_wheel
+python -m pipx run build
 twine upload dist/*
