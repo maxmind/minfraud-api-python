@@ -21,8 +21,7 @@ version="${BASH_REMATCH[1]}"
 date="${BASH_REMATCH[2]}"
 notes="$(echo "${BASH_REMATCH[3]}" | sed -n -E '/^[0-9]+\.[0-9]+\.[0-9]+/,$!p')"
 
-
-if [[ "$date" !=  "$(date +"%Y-%m-%d")" ]]; then
+if [[ "$date" != "$(date +"%Y-%m-%d")" ]]; then
     echo "$date is not today!"
     exit 1
 fi
@@ -33,9 +32,6 @@ if [ -n "$(git status --porcelain)" ]; then
     echo ". is not clean." >&2
     exit 1
 fi
-
-# Make sure release deps are installed with the current python
-pip install -U sphinx wheel voluptuous email_validator twine geoip2
 
 perl -pi -e "s/(?<=__version__ = \").+?(?=\")/$version/g" minfraud/version.py
 perl -pi -e "s/(?<=^version = \").+?(?=\")/$version/gsm" pyproject.toml
@@ -63,8 +59,3 @@ git push
 gh release create --target "$(git branch --show-current)" -t "$version" -n "$notes" "$tag"
 
 git push --tags
-
-rm -fr build dist
-python -m sphinx -M html ./docs ./build/sphinx -W
-python -m pipx run build
-twine upload dist/*
