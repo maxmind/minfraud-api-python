@@ -19,7 +19,12 @@ from minfraud.errors import (
 from minfraud.models import Factors, Insights, Score
 from minfraud.webservice import AsyncClient, Client
 
+import minfraud.webservice
 import unittest
+
+# We have this so that we can avoid a mocket issue:
+# https://github.com/mindflayer/python-mocket/issues/209
+minfraud.webservice._SCHEME = "http"
 
 
 class BaseTest(unittest.TestCase):
@@ -36,7 +41,7 @@ class BaseTest(unittest.TestCase):
         with open(os.path.join(test_dir, self.response_file), encoding="utf-8") as file:
             self.response = file.read()
 
-    base_uri = "https://minfraud.maxmind.com/minfraud/v2.0"
+    base_uri = "http://minfraud.maxmind.com/minfraud/v2.0"
 
     @httprettified
     def test_invalid_auth(self):
