@@ -13,7 +13,7 @@ dependencies = [
     "requests>=2.24.0,<3.0.0",
     "voluptuous",
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 readme = "README.rst"
 license = {text = "Apache License 2.0"}
 classifiers = [
@@ -23,7 +23,6 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
