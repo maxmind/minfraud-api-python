@@ -3,6 +3,12 @@
 History
 -------
 
+2.9.0
+++++++++++++++++++
+
+* IMPORTANT: Python 3.8 or greater is required. If you are using an older
+  version, please use an earlier release.
+
 2.8.0 (2023-05-09)
 ++++++++++++++++++
 

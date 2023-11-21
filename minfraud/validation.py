@@ -57,7 +57,7 @@ def _ip_address(s: Optional[str]) -> str:
 def _email_or_md5(s: str) -> str:
     if re.match(r"^[0-9A-Fa-f]{32}$", s):
         return s
-    return validate_email(s, check_deliverability=False).email
+    return validate_email(s, check_deliverability=False).normalized
 
 
 # based off of:
