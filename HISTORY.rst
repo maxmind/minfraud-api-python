@@ -3,11 +3,15 @@
 History
 -------
 
-2.9.0
+2.9.0 (2023-12-05)
 ++++++++++++++++++
 
 * IMPORTANT: Python 3.8 or greater is required. If you are using an older
   version, please use an earlier release.
+* Updated ``geoip2`` to version that includes the ``is_anycast`` attribute on
+  ``geoip2.record.Traits``. This property is ``True`` if the IP address
+  belongs to an `anycast network <https://en.wikipedia.org/wiki/Anycast>`_.
+  This is available in minFraud Insights and Factors.
 
 2.8.0 (2023-05-09)
 ++++++++++++++++++
