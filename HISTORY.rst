@@ -3,6 +3,13 @@
 History
 -------
 
+2.10.0
+++++++++++++++++++
+
+* Added the following new values to the ``/payment/processor`` validation:
+  * ``pxp_financial``
+  * ``trustpay``
+
 2.9.0 (2023-12-05)
 ++++++++++++++++++
 
