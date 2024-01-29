@@ -5,6 +5,7 @@ minfraud.models
 This module contains models for the minFraud response object.
 
 """
+
 # pylint:disable=too-many-lines
 from collections import namedtuple
 from functools import update_wrapper
