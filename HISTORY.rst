@@ -7,8 +7,10 @@ History
 ++++++++++++++++++
 
 * Added the following new values to the ``/payment/processor`` validation:
+
   * ``pxp_financial``
   * ``trustpay``
+
 * Equivalent domain names are now normalized when ``hash_address`` is used.
   For example, ``googlemail.com`` will become ``gmail.com``.
 * Periods are now removed from ``gmail.com`` email address local parts when
@@ -21,7 +23,7 @@ History
   their local part when ``hash_address`` is used. For example,
   ``foo-bar@yahoo.com`` will become ``foo@yahoo.com`` for additional
   ``yahoo.com`` domains.
-* Duplicate ``.com``s are now removed from email domain names when
+* Duplicate ``.com`` s are now removed from email domain names when
   ``hash_address`` is used. For example, ``example.com.com`` will become
   ``example.com``.
 * Extraneous characters after ``.com`` are now removed from email domain
@@ -51,6 +53,7 @@ History
 * IMPORTANT: Python 3.7 or greater is required. If you are using an older
   version, please use an earlier release.
 * Added the following new values to the ``/payment/processor`` validation:
+
   * ``google_pay``
   * ``placetopay``
   * ``shopify_payments``
@@ -85,6 +88,7 @@ History
   ``response.ip_address.traits.mobile_network_code``. We expect this data to be
   available by late January, 2022.
 * Added the following new values to the ``/payment/processor`` validation:
+
   * ``boacompra``
   * ``boku``
   * ``coregateway``
@@ -96,6 +100,7 @@ History
   * ``payvision``
   * ``trustly``
   * ``windcave``
+
 * The ``/credit_card/last_4_digits`` input has been deprecated in favor of
   ``/credit_card/last_digits`` and will be removed in a future release.
   ``last_digits``/``last_4_digits`` also now supports two digit values in
@@ -106,6 +111,7 @@ History
   an ``issuer_id_number`` that contains an eight digit IIN, and if the credit
   card brand is not one of the following, you should send the last two digits
   for ``last_digits``:
+
   * ``Discover``
   * ``JCB``
   * ``Mastercard``
@@ -122,6 +128,7 @@ History
 ++++++++++++++++++
 
 * Added the following new values to the ``/payment/processor`` validation:
+
   * ``cardknox``
   * ``creditguard``
   * ``credorax``
@@ -129,6 +136,7 @@ History
   * ``dlocal``
   * ``onpay``
   * ``safecharge``
+
 * Added ``rule_label`` to minFraud output ``/disposition``.
 * Added ``was_3d_secure_successful`` to ``/credit_card`` validation
 
@@ -156,7 +164,6 @@ History
 * Added support for the IP address risk reasons in the minFraud Insights and
   Factors responses. This is available at ``.ip_address.risk_reasons``. It is
   an array of ``IPRiskReason`` objects.
-
 
 2.2.0 (2020-10-13)
 ++++++++++++++++++
@@ -214,13 +221,16 @@ History
 +++++++++++++++++++
 
 * Added the following new values to the ``/payment/processor`` validation:
+
   * ``cashfree``
   * ``first_atlantic_commerce``
   * ``komoju``
   * ``paytm``
   * ``razorpay``
   * ``systempay``
+
 * Added support for the following new subscores in Factors responses:
+
   * ``device``: the risk associated with the device
   * ``email_local_part``: the risk associated with the email address local part
   * ``shipping_address``: the risk associated with the shipping address
@@ -252,6 +262,7 @@ History
   This may be accessed via ``response.email.domain.first_seen`` on the
   minFraud Insights and Factors response objects.
 * Added the following new values to the ``/payment/processor`` validation:
+
   * ``cardpay``
   * ``epx``
 
@@ -270,6 +281,7 @@ History
   to 9,999,999,999,999. Previously, larger numbers were allowed.
 * Python 3.3 and 3.4 are no longer supported.
 * Added the following new values to the ``/payment/processor`` validation:
+
   * ``affirm``
   * ``afterpay``
   * ``cetelem``
@@ -287,6 +299,7 @@ History
   * ``paysafecard``
   * ``smartdebit``
   * ``synapsefi``
+
 * Deprecated the ``email_tenure`` and ``ip_tenure`` attributes of
   ``minfraud.models.Subscores``.
 * Deprecated the ``is_high_risk`` attribute of
@@ -299,11 +312,13 @@ History
 * Renamed MaxMind user ID to account ID in the code and added support for the
   new ``ACCOUNT_ID_REQUIRED`` error code.
 * Added the following new values to the ``/payment/processor`` validation:
+
   * ``ccavenue``
   * ``ct_payments``
   * ``dalenys``
   * ``oney``
   * ``posconnect``
+
 * Added support for the ``/device/local_time`` output.
 * Added support for the ``/credit_card/is_virtual`` output.
 * Added ``payout_change`` to the ``/event/type`` input validation.
@@ -316,6 +331,7 @@ History
   ``geoip2.record.RepresentedCountry``. This attribute is ``True`` if the
   country is a member state of the European Union.
 * Added the following new values to the ``/payment/processor`` validation:
+
   * ``cybersource``
   * ``transact_pro``
   * ``wirecard``
@@ -324,11 +340,13 @@ History
 ++++++++++++++++++
 
 * Added the following new values to the ``/payment/processor`` validation:
+
   * ``bpoint``
   * ``checkout_com``
   * ``emerchantpay``
   * ``heartland``
   * ``payway``
+
 * Updated ``geoip2`` dependency to add support for GeoIP2 Precision Insights
   anonymizer fields.
 
@@ -338,6 +356,7 @@ History
 * Added support for custom inputs. You may set up custom inputs from your
   account portal.
 * Added the following new values to the ``/payment/processor`` validation:
+
   * ``american_express_payment_gateway``
   * ``bluesnap``
   * ``commdoo``
@@ -354,6 +373,7 @@ History
   * ``vantiv``
   * ``vericheck``
   * ``vpos``
+
 * Added the following new input values:
   ``/device/session_age`` and ``/device/session_id``.
 * Added support for the ``/email/first_seen`` output.
@@ -425,11 +445,13 @@ History
 ++++++++++++++++++
 
 * Added support for new minFraud Insights outputs. These are:
-     * ``/credit_card/brand``
-     * ``/credit_card/type``
-     * ``/device/id``
-     * ``/email/is_free``
-     * ``/email/is_high_risk``
+
+  * ``/credit_card/brand``
+  * ``/credit_card/type``
+  * ``/device/id``
+  * ``/email/is_free``
+  * ``/email/is_high_risk``
+
 * ``input`` on the ``Warning`` response model has been replaced with
   ``input_pointer``. The latter is a JSON pointer to the input that
   caused the warning.
