@@ -283,7 +283,7 @@ def maybe_hash_email(transaction):
         return
 
     address, domain = _clean_email(address)
-    if not address:
+    if address is None:
         return
 
     if domain != "" and "domain" not in email:
