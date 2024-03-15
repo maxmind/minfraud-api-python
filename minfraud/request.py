@@ -30,6 +30,50 @@ _TYPO_DOMAINS = {
     "putlook.com": "outlook.com",
 }
 
+_TYPO_TLDS = {
+    "comm": "com",
+    "commm": "com",
+    "commmm": "com",
+    "comn": "com",
+    "cbm": "com",
+    "ccm": "com",
+    "cdm": "com",
+    "cem": "com",
+    "cfm": "com",
+    "cgm": "com",
+    "chm": "com",
+    "cim": "com",
+    "cjm": "com",
+    "ckm": "com",
+    "clm": "com",
+    "cmm": "com",
+    "cnm": "com",
+    "cpm": "com",
+    "cqm": "com",
+    "crm": "com",
+    "csm": "com",
+    "ctm": "com",
+    "cum": "com",
+    "cvm": "com",
+    "cwm": "com",
+    "cxm": "com",
+    "cym": "com",
+    "czm": "com",
+    "col": "com",
+    "con": "com",
+    "dom": "com",
+    "don": "com",
+    "som": "com",
+    "son": "com",
+    "vom": "com",
+    "von": "com",
+    "xom": "com",
+    "xon": "com",
+    "clam": "com",
+    "colm": "com",
+    "comcom": "com",
+}
+
 _EQUIVALENT_DOMAINS = {
     "googlemail.com": "gmail.com",
     "pm.me": "protonmail.com",
@@ -296,9 +340,13 @@ def _clean_domain(domain):
     domain = domain.strip().rstrip(".").encode("idna").decode("ASCII")
 
     domain = re.sub(r"(?:\.com){2,}$", ".com", domain)
-    domain = re.sub(r"\.com[^.]+$", ".com", domain)
-    domain = re.sub(r"(?:\.(?:com|c[a-z]{1,2}m|co[ln]|[dsvx]o[mn]|))$", ".com", domain)
     domain = re.sub(r"^\d+(?:gmail?\.com)$", "gmail.com", domain)
+
+    idx = domain.rfind(".")
+    if idx != -1:
+        tld = domain[idx + 1 :]  # noqa
+        if tld in _TYPO_TLDS:
+            domain = domain[:idx] + "." + _TYPO_TLDS.get(tld)
 
     domain = _TYPO_DOMAINS.get(domain, domain)
     domain = _EQUIVALENT_DOMAINS.get(domain, domain)

@@ -210,7 +210,10 @@ def test_clean_email():
         {"input": "Test+@maxmind.com", "output": "test@maxmind.com"},
         {"input": "+@maxmind.com", "output": "+@maxmind.com"},
         {"input": "  Test@maxmind.com", "output": "test@maxmind.com"},
-        {"input": "Test@maxmind.com|abc124472372", "output": "test@maxmind.com"},
+        {
+            "input": "Test@maxmind.com|abc124472372",
+            "output": "test@maxmind.com|abc124472372",
+        },
         {"input": "Test+foo@yahoo.com", "output": "test+foo@yahoo.com"},
         {"input": "Test-foo@yahoo.com", "output": "test@yahoo.com"},
         {"input": "Test-foo-foo2@yahoo.com", "output": "test@yahoo.com"},
@@ -222,9 +225,10 @@ def test_clean_email():
         {"input": "alias@user.fastmail.com", "output": "user@fastmail.com"},
         {"input": "foo-bar@ymail.com", "output": "foo@ymail.com"},
         {"input": "foo@example.com.com", "output": "foo@example.com"},
-        {"input": "foo@example.comfoo", "output": "foo@example.com"},
-        {"input": "foo@example.cam", "output": "foo@example.com"},
+        {"input": "foo@example.comfoo", "output": "foo@example.comfoo"},
+        {"input": "foo@example.cam", "output": "foo@example.cam"},
         {"input": "foo@10000gmail.com", "output": "foo@gmail.com"},
+        {"input": "foo@example.comcom", "output": "foo@example.com"},
     ]
 
     for test in tests:
