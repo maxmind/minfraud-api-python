@@ -229,6 +229,8 @@ def test_clean_email():
         {"input": "foo@example.cam", "output": "foo@example.cam"},
         {"input": "foo@10000gmail.com", "output": "foo@gmail.com"},
         {"input": "foo@example.comcom", "output": "foo@example.com"},
+        {"input": "foo@example.com.", "output": "foo@example.com"},
+        {"input": "foo@example.com...", "output": "foo@example.com"},
     ]
 
     for test in tests:
