@@ -33,6 +33,8 @@ History
   become ``gmail.com``.
 * Additional ``gmail.com`` typos are now normalized when ``hash_email`` is
   used. For example, ``gmali.com`` will become ``gmail.com``.
+* When ``hash_email`` is used, the local part of an email address is now
+  normalized to NFC.
 
 2.9.0 (2023-12-05)
 ++++++++++++++++++

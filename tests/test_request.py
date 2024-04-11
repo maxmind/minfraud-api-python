@@ -141,6 +141,26 @@ class TestRequest(unittest.TestCase):
                     }
                 },
             },
+            {
+                "name": "email local part nfc normalization form 1",
+                "input": {"email": {"address": "bu\u0308cher@example.com"}},
+                "expected": {
+                    "email": {
+                        "address": "53550c712b146287a2d0dd30e5ed6f4b",
+                        "domain": "example.com",
+                    }
+                },
+            },
+            {
+                "name": "email local part nfc normalization form 2",
+                "input": {"email": {"address": "b\u00FCcher@example.com"}},
+                "expected": {
+                    "email": {
+                        "address": "53550c712b146287a2d0dd30e5ed6f4b",
+                        "domain": "example.com",
+                    }
+                },
+            },
         ]
 
         for test in tests:
