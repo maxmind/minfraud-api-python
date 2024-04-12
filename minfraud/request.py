@@ -8,6 +8,7 @@ that may break any direct use of it.
 import re
 import warnings
 import hashlib
+import unicodedata
 from typing import Any, Dict
 from voluptuous import MultipleInvalid
 
@@ -363,6 +364,8 @@ def _clean_email(address):
 
     domain = _clean_domain(address[at_idx + 1 :])  # noqa
     local_part = address[:at_idx]
+
+    local_part = unicodedata.normalize("NFC", local_part)
 
     # Strip off aliased part of email address.
     if domain in _YAHOO_DOMAINS:

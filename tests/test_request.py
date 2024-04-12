@@ -141,6 +141,26 @@ class TestRequest(unittest.TestCase):
                     }
                 },
             },
+            {
+                "name": "email local part nfc normalization form 1",
+                "input": {"email": {"address": "bu\u0308cher@example.com"}},
+                "expected": {
+                    "email": {
+                        "address": "53550c712b146287a2d0dd30e5ed6f4b",
+                        "domain": "example.com",
+                    }
+                },
+            },
+            {
+                "name": "email local part nfc normalization form 2",
+                "input": {"email": {"address": "b\u00FCcher@example.com"}},
+                "expected": {
+                    "email": {
+                        "address": "53550c712b146287a2d0dd30e5ed6f4b",
+                        "domain": "example.com",
+                    }
+                },
+            },
         ]
 
         for test in tests:
@@ -231,6 +251,8 @@ def test_clean_email():
         {"input": "foo@example.comcom", "output": "foo@example.com"},
         {"input": "foo@example.com.", "output": "foo@example.com"},
         {"input": "foo@example.com...", "output": "foo@example.com"},
+        {"input": "example@bu\u0308cher.com", "output": "example@xn--bcher-kva.com"},
+        {"input": "example@b\u00FCcher.com", "output": "example@xn--bcher-kva.com"},
     ]
 
     for test in tests:
