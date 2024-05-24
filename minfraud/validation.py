@@ -379,14 +379,36 @@ def _uuid(s: str) -> str:
     raise ValueError
 
 
-validate_report = Schema(
+def _transaction_id(s: Optional[str]) -> str:
+    if isinstance(s, str) and len(s) > 0:
+        return s
+    raise ValueError
+
+
+validate_report_schema = Schema(
     {
         "chargeback_code": str,
-        Required("ip_address"): _ip_address,
+        "ip_address": _ip_address,
         "maxmind_id": _maxmind_id,
         "minfraud_id": _uuid,
         "notes": str,
         Required("tag"): _tag,
-        "transaction_id": str,
+        "transaction_id": _transaction_id,
     },
 )
+
+
+def validate_at_least_one_identifier_field(report):
+    optional_fields = ["ip_address", "maxmind_id", "minfraud_id", "transaction_id"]
+    if not any(field in report for field in optional_fields):
+        raise ValueError(
+            "The report must contain at least one of the following fields: 'ip_address', 'maxmind_id', 'minfraud_id', 'transaction_id'."
+        )
+    return True
+
+
+def validate_report(report):
+    """Validate minFraud Transaction Report fields."""
+    validate_report_schema(report)
+    validate_at_least_one_identifier_field(report)
+    return True

@@ -51,11 +51,17 @@ class ValidationBase:
 
     def check_invalid_report(self, report):
         self.setup_report(report)
+        self.check_invalid_report_no_setup(report)
+
+    def check_invalid_report_no_setup(self, report):
         with self.assertRaises(MultipleInvalid, msg=f"{report} is invalid"):
             validate_report(report)
 
     def check_report(self, report):
         self.setup_report(report)
+        self.check_report_no_setup(report)
+
+    def check_report_no_setup(self, report):
         try:
             validate_report(report)
         except MultipleInvalid as e:
@@ -431,3 +437,11 @@ class TestReport(unittest.TestCase, ValidationBase):
             self.check_report({"tag": good})
         for bad in ("risky_business", "", None):
             self.check_invalid_report({"tag": bad})
+
+    def test_report_valid_identifier(self):
+        self.check_report_no_setup({"tag": "chargeback", "ip_address": "1.1.1.1"})
+        self.check_report_no_setup(
+            {"tag": "chargeback", "minfraud_id": "58fa38d8-4b87-458b-a22b-f00eda1aa20d"}
+        )
+        self.check_report_no_setup({"tag": "chargeback", "maxmind_id": "12345678"})
+        self.check_report_no_setup({"tag": "chargeback", "transaction_id": "abc123"})
