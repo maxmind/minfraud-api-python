@@ -385,7 +385,7 @@ def _transaction_id(s: Optional[str]) -> str:
     raise ValueError
 
 
-validate_report_schema = Schema(
+_validate_report_schema = Schema(
     {
         "chargeback_code": str,
         "ip_address": _ip_address,
@@ -398,7 +398,7 @@ validate_report_schema = Schema(
 )
 
 
-def validate_at_least_one_identifier_field(report):
+def _validate_at_least_one_identifier_field(report):
     optional_fields = ["ip_address", "maxmind_id", "minfraud_id", "transaction_id"]
     if not any(field in report for field in optional_fields):
         raise ValueError(
@@ -409,6 +409,6 @@ def validate_at_least_one_identifier_field(report):
 
 def validate_report(report):
     """Validate minFraud Transaction Report fields."""
-    validate_report_schema(report)
-    validate_at_least_one_identifier_field(report)
+    _validate_report_schema(report)
+    _validate_at_least_one_identifier_field(report)
     return True
