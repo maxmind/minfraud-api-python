@@ -15,7 +15,7 @@ from decimal import Decimal
 from typing import Optional
 
 from email_validator import validate_email  # type: ignore
-from voluptuous import All, Any, In, Match, Range, Required, Schema
+from voluptuous import All, Any, In, Match, MultipleInvalid, Range, Required, Schema
 from voluptuous.error import UrlInvalid
 
 # Pylint doesn't like the private function type naming for the callable
@@ -401,8 +401,11 @@ _validate_report_schema = Schema(
 def _validate_at_least_one_identifier_field(report):
     optional_fields = ["ip_address", "maxmind_id", "minfraud_id", "transaction_id"]
     if not any(field in report for field in optional_fields):
-        raise ValueError(
-            "The report must contain at least one of the following fields: 'ip_address', 'maxmind_id', 'minfraud_id', 'transaction_id'."
+        # We return MultipleInvalid instead of ValueError to be consistent with what
+        # voluptuous returns.
+        raise MultipleInvalid(
+            "The report must contain at least one of the following fields: "
+            "'ip_address', 'maxmind_id', 'minfraud_id', 'transaction_id'."
         )
     return True
 

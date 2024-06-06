@@ -439,6 +439,8 @@ class TestReport(unittest.TestCase, ValidationBase):
             self.check_invalid_report({"tag": bad})
 
     def test_report_valid_identifier(self):
+        self.check_invalid_report_no_setup({"tag": "chargeback"})
+
         self.check_report_no_setup({"tag": "chargeback", "ip_address": "1.1.1.1"})
         self.check_report_no_setup(
             {"tag": "chargeback", "minfraud_id": "58fa38d8-4b87-458b-a22b-f00eda1aa20d"}
