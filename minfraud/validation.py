@@ -399,8 +399,8 @@ _validate_report_schema = Schema(
 
 
 def _validate_at_least_one_identifier_field(report):
-    optional_fields = ["ip_address", "maxmind_id", "minfraud_id", "transaction_id"]
-    if not any(field in report for field in optional_fields):
+    optional_fields = {"ip_address", "maxmind_id", "minfraud_id", "transaction_id"}
+    if not optional_fields & report.keys():
         # We return MultipleInvalid instead of ValueError to be consistent with what
         # voluptuous returns.
         raise MultipleInvalid(
