@@ -379,6 +379,15 @@ def _uuid(s: str) -> str:
     raise ValueError
 
 
+NIL_UUID = str(uuid.UUID(int=0))
+
+
+def _non_empty_uuid(s: str) -> str:
+    if _uuid(s) == NIL_UUID:
+        raise ValueError
+    return s
+
+
 def _transaction_id(s: Optional[str]) -> str:
     if isinstance(s, str) and len(s) > 0:
         return s
@@ -390,7 +399,7 @@ _validate_report_schema = Schema(
         "chargeback_code": str,
         "ip_address": _ip_address,
         "maxmind_id": _maxmind_id,
-        "minfraud_id": _uuid,
+        "minfraud_id": _non_empty_uuid,
         "notes": str,
         Required("tag"): _tag,
         "transaction_id": _transaction_id,
@@ -399,8 +408,8 @@ _validate_report_schema = Schema(
 
 
 def _validate_at_least_one_identifier_field(report):
-    optional_fields = {"ip_address", "maxmind_id", "minfraud_id", "transaction_id"}
-    if not optional_fields & report.keys():
+    optional_fields = ["ip_address", "maxmind_id", "minfraud_id", "transaction_id"]
+    if not any(field in report for field in optional_fields):
         # We return MultipleInvalid instead of ValueError to be consistent with what
         # voluptuous returns.
         raise MultipleInvalid(
