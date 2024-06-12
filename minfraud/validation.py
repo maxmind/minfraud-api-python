@@ -15,7 +15,7 @@ from decimal import Decimal
 from typing import Optional
 
 from email_validator import validate_email  # type: ignore
-from voluptuous import All, Any, In, Match, Range, Required, Schema
+from voluptuous import All, Any, In, Match, MultipleInvalid, Range, Required, Schema
 from voluptuous.error import UrlInvalid
 
 # Pylint doesn't like the private function type naming for the callable
@@ -379,14 +379,48 @@ def _uuid(s: str) -> str:
     raise ValueError
 
 
-validate_report = Schema(
+NIL_UUID = str(uuid.UUID(int=0))
+
+
+def _non_empty_uuid(s: str) -> str:
+    if _uuid(s) == NIL_UUID:
+        raise ValueError
+    return s
+
+
+def _transaction_id(s: Optional[str]) -> str:
+    if isinstance(s, str) and len(s) > 0:
+        return s
+    raise ValueError
+
+
+_validate_report_schema = Schema(
     {
         "chargeback_code": str,
-        Required("ip_address"): _ip_address,
+        "ip_address": _ip_address,
         "maxmind_id": _maxmind_id,
-        "minfraud_id": _uuid,
+        "minfraud_id": _non_empty_uuid,
         "notes": str,
         Required("tag"): _tag,
-        "transaction_id": str,
+        "transaction_id": _transaction_id,
     },
 )
+
+
+def _validate_at_least_one_identifier_field(report):
+    optional_fields = ["ip_address", "maxmind_id", "minfraud_id", "transaction_id"]
+    if not any(field in report for field in optional_fields):
+        # We return MultipleInvalid instead of ValueError to be consistent with what
+        # voluptuous returns.
+        raise MultipleInvalid(
+            "The report must contain at least one of the following fields: "
+            "'ip_address', 'maxmind_id', 'minfraud_id', 'transaction_id'."
+        )
+    return True
+
+
+def validate_report(report):
+    """Validate minFraud Transaction Report fields."""
+    _validate_report_schema(report)
+    _validate_at_least_one_identifier_field(report)
+    return True
