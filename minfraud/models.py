@@ -759,6 +759,58 @@ class ShippingAddress:
 
 
 @_inflate_to_namedtuple
+class Phone:
+    """Information about the billing or shipping phone number.
+
+    .. attribute:: country
+
+      The two-character ISO 3166-1 country code for the country associated with
+      the phone number.
+
+      :type: str | None
+
+    .. attribute:: is_voip
+
+      This property is ``True`` if the phone number is a Voice over Internet
+      Protocol (VoIP) number allocated by a regulator. The property is
+      ``False`` when the number is not VoIP. If the phone number was not
+      provided or we do not have data for it, the property will be ``None``.
+
+      :type: bool | None
+
+    .. attribute:: network_operator
+
+      The name of the original network operator associated with the phone
+      number. This field does not reflect phone numbers that have been ported
+      from the original operator to another, nor does it identify mobile
+      virtual network operators.
+
+      :type: str | None
+
+    .. attribute:: number_type
+
+      One of the following values: fixed or mobile. Additional values may be
+      added in the future.
+
+      :type: str | None
+
+    """
+
+    country: Optional[str]
+    is_voip: Optional[bool]
+    network_operator: Optional[str]
+    number_type: Optional[str]
+
+    __slots__ = ()
+    _fields = {
+        "country": None,
+        "is_voip": None,
+        "network_operator": None,
+        "number_type": None,
+    }
+
+
+@_inflate_to_namedtuple
 class ServiceWarning:
     """Warning from the web service.
 
@@ -1110,10 +1162,26 @@ class Factors:
 
       :type: BillingAddress
 
+    .. attribute:: billing_phone
+
+      A :class:`.Phone` object containing minFrauddata related to the billing
+      phone used in the transaction.
+
+      :type: Phone
+
     .. attribute:: shipping_address
 
       A :class:`.ShippingAddress` object containing
       minFraud data related to the shipping address used in the transaction.
+
+      :type: ShippingAddress
+
+    .. attribute:: shipping_phone
+
+      A :class:`.Phone` object containing minFrauddata related to the shipping
+      phone used in the transaction.
+
+      :type: Phone
 
     .. attribute:: subscores
 
@@ -1123,6 +1191,7 @@ class Factors:
     """
 
     billing_address: BillingAddress
+    billing_phone: Phone
     credit_card: CreditCard
     disposition: Disposition
     funds_remaining: float
@@ -1133,12 +1202,14 @@ class Factors:
     queries_remaining: int
     risk_score: float
     shipping_address: ShippingAddress
+    shipping_phone: Phone
     subscores: Subscores
     warnings: Tuple[ServiceWarning, ...]
 
     __slots__ = ()
     _fields = {
         "billing_address": BillingAddress,
+        "billing_phone": Phone,
         "credit_card": CreditCard,
         "disposition": Disposition,
         "funds_remaining": None,
@@ -1149,6 +1220,7 @@ class Factors:
         "queries_remaining": None,
         "risk_score": None,
         "shipping_address": ShippingAddress,
+        "shipping_phone": Phone,
         "subscores": Subscores,
         "warnings": _create_warnings,
     }
@@ -1241,13 +1313,30 @@ class Insights:
 
       :type: BillingAddress
 
+    .. attribute:: billing_phone
+
+      A :class:`.Phone` object containing minFrauddata related to the billing
+      phone used in the transaction.
+
+      :type: Phone
+
     .. attribute:: shipping_address
 
       A :class:`.ShippingAddress` object containing
       minFraud data related to the shipping address used in the transaction.
+
+      :type: ShippingAddress
+
+    .. attribute:: shipping_phone
+
+      A :class:`.Phone` object containing minFrauddata related to the shipping
+      phone used in the transaction.
+
+      :type: Phone
     """
 
     billing_address: BillingAddress
+    billing_phone: Phone
     credit_card: CreditCard
     device: Device
     disposition: Disposition
@@ -1258,11 +1347,13 @@ class Insights:
     queries_remaining: int
     risk_score: float
     shipping_address: ShippingAddress
+    shipping_phone: Phone
     warnings: Tuple[ServiceWarning, ...]
 
     __slots__ = ()
     _fields = {
         "billing_address": BillingAddress,
+        "billing_phone": Phone,
         "credit_card": CreditCard,
         "device": Device,
         "disposition": Disposition,
@@ -1273,6 +1364,7 @@ class Insights:
         "queries_remaining": None,
         "risk_score": None,
         "shipping_address": ShippingAddress,
+        "shipping_phone": Phone,
         "warnings": _create_warnings,
     }
 
