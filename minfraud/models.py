@@ -1164,7 +1164,7 @@ class Factors:
 
     .. attribute:: billing_phone
 
-      A :class:`.Phone` object containing minFrauddata related to the billing
+      A :class:`.Phone` object containing minFraud data related to the billing
       phone used in the transaction.
 
       :type: Phone
@@ -1178,7 +1178,7 @@ class Factors:
 
     .. attribute:: shipping_phone
 
-      A :class:`.Phone` object containing minFrauddata related to the shipping
+      A :class:`.Phone` object containing minFraud data related to the shipping
       phone used in the transaction.
 
       :type: Phone
@@ -1315,7 +1315,7 @@ class Insights:
 
     .. attribute:: billing_phone
 
-      A :class:`.Phone` object containing minFrauddata related to the billing
+      A :class:`.Phone` object containing minFraud data related to the billing
       phone used in the transaction.
 
       :type: Phone
@@ -1329,7 +1329,7 @@ class Insights:
 
     .. attribute:: shipping_phone
 
-      A :class:`.Phone` object containing minFrauddata related to the shipping
+      A :class:`.Phone` object containing minFraud data related to the shipping
       phone used in the transaction.
 
       :type: Phone
