@@ -246,6 +246,21 @@ class TestModels(unittest.TestCase):
         self.assertEqual(phone, issuer.phone_number)
         self.assertEqual(True, issuer.matches_provided_phone_number)
 
+    def test_phone(self):
+        phone = Phone(
+            {
+                "country": "US",
+                "is_voip": True,
+                "network_operator": "Verizon/1",
+                "number_type": "fixed",
+            }
+        )
+
+        self.assertEqual("US", phone.country)
+        self.assertEqual(True, phone.is_voip)
+        self.assertEqual("Verizon/1", phone.network_operator)
+        self.assertEqual("fixed", phone.number_type)
+
     def test_warning(self):
         code = "INVALID_INPUT"
         msg = "Input invalid"
@@ -327,7 +342,9 @@ class TestModels(unittest.TestCase):
             "device": {"id": "b643d445-18b2-4b9d-bad4-c9c4366e402a"},
             "email": {"domain": {"first_seen": "2014-02-23"}, "is_free": True},
             "shipping_address": {"is_in_ip_country": True},
+            "shipping_phone": {"is_voip": True},
             "billing_address": {"is_in_ip_country": True},
+            "billing_phone": {"is_voip": True},
             "funds_remaining": 10.01,
             "queries_remaining": 123,
             "risk_score": 0.01,
@@ -367,8 +384,10 @@ class TestModels(unittest.TestCase):
         self.assertEqual("reject", insights.disposition.action)
         self.assertEqual(True, insights.email.is_free)
         self.assertEqual("2014-02-23", insights.email.domain.first_seen)
+        self.assertEqual(True, insights.shipping_phone.is_voip)
         self.assertEqual(True, insights.shipping_address.is_in_ip_country)
         self.assertEqual(True, insights.billing_address.is_in_ip_country)
+        self.assertEqual(True, insights.billing_phone.is_voip)
         self.assertEqual(uuid, insights.id)
         self.assertEqual(10.01, insights.funds_remaining)
         self.assertEqual(123, insights.queries_remaining)

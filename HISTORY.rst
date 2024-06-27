@@ -10,6 +10,11 @@ History
   ``ip_address`` parameter optional. Now the ``tag`` and at least one of the
   following parameters must be supplied: ``ip_address``, ``maxmind_id``,
   ``minfraud_id``, ``transaction_id``.
+* Added ``billing_phone`` and ``shipping_phone`` properties to the minFraud
+  Insights and Factors response models. These contain objects with information
+  about the respective phone numbers. Please see `our developer
+  site <https://dev.maxmind.com/minfraud/api-documentation/responses/>`_ for
+  more information.
 
 2.10.0 (2024-04-16)
 +++++++++++++++++++
