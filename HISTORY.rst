@@ -15,6 +15,7 @@ History
   about the respective phone numbers. Please see `our developer
   site <https://dev.maxmind.com/minfraud/api-documentation/responses/>`_ for
   more information.
+* Added ``payconex`` to the ``/payment/processor`` validation.
 
 2.10.0 (2024-04-16)
 +++++++++++++++++++

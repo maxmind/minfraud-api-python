@@ -185,6 +185,7 @@ _payment_processor = In(
         "orangepay",
         "other",
         "pacnet_services",
+        "payconex",
         "payeezy",
         "payfast",
         "paygate",
