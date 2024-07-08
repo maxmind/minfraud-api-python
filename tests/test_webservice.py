@@ -3,7 +3,7 @@ import json
 import os
 from io import open
 from typing import Type, Union
-import pytest_httpserver
+from pytest_httpserver import HTTPServer
 import pytest
 
 from minfraud.errors import (
@@ -24,17 +24,19 @@ class BaseTest(unittest.TestCase):
     client_class: Union[Type[AsyncClient], Type[Client]] = Client
 
     @pytest.fixture(autouse=True)
-    def setup_httpserver(self, httpserver: pytest_httpserver.HTTPServer):
+    def setup_httpserver(self, httpserver: HTTPServer):
         self.httpserver = httpserver
 
     def setUp(self):
         self.client = self.client_class(42, "abcdef123456")
-        self.client._base_uri = self.httpserver.url_for("/minfraud/v2.0") 
-        self.client._factors_uri = self.httpserver.url_for("/minfraud/v2.0/factors") 
-        
+        self.client._base_uri = self.httpserver.url_for("/minfraud/v2.0")
+        self.client._factors_uri = self.httpserver.url_for("/minfraud/v2.0/factors")
+
         self.client._insights_uri = self.httpserver.url_for("/minfraud/v2.0/insights")
         self.client._score_uri = self.httpserver.url_for("/minfraud/v2.0/score")
-        self.client._report_uri = self.httpserver.url_for("/minfraud/v2.0/transactions/report")
+        self.client._report_uri = self.httpserver.url_for(
+            "/minfraud/v2.0/transactions/report"
+        )
         self.base_uri = self.client._base_uri
 
         test_dir = os.path.join(os.path.dirname(__file__), "data")
@@ -217,17 +219,14 @@ class BaseTransactionTest(BaseTest):
         def custom_handler(r):
             nonlocal last
             last = r
-            return "hello world"
+            return '{"status": 204}'
 
         self.httpserver.expect_request(uri, method="POST").respond_with_handler(
             custom_handler
         )
 
         request = {"email": {"address": "Test+ignore@maxmind.com"}}
-        try:
-            self.run_client(getattr(self.client, self.type)(request, hash_email=True))
-        except Exception as e:
-            pass
+        self.run_client(getattr(self.client, self.type)(request, hash_email=True))
 
         self.assertEqual(
             {
@@ -245,11 +244,11 @@ class BaseTransactionTest(BaseTest):
         locales = ("fr",)
         client = self.client_class(42, "abcdef123456", locales=locales)
         client._base_uri = self.httpserver.url_for("/minfraud/v2.0")
-        client._factors_uri = self.httpserver.url_for("/minfraud/v2.0/factors") 
-        client._insights_uri = self.httpserver.url_for("/minfraud/v2.0/insights") 
+        client._factors_uri = self.httpserver.url_for("/minfraud/v2.0/factors")
+        client._insights_uri = self.httpserver.url_for("/minfraud/v2.0/insights")
         client._score_uri = self.httpserver.url_for("/minfraud/v2.0/score")
-        client._report_uri = (
-            self.httpserver.url_for("minfraud/v2.0/transactions/report")
+        client._report_uri = self.httpserver.url_for(
+            "minfraud/v2.0/transactions/report"
         )
         model = self.create_success(client=client)
         response = json.loads(self.response)
