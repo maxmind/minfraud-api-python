@@ -29,17 +29,12 @@ class BaseTest(unittest.TestCase):
 
     def setUp(self):
         self.client = self.client_class(42, "abcdef123456")
-        self.client._base_uri = self.httpserver.url_for("/") + "minfraud/v2.0"
-        self.client._factors_uri = (
-            self.httpserver.url_for("/") + "minfraud/v2.0/factors"
-        )
-        self.client._insights_uri = (
-            self.httpserver.url_for("/") + "minfraud/v2.0/insights"
-        )
-        self.client._score_uri = self.httpserver.url_for("/") + "minfraud/v2.0/score"
-        self.client._report_uri = (
-            self.httpserver.url_for("/") + "minfraud/v2.0/transactions/report"
-        )
+        self.client._base_uri = self.httpserver.url_for("/minfraud/v2.0") 
+        self.client._factors_uri = self.httpserver.url_for("/minfraud/v2.0/factors") 
+        
+        self.client._insights_uri = self.httpserver.url_for("/minfraud/v2.0/insights")
+        self.client._score_uri = self.httpserver.url_for("/minfraud/v2.0/score")
+        self.client._report_uri = self.httpserver.url_for("/minfraud/v2.0/transactions/report")
         self.base_uri = self.client._base_uri
 
         test_dir = os.path.join(os.path.dirname(__file__), "data")
@@ -249,12 +244,12 @@ class BaseTransactionTest(BaseTest):
     def test_200_with_locales(self):
         locales = ("fr",)
         client = self.client_class(42, "abcdef123456", locales=locales)
-        client._base_uri = self.httpserver.url_for("/") + "minfraud/v2.0"
-        client._factors_uri = self.httpserver.url_for("/") + "minfraud/v2.0/factors"
-        client._insights_uri = self.httpserver.url_for("/") + "minfraud/v2.0/insights"
-        client._score_uri = self.httpserver.url_for("/") + "minfraud/v2.0/score"
+        client._base_uri = self.httpserver.url_for("/minfraud/v2.0")
+        client._factors_uri = self.httpserver.url_for("/minfraud/v2.0/factors") 
+        client._insights_uri = self.httpserver.url_for("/minfraud/v2.0/insights") 
+        client._score_uri = self.httpserver.url_for("/minfraud/v2.0/score")
         client._report_uri = (
-            self.httpserver.url_for("/") + "minfraud/v2.0/transactions/report"
+            self.httpserver.url_for("minfraud/v2.0/transactions/report")
         )
         model = self.create_success(client=client)
         response = json.loads(self.response)
