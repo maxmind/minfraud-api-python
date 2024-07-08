@@ -3,7 +3,7 @@
 History
 -------
 
-2.11.0
+2.11.0 (2024-07-08)
 +++++++++++++++++++
 
 * Updated the validation for the Report Transactions API to make the
