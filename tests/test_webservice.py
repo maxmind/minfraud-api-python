@@ -3,10 +3,8 @@ import json
 import os
 from io import open
 from typing import Type, Union
-
-# httpretty currently doesn't work, but mocket with the compat interface
-# does. See, e.g., https://github.com/gabrielfalcao/HTTPretty/issues/220
-from mocket.plugins.httpretty import httpretty, httprettified  # type: ignore
+from pytest_httpserver import HTTPServer
+import pytest
 
 from minfraud.errors import (
     HTTPError,
@@ -19,15 +17,25 @@ from minfraud.errors import (
 from minfraud.models import Factors, Insights, Score
 from minfraud.webservice import AsyncClient, Client
 
+import minfraud.webservice
 import unittest
+
+minfraud.webservice._SCHEME = "http"
 
 
 class BaseTest(unittest.TestCase):
     client_class: Union[Type[AsyncClient], Type[Client]] = Client
 
-    def setUp(self):
-        self.client = self.client_class(42, "abcdef123456")
+    @pytest.fixture(autouse=True)
+    def setup_httpserver(self, httpserver: HTTPServer):
+        self.httpserver = httpserver
 
+    def setUp(self):
+        self.client = self.client_class(
+            42,
+            "abcdef123456",
+            host="{0}:{1}".format(self.httpserver.host, self.httpserver.port),
+        )
         test_dir = os.path.join(os.path.dirname(__file__), "data")
         with open(os.path.join(test_dir, self.request_file), encoding="utf-8") as file:
             content = file.read()
@@ -36,9 +44,6 @@ class BaseTest(unittest.TestCase):
         with open(os.path.join(test_dir, self.response_file), encoding="utf-8") as file:
             self.response = file.read()
 
-    base_uri = "https://minfraud.maxmind.com/minfraud/v2.0"
-
-    @httprettified
     def test_invalid_auth(self):
         for error in (
             "ACCOUNT_ID_REQUIRED",
@@ -52,19 +57,16 @@ class BaseTest(unittest.TestCase):
                     status_code=401,
                 )
 
-    @httprettified
     def test_invalid_request(self):
         with self.assertRaisesRegex(InvalidRequestError, "IP invalid"):
             self.create_error(text='{"code":"IP_ADDRESS_INVALID","error":"IP invalid"}')
 
-    @httprettified
     def test_300_error(self):
         with self.assertRaisesRegex(
             HTTPError, r"Received an unexpected HTTP status \(300\) for"
         ):
             self.create_error(status_code=300)
 
-    @httprettified
     def test_permission_required(self):
         with self.assertRaisesRegex(PermissionRequiredError, "permission"):
             self.create_error(
@@ -72,7 +74,6 @@ class BaseTest(unittest.TestCase):
                 status_code=403,
             )
 
-    @httprettified
     def test_400_with_invalid_json(self):
         with self.assertRaisesRegex(
             HTTPError,
@@ -81,19 +82,16 @@ class BaseTest(unittest.TestCase):
         ):
             self.create_error(text="{blah}")
 
-    @httprettified
     def test_400_with_no_body(self):
         with self.assertRaisesRegex(HTTPError, "Received a 400 error with no body"):
             self.create_error()
 
-    @httprettified
     def test_400_with_unexpected_content_type(self):
         with self.assertRaisesRegex(
             HTTPError, "Received a 400 with the following body: b?'?plain'?"
         ):
             self.create_error(content_type="text/plain", text="plain")
 
-    @httprettified
     def test_400_without_json_body(self):
         with self.assertRaisesRegex(
             HTTPError,
@@ -102,7 +100,6 @@ class BaseTest(unittest.TestCase):
         ):
             self.create_error(text="plain")
 
-    @httprettified
     def test_400_with_unexpected_json(self):
         with self.assertRaisesRegex(
             HTTPError,
@@ -111,16 +108,15 @@ class BaseTest(unittest.TestCase):
         ):
             self.create_error(text='{"not":"expected"}')
 
-    @httprettified
     def test_500_error(self):
         with self.assertRaisesRegex(HTTPError, r"Received a server error \(500\) for"):
             self.create_error(status_code=500)
 
     def create_error(self, status_code=400, text="", content_type=None):
         uri = "/".join(
-            [self.base_uri, "transactions", "report"]
+            ["/minfraud/v2.0", "transactions", "report"]
             if self.type == "report"
-            else [self.base_uri, self.type]
+            else ["/minfraud/v2.0", self.type]
         )
         if content_type is None:
             content_type = (
@@ -128,38 +124,37 @@ class BaseTest(unittest.TestCase):
                 if self.type == "report"
                 else "application/vnd.maxmind.com-error+json; charset=UTF-8; version=2.0"
             )
-        httpretty.register_uri(
-            httpretty.POST,
-            uri=uri,
-            status=status_code,
-            body=text,
+        self.httpserver.expect_request(uri, method="POST").respond_with_data(
+            text,
             content_type=content_type,
+            status=status_code,
         )
         return self.run_client(getattr(self.client, self.type)(self.full_request))
 
     def create_success(self, text=None, client=None, request=None):
         uri = "/".join(
-            [self.base_uri, "transactions", "report"]
+            ["/minfraud/v2.0", "transactions", "report"]
             if self.type == "report"
-            else [self.base_uri, self.type]
+            else ["/minfraud/v2.0", self.type]
         )
-        httpretty.register_uri(
-            httpretty.POST,
-            uri=uri,
-            status=204 if self.type == "report" else 200,
-            body=self.response if text is None else text,
+        if request is None:
+            request = self.full_request
+
+        response = self.response if text is None else text
+        status = 204 if self.type == "report" else 200
+        self.httpserver.expect_request(uri, method="POST").respond_with_data(
+            response,
             content_type=f"application/vnd.maxmind.com-minfraud-{self.type}+json; charset=UTF-8; version=2.0",
+            status=status,
         )
         if client is None:
             client = self.client
-        if request is None:
-            request = self.full_request
+
         return self.run_client(getattr(client, self.type)(request))
 
     def run_client(self, v):
         return v
 
-    @httprettified
     def test_named_constructor_args(self):
         id = "47"
         key = "1234567890ab"
@@ -170,7 +165,6 @@ class BaseTest(unittest.TestCase):
             self.assertEqual(client._account_id, id)
             self.assertEqual(client._license_key, key)
 
-    @httprettified
     def test_missing_constructor_args(self):
         with self.assertRaises(TypeError):
             self.client_class(license_key="1234567890ab")
@@ -180,10 +174,10 @@ class BaseTest(unittest.TestCase):
 
 
 class BaseTransactionTest(BaseTest):
+
     def has_ip_location(self):
         return self.type in ["factors", "insights"]
 
-    @httprettified
     def test_200(self):
         model = self.create_success()
         response = json.loads(self.response)
@@ -197,7 +191,6 @@ class BaseTransactionTest(BaseTest):
             self.assertEqual("004", model.ip_address.traits.mobile_network_code)
             self.assertEqual("ANONYMOUS_IP", model.ip_address.risk_reasons[0].code)
 
-    @httprettified
     def test_200_on_request_with_nones(self):
         model = self.create_success(
             request={
@@ -215,36 +208,36 @@ class BaseTransactionTest(BaseTest):
         response = self.response
         self.assertEqual(0.01, model.risk_score)
 
-    @httprettified
     def test_200_with_email_hashing(self):
-        uri = "/".join([self.base_uri, self.type])
-
-        httpretty.register_uri(
-            httpretty.POST,
-            uri=uri,
-            status=200,
-            body=self.response,
-            content_type=f"application/vnd.maxmind.com-minfraud-{self.type}+json; charset=UTF-8; version=2.0",
-        )
-
-        request = {"email": {"address": "Test+ignore@maxmind.com"}}
-        self.run_client(getattr(self.client, self.type)(request, hash_email=True))
-
-        self.assertEqual(
-            {
+        uri = "/".join(["/minfraud/v2.0", self.type])
+        self.httpserver.expect_request(
+            uri,
+            method="POST",
+            json={
                 "email": {
                     "address": "977577b140bfb7c516e4746204fbdb01",
                     "domain": "maxmind.com",
                 }
             },
-            json.loads(httpretty.last_request.body),
+        ).respond_with_data(
+            self.response,
+            content_type=f"application/vnd.maxmind.com-minfraud-{self.type}+json; charset=UTF-8; version=2.0",
+            status=200,
         )
 
+        request = {"email": {"address": "Test+ignore@maxmind.com"}}
+        self.run_client(getattr(self.client, self.type)(request, hash_email=True))
+
     # This was fixed in https://github.com/maxmind/minfraud-api-python/pull/78
-    @httprettified
+
     def test_200_with_locales(self):
         locales = ("fr",)
-        client = self.client_class(42, "abcdef123456", locales=locales)
+        client = self.client_class(
+            42,
+            "abcdef123456",
+            locales=locales,
+            host="{0}:{1}".format(self.httpserver.host, self.httpserver.port),
+        )
         model = self.create_success(client=client)
         response = json.loads(self.response)
         if self.has_ip_location():
@@ -254,7 +247,6 @@ class BaseTransactionTest(BaseTest):
             self.assertEqual("Royaume-Uni", model.ip_address.country.name)
             self.assertEqual("Londres", model.ip_address.city.name)
 
-    @httprettified
     def test_200_with_reserved_ip_warning(self):
         model = self.create_success(
             """
@@ -275,7 +267,6 @@ class BaseTransactionTest(BaseTest):
 
         self.assertEqual(12, model.risk_score)
 
-    @httprettified
     def test_200_with_no_body(self):
         with self.assertRaisesRegex(
             MinFraudError,
@@ -284,7 +275,6 @@ class BaseTransactionTest(BaseTest):
         ):
             self.create_success(text="")
 
-    @httprettified
     def test_200_with_invalid_json(self):
         with self.assertRaisesRegex(
             MinFraudError,
@@ -293,7 +283,6 @@ class BaseTransactionTest(BaseTest):
         ):
             self.create_success(text="{")
 
-    @httprettified
     def test_insufficient_funds(self):
         with self.assertRaisesRegex(InsufficientFundsError, "out of funds"):
             self.create_error(
@@ -328,11 +317,9 @@ class TestReportTransaction(BaseTest):
     request_file = "full-report-request.json"
     response_file = "report-response.json"
 
-    @httprettified
     def test_204(self):
         self.create_success()
 
-    @httprettified
     def test_204_on_request_with_nones(self):
         self.create_success(
             request={
