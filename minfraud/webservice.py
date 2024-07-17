@@ -32,6 +32,7 @@ _AIOHTTP_UA = f"minFraud-API/{__version__} {aiohttp.http.SERVER_SOFTWARE}"
 
 _REQUEST_UA = f"minFraud-API/{__version__} {requests.utils.default_user_agent()}"
 
+_SCHEME = "https"
 
 # pylint: disable=too-many-instance-attributes, missing-class-docstring
 class BaseClient:
@@ -57,8 +58,7 @@ class BaseClient:
         self._account_id = str(account_id)
         self._license_key = license_key
         self._timeout = timeout
-
-        base_uri = f"https://{host}/minfraud/v2.0"
+        base_uri = f"{_SCHEME}://{host}/minfraud/v2.0"
         self._score_uri = "/".join([base_uri, "score"])
         self._insights_uri = "/".join([base_uri, "insights"])
         self._factors_uri = "/".join([base_uri, "factors"])

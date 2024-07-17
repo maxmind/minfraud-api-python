@@ -17,8 +17,10 @@ from minfraud.errors import (
 from minfraud.models import Factors, Insights, Score
 from minfraud.webservice import AsyncClient, Client
 
+import minfraud.webservice
 import unittest
 
+minfraud.webservice._SCHEME = "http"
 
 class BaseTest(unittest.TestCase):
     client_class: Union[Type[AsyncClient], Type[Client]] = Client
@@ -28,16 +30,7 @@ class BaseTest(unittest.TestCase):
         self.httpserver = httpserver
 
     def setUp(self):
-        self.client = self.client_class(42, "abcdef123456")
-        self.client._base_uri = self.httpserver.url_for("/minfraud/v2.0")
-        self.client._factors_uri = self.httpserver.url_for("/minfraud/v2.0/factors")
-
-        self.client._insights_uri = self.httpserver.url_for("/minfraud/v2.0/insights")
-        self.client._score_uri = self.httpserver.url_for("/minfraud/v2.0/score")
-        self.client._report_uri = self.httpserver.url_for(
-            "/minfraud/v2.0/transactions/report"
-        )
-
+        self.client = self.client_class(42, "abcdef123456",host="{0}:{1}".format(self.httpserver.host,self.httpserver.port))
         test_dir = os.path.join(os.path.dirname(__file__), "data")
         with open(os.path.join(test_dir, self.request_file), encoding="utf-8") as file:
             content = file.read()
@@ -241,14 +234,7 @@ class BaseTransactionTest(BaseTest):
 
     def test_200_with_locales(self):
         locales = ("fr",)
-        client = self.client_class(42, "abcdef123456", locales=locales)
-        client._base_uri = self.httpserver.url_for("/minfraud/v2.0")
-        client._factors_uri = self.httpserver.url_for("/minfraud/v2.0/factors")
-        client._insights_uri = self.httpserver.url_for("/minfraud/v2.0/insights")
-        client._score_uri = self.httpserver.url_for("/minfraud/v2.0/score")
-        client._report_uri = self.httpserver.url_for(
-            "minfraud/v2.0/transactions/report"
-        )
+        client = self.client_class(42, "abcdef123456", locales=locales,host="{0}:{1}".format(self.httpserver.host,self.httpserver.port))
         model = self.create_success(client=client)
         response = json.loads(self.response)
         if self.has_ip_location():
