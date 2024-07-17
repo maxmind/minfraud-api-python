@@ -22,6 +22,7 @@ import unittest
 
 minfraud.webservice._SCHEME = "http"
 
+
 class BaseTest(unittest.TestCase):
     client_class: Union[Type[AsyncClient], Type[Client]] = Client
 
@@ -30,7 +31,11 @@ class BaseTest(unittest.TestCase):
         self.httpserver = httpserver
 
     def setUp(self):
-        self.client = self.client_class(42, "abcdef123456",host="{0}:{1}".format(self.httpserver.host,self.httpserver.port))
+        self.client = self.client_class(
+            42,
+            "abcdef123456",
+            host="{0}:{1}".format(self.httpserver.host, self.httpserver.port),
+        )
         test_dir = os.path.join(os.path.dirname(__file__), "data")
         with open(os.path.join(test_dir, self.request_file), encoding="utf-8") as file:
             content = file.read()
@@ -205,36 +210,34 @@ class BaseTransactionTest(BaseTest):
 
     def test_200_with_email_hashing(self):
         uri = "/".join(["/minfraud/v2.0", self.type])
-
-        last = None
-
-        def custom_handler(r):
-            nonlocal last
-            last = r
-            return '{"status": 204}'
-
-        self.httpserver.expect_request(uri, method="POST").respond_with_handler(
-            custom_handler
-        )
-
-        request = {"email": {"address": "Test+ignore@maxmind.com"}}
-        self.run_client(getattr(self.client, self.type)(request, hash_email=True))
-
-        self.assertEqual(
-            {
+        self.httpserver.expect_request(
+            uri,
+            method="POST",
+            json={
                 "email": {
                     "address": "977577b140bfb7c516e4746204fbdb01",
                     "domain": "maxmind.com",
                 }
             },
-            json.loads(last.data.decode("utf-8")),
+        ).respond_with_data(
+            self.response,
+            content_type=f"application/vnd.maxmind.com-minfraud-{self.type}+json; charset=UTF-8; version=2.0",
+            status=200,
         )
+
+        request = {"email": {"address": "Test+ignore@maxmind.com"}}
+        self.run_client(getattr(self.client, self.type)(request, hash_email=True))
 
     # This was fixed in https://github.com/maxmind/minfraud-api-python/pull/78
 
     def test_200_with_locales(self):
         locales = ("fr",)
-        client = self.client_class(42, "abcdef123456", locales=locales,host="{0}:{1}".format(self.httpserver.host,self.httpserver.port))
+        client = self.client_class(
+            42,
+            "abcdef123456",
+            locales=locales,
+            host="{0}:{1}".format(self.httpserver.host, self.httpserver.port),
+        )
         model = self.create_success(client=client)
         response = json.loads(self.response)
         if self.has_ip_location():
