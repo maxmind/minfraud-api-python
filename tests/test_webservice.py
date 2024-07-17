@@ -37,7 +37,6 @@ class BaseTest(unittest.TestCase):
         self.client._report_uri = self.httpserver.url_for(
             "/minfraud/v2.0/transactions/report"
         )
-        self.base_uri = self.client._base_uri
 
         test_dir = os.path.join(os.path.dirname(__file__), "data")
         with open(os.path.join(test_dir, self.request_file), encoding="utf-8") as file:
