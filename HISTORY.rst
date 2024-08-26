@@ -3,11 +3,15 @@
 History
 -------
 
-2.11.1
+2.12.0-beta.1
 +++++++++++++++++++
 
 * ``setuptools`` was incorrectly listed as a runtime dependency. This has
   been removed.
+* Added support for the new risk reasons outputs in minFraud Factors. The risk
+  reasons output codes and reasons are currently in beta and are subject to
+  change. We recommend that you use these beta outputs with caution and avoid
+  relying on them for critical applications.
 
 2.11.0 (2024-07-08)
 +++++++++++++++++++

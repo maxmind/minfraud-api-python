@@ -273,6 +273,28 @@ class TestModels(unittest.TestCase):
         self.assertEqual(msg, warning.warning)
         self.assertEqual("/first/second", warning.input_pointer)
 
+    def test_reason(self):
+        code = "EMAIL_ADDRESS_NEW"
+        msg = "Riskiness of newly-sighted email address"
+
+        reason = Reason({"code": code, "reason": msg})
+
+        self.assertEqual(code, reason.code)
+        self.assertEqual(msg, reason.reason)
+
+    def test_risk_score_reason(self):
+        multiplier = 0.34
+        code = "EMAIL_ADDRESS_NEW"
+        msg = "Riskiness of newly-sighted email address"
+
+        reason = RiskScoreReason(
+            {"multiplier": 0.34, "reasons": [{"code": code, "reason": msg}]}
+        )
+
+        self.assertEqual(multiplier, reason.multiplier)
+        self.assertEqual(code, reason.reasons[0].code)
+        self.assertEqual(msg, reason.reasons[0].reason)
+
     def test_score(self):
         id = "b643d445-18b2-4b9d-bad4-c9c4366e402a"
         score = Score(
@@ -303,6 +325,7 @@ class TestModels(unittest.TestCase):
         response = self.factors_response()
         factors = Factors(response)
         self.check_insights_data(factors, response["id"])
+        self.check_risk_score_reasons_data(factors.risk_score_reasons)
         self.assertEqual(0.01, factors.subscores.avs_result)
         self.assertEqual(0.02, factors.subscores.billing_address)
         self.assertEqual(
@@ -371,6 +394,17 @@ class TestModels(unittest.TestCase):
                 "time_of_day": 0.17,
             },
             "warnings": [{"code": "INVALID_INPUT"}],
+            "risk_score_reasons": [
+                {
+                    "multiplier": 45,
+                    "reasons": [
+                        {
+                            "code": "ANONYMOUS_IP",
+                            "reason": "Risk due to IP being an Anonymous IP",
+                        }
+                    ],
+                }
+            ],
         }
 
     def check_insights_data(self, insights, uuid):
@@ -395,4 +429,11 @@ class TestModels(unittest.TestCase):
         self.assertEqual("INVALID_INPUT", insights.warnings[0].code)
         self.assertIsInstance(
             insights.warnings, tuple, "warnings is a tuple, not a dict"
+        )
+
+    def check_risk_score_reasons_data(self, reasons):
+        self.assertEqual(45, reasons[0].multiplier)
+        self.assertEqual("ANONYMOUS_IP", reasons[0].reasons[0].code)
+        self.assertEqual(
+            "Risk due to IP being an Anonymous IP", reasons[0].reasons[0].reason
         )
