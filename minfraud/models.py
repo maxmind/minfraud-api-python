@@ -1082,7 +1082,7 @@ class Reason:
     This class provides both a machine-readable code and a human-readable
     explanation of the reason for the risk score.
 
-    Although more codes may be added in the future, the current codes are:
+    Although more codes_ may be added in the future, the current codes are:
 
     - ``BROWSER_LANGUAGE`` - Riskiness of the browser user-agent and
       language associated with the request.
@@ -1140,6 +1140,9 @@ class Reason:
         based on minFraud network activity.
     - ``SHIP_ACTIVITY`` - Riskiness of ship address based on minFraud network activity.
 
+    .. _codes: https://dev.maxmind.com/minfraud/api-documentation/responses\
+    /#schema--response--risk-score-reason--multiplier-reason
+
     .. attribute:: code
 
       This value is a machine-readable code identifying the
@@ -1187,10 +1190,10 @@ class RiskScoreReason:
 
     .. attribute:: reasons
 
-        This tuple contains :class:`.Reason` objects that describe
-        one of the reasons for the multiplier.
+      This tuple contains :class:`.Reason` objects that describe
+      one of the reasons for the multiplier.
 
-        :type: tuple[Reason]
+      :type: tuple[Reason]
 
     """
 
@@ -1328,14 +1331,13 @@ class Factors:
 
     .. attribute:: risk_score_reasons
 
-        This tuple contains :class:`.RiskScoreReason` objects that describe
-        risk score reasons for a given transaction
-        that change the risk score significantly.
-        Risk score reasons are usually only returned for medium to
-        high risk transactions. If there were no significant changes to the risk
-        score due to these reasons, then this tuple will be empty.
+      This tuple contains :class:`.RiskScoreReason` objects that describe
+      risk score reasons for a given transaction that change the risk score
+      significantly. Risk score reasons are usually only returned for medium to
+      high risk transactions. If there were no significant changes to the risk
+      score due to these reasons, then this tuple will be empty.
 
-        :type: tuple[RiskScoreReason]
+      :type: tuple[RiskScoreReason]
 
     """
 

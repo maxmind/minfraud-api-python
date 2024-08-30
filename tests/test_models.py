@@ -432,7 +432,9 @@ class TestModels(unittest.TestCase):
         )
 
     def check_risk_score_reasons_data(self, reasons):
+        self.assertEqual(1, len(reasons))
         self.assertEqual(45, reasons[0].multiplier)
+        self.assertEqual(1, len(reasons[0].reasons))
         self.assertEqual("ANONYMOUS_IP", reasons[0].reasons[0].code)
         self.assertEqual(
             "Risk due to IP being an Anonymous IP", reasons[0].reasons[0].reason

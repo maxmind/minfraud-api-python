@@ -3,7 +3,7 @@
 History
 -------
 
-2.12.0-beta.1
+2.12.0b1
 +++++++++++++++++++
 
 * ``setuptools`` was incorrectly listed as a runtime dependency. This has

@@ -207,7 +207,7 @@
   ],
   "risk_score_reasons": [
     {
-      "multiplier": 45,
+      "multiplier": 45.0,
       "reasons": [
         {
           "code": "ANONYMOUS_IP",
