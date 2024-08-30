@@ -267,6 +267,15 @@ class BaseTransactionTest(BaseTest):
 
         self.assertEqual(12, model.risk_score)
 
+    def test_200_with_no_risk_score_reasons(self):
+        if "risk_score_reasons" not in self.response:
+            return
+
+        response = json.loads(self.response)
+        del response["risk_score_reasons"]
+        model = self.create_success(text=json.dumps(response))
+        self.assertEqual(tuple(), model.risk_score_reasons)
+
     def test_200_with_no_body(self):
         with self.assertRaisesRegex(
             MinFraudError,
