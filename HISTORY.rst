@@ -3,8 +3,8 @@
 History
 -------
 
-2.12.0b1
-+++++++++++++++++++
+2.12.0b1 (2024-09-06)
++++++++++++++++++++++
 
 * ``setuptools`` was incorrectly listed as a runtime dependency. This has
   been removed.
