@@ -863,6 +863,9 @@ def _create_warnings(warnings: List[Dict[str, str]]) -> Tuple[ServiceWarning, ..
 class Subscores:
     """Risk factor scores used in calculating the overall risk score.
 
+    .. deprecated:: 2.12.0
+      Use RiskScoreReason instead.
+
     .. attribute:: avs_result
 
       The risk associated with the AVS result. If present, this is a value
@@ -1328,6 +1331,9 @@ class Factors:
       A :class:`.Subscores` object containing scores for many of the
       individual risk factors that are used to calculate the overall risk
       score.
+
+      .. deprecated:: 2.12.0
+        Use RiskScoreReason instead.
 
     .. attribute:: risk_score_reasons
 

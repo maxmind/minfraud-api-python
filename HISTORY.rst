@@ -3,6 +3,13 @@
 History
 -------
 
+2.12.0
++++++++++++++++++++
+
+* The minFraud Factors subscores have been deprecated. They will be removed
+  in March 2025. Please see `our release notes <https://dev.maxmind.com/minfraud/release-notes/2024/#deprecation-of-risk-factor-scoressubscores>`_
+  for more information.
+
 2.12.0b1 (2024-09-06)
 +++++++++++++++++++++
 
