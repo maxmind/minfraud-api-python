@@ -145,6 +145,7 @@ _payment_processor = In(
         "elavon",
         "emerchantpay",
         "epay",
+        "epayco",
         "eprocessing_network",
         "epx",
         "eway",
