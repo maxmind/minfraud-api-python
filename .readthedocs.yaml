@@ -5,6 +5,10 @@ build:
   tools:
     python: "3.13"
 
+sphinx:
+  configuration: docs/conf.py
+
 python:
   install:
-    - path: .
+    - method: pip
+      path: .
