@@ -82,8 +82,8 @@ class BaseClient:
                 uri,
             ) from ex
         if "ip_address" in decoded_body:
-            decoded_body["ip_address"]["_locales"] = self._locales
-        return model_class(decoded_body)  # type: ignore
+            decoded_body["ip_address"]["locales"] = self._locales
+        return model_class(**decoded_body)  # type: ignore
 
     def _exception_for_error(
         self, status: int, content_type: Optional[str], raw_body: str, uri: str

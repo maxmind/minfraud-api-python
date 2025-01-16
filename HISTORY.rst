@@ -3,9 +3,15 @@
 History
 -------
 
-2.12.0
+3.0.0
 +++++++++++++++++++
 
+* BREAKING CHANGE: The ``minfraud.model.*`` classes have been refactored to
+  simplify them and make them more flexible. They are no longer subclass
+  NamedTuple and are now standard Python classes. This also means the
+  classes are no longer immutable. For most users, these differences should
+  not impact their integration.
+* BREAKING CHANGE: Model attributes that were formerly tuples are now lists.
 * The minFraud Factors subscores have been deprecated. They will be removed
   in March 2025. Please see `our release notes <https://dev.maxmind.com/minfraud/release-notes/2024/#deprecation-of-risk-factor-scoressubscores>`_
   for more information.

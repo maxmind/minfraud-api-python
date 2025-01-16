@@ -6,62 +6,15 @@ This module contains models for the minFraud response object.
 
 """
 
-# pylint:disable=too-many-lines
-from collections import namedtuple
-from functools import update_wrapper
-from typing import Any, Dict, List, Optional, Tuple
+# pylint:disable=too-many-lines,too-many-instance-attributes,too-many-locals
+from typing import Dict, List, Optional
 
+from geoip2.mixins import SimpleEquality
 import geoip2.models
 import geoip2.records
 
 
-# Using a factory decorator rather than a metaclass as supporting
-# metaclasses on Python 2 and 3 is more painful (although we could use
-# six, I suppose). Using a closure rather than a class-based decorator as
-# class based decorators don't work right with `update_wrapper`,
-# causing help(class) to not work correctly.
-def _inflate_to_namedtuple(orig_cls):
-    keys = sorted(orig_cls._fields.keys())
-    fields = orig_cls._fields
-    name = orig_cls.__name__
-    orig_cls.__name__ += "Super"
-    ntup = namedtuple(name, keys)
-    ntup.__name__ = name + "NamedTuple"
-    ntup.__new__.__defaults__ = (None,) * len(keys)
-    new_cls = type(
-        name, (ntup, orig_cls), {"__slots__": (), "__doc__": orig_cls.__doc__}
-    )
-    update_wrapper(_inflate_to_namedtuple, new_cls)
-    orig_new = new_cls.__new__
-
-    # wipe out original namedtuple field docs as they aren't useful
-    # for attr in fields:
-    #     getattr(cls, attr).__func__.__doc__ = None
-
-    def new(cls, *args, **kwargs):
-        """Create new instance."""
-        if (args and kwargs) or len(args) > 1:
-            raise ValueError(
-                "Only provide a single (dict) positional argument"
-                " or use keyword arguments. Do not use both."
-            )
-        if args:
-            values = args[0] if args[0] else {}
-
-            for field, default in fields.items():
-                if callable(default):
-                    kwargs[field] = default(values.get(field))
-                else:
-                    kwargs[field] = values.get(field, default)
-
-        return orig_new(cls, **kwargs)
-
-    new_cls.__new__ = staticmethod(new)
-    return new_cls
-
-
-@_inflate_to_namedtuple
-class IPRiskReason:
+class IPRiskReason(SimpleEquality):
     """Reason for the IP risk.
 
     This class provides both a machine-readable code and a human-readable
@@ -102,19 +55,9 @@ class IPRiskReason:
     code: Optional[str]
     reason: Optional[str]
 
-    __slots__ = ()
-    _fields = {
-        "code": None,
-        "reason": None,
-    }
-
-
-def _create_ip_risk_reasons(
-    reasons: Optional[List[Dict[str, str]]]
-) -> Tuple[IPRiskReason, ...]:
-    if not reasons:
-        return ()
-    return tuple(IPRiskReason(x) for x in reasons)  # type: ignore
+    def __init__(self, code: Optional[str] = None, reason: Optional[str] = None):
+        self.code = code
+        self.reason = reason
 
 
 class GeoIP2Location(geoip2.records.Location):
@@ -255,31 +198,27 @@ class IPAddress(geoip2.models.Insights):
     country: GeoIP2Country
     location: GeoIP2Location
     risk: Optional[float]
-    risk_reasons: Tuple[IPRiskReason, ...]
+    risk_reasons: List[IPRiskReason]
 
-    def __init__(self, ip_address: Dict[str, Any]) -> None:
-        if ip_address is None:
-            ip_address = {}
-        locales = ip_address.get("_locales")
-        if "_locales" in ip_address:
-            del ip_address["_locales"]
-        super().__init__(ip_address, locales=locales)
-        self.country = GeoIP2Country(locales, **ip_address.get("country", {}))
-        self.location = GeoIP2Location(**ip_address.get("location", {}))
-        self.risk = ip_address.get("risk", None)
-        self.risk_reasons = _create_ip_risk_reasons(ip_address.get("risk_reasons"))
-        self._finalized = True
+    def __init__(
+        self,
+        *,
+        locales: Optional[List[str]] = None,
+        country: Optional[Dict] = None,
+        location: Optional[Dict] = None,
+        risk: Optional[float] = None,
+        risk_reasons: Optional[List[Dict]] = None,
+        **kwargs,
+    ) -> None:
 
-    # Unfortunately the GeoIP2 models are not immutable, only the records. This
-    # corrects that for minFraud
-    def __setattr__(self, name: str, value: Any) -> None:
-        if hasattr(self, "_finalized") and self._finalized:
-            raise AttributeError("can't set attribute")
-        super().__setattr__(name, value)
+        super().__init__(kwargs, locales=locales)
+        self.country = GeoIP2Country(locales, **(country or {}))
+        self.location = GeoIP2Location(**(location or {}))
+        self.risk = risk
+        self.risk_reasons = [IPRiskReason(**x) for x in risk_reasons or []]
 
 
-@_inflate_to_namedtuple
-class ScoreIPAddress:
+class ScoreIPAddress(SimpleEquality):
     """Information about the IP address for minFraud Score.
 
     .. attribute:: risk
@@ -292,14 +231,11 @@ class ScoreIPAddress:
 
     risk: Optional[float]
 
-    __slots__ = ()
-    _fields = {
-        "risk": None,
-    }
+    def __init__(self, *, risk: Optional[float] = None, **_):
+        self.risk = risk
 
 
-@_inflate_to_namedtuple
-class Issuer:
+class Issuer(SimpleEquality):
     """Information about the credit card issuer.
 
     .. attribute:: name
@@ -342,17 +278,22 @@ class Issuer:
     phone_number: Optional[str]
     matches_provided_phone_number: Optional[bool]
 
-    __slots__ = ()
-    _fields = {
-        "name": None,
-        "matches_provided_name": None,
-        "phone_number": None,
-        "matches_provided_phone_number": None,
-    }
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        matches_provided_name: Optional[bool] = None,
+        phone_number: Optional[str] = None,
+        matches_provided_phone_number: Optional[bool] = None,
+        **_,
+    ):
+        self.name = name
+        self.matches_provided_name = matches_provided_name
+        self.phone_number = phone_number
+        self.matches_provided_phone_number = matches_provided_phone_number
 
 
-@_inflate_to_namedtuple
-class Device:
+class Device(SimpleEquality):
     """Information about the device associated with the IP address.
 
     In order to receive device output from minFraud Insights or minFraud
@@ -396,17 +337,23 @@ class Device:
     last_seen: Optional[str]
     local_time: Optional[str]
 
-    __slots__ = ()
-    _fields = {
-        "confidence": None,
-        "id": None,
-        "last_seen": None,
-        "local_time": None,
-    }
+    def __init__(
+        self,
+        *,
+        confidence: Optional[float] = None,
+        # pylint:disable=redefined-builtin
+        id: Optional[str] = None,
+        last_seen: Optional[str] = None,
+        local_time: Optional[str] = None,
+        **_,
+    ):
+        self.confidence = confidence
+        self.id = id
+        self.last_seen = last_seen
+        self.local_time = local_time
 
 
-@_inflate_to_namedtuple
-class Disposition:
+class Disposition(SimpleEquality):
     """Information about disposition for the request as set by custom rules.
 
     In order to receive a disposition, you must be use the minFraud custom
@@ -442,16 +389,20 @@ class Disposition:
     reason: Optional[str]
     rule_label: Optional[str]
 
-    __slots__ = ()
-    _fields = {
-        "action": None,
-        "reason": None,
-        "rule_label": None,
-    }
+    def __init__(
+        self,
+        *,
+        action: Optional[str] = None,
+        reason: Optional[str] = None,
+        rule_label: Optional[str] = None,
+        **_,
+    ):
+        self.action = action
+        self.reason = reason
+        self.rule_label = rule_label
 
 
-@_inflate_to_namedtuple
-class EmailDomain:
+class EmailDomain(SimpleEquality):
     """Information about the email domain passed in the request.
 
     .. attribute:: first_seen
@@ -466,14 +417,11 @@ class EmailDomain:
 
     first_seen: Optional[str]
 
-    __slots__ = ()
-    _fields = {
-        "first_seen": None,
-    }
+    def __init__(self, *, first_seen: Optional[str] = None, **_):
+        self.first_seen = first_seen
 
 
-@_inflate_to_namedtuple
-class Email:
+class Email(SimpleEquality):
     """Information about the email address passed in the request.
 
     .. attribute:: domain
@@ -521,18 +469,22 @@ class Email:
     is_free: Optional[bool]
     is_high_risk: Optional[bool]
 
-    __slots__ = ()
-    _fields = {
-        "domain": EmailDomain,
-        "first_seen": None,
-        "is_disposable": None,
-        "is_free": None,
-        "is_high_risk": None,
-    }
+    def __init__(
+        self,
+        domain: Optional[Dict] = None,
+        first_seen: Optional[str] = None,
+        is_disposable: Optional[bool] = None,
+        is_free: Optional[bool] = None,
+        is_high_risk: Optional[bool] = None,
+    ):
+        self.domain = EmailDomain(**(domain or {}))
+        self.first_seen = first_seen
+        self.is_disposable = is_disposable
+        self.is_free = is_free
+        self.is_high_risk = is_high_risk
 
 
-@_inflate_to_namedtuple
-class CreditCard:
+class CreditCard(SimpleEquality):
     """Information about the credit card based on the issuer ID number.
 
     .. attribute:: country
@@ -604,21 +556,29 @@ class CreditCard:
     is_virtual: Optional[bool]
     type: Optional[str]
 
-    __slots__ = ()
-    _fields = {
-        "issuer": Issuer,
-        "country": None,
-        "brand": None,
-        "is_business": None,
-        "is_issued_in_billing_address_country": None,
-        "is_prepaid": None,
-        "is_virtual": None,
-        "type": None,
-    }
+    def __init__(
+        self,
+        issuer: Optional[Dict] = None,
+        country: Optional[str] = None,
+        brand: Optional[str] = None,
+        is_business: Optional[bool] = None,
+        is_issued_in_billing_address_country: Optional[bool] = None,
+        is_prepaid: Optional[bool] = None,
+        is_virtual: Optional[bool] = None,
+        # pylint:disable=redefined-builtin
+        type: Optional[str] = None,
+    ):
+        self.issuer = Issuer(**(issuer or {}))
+        self.country = country
+        self.brand = brand
+        self.is_business = is_business
+        self.is_issued_in_billing_address_country = is_issued_in_billing_address_country
+        self.is_prepaid = is_prepaid
+        self.is_virtual = is_virtual
+        self.type = type
 
 
-@_inflate_to_namedtuple
-class BillingAddress:
+class BillingAddress(SimpleEquality):
     """Information about the billing address.
 
     .. attribute:: distance_to_ip_location
@@ -667,18 +627,24 @@ class BillingAddress:
     distance_to_ip_location: Optional[int]
     is_in_ip_country: Optional[bool]
 
-    __slots__ = ()
-    _fields = {
-        "is_postal_in_city": None,
-        "latitude": None,
-        "longitude": None,
-        "distance_to_ip_location": None,
-        "is_in_ip_country": None,
-    }
+    def __init__(
+        self,
+        *,
+        is_postal_in_city: Optional[bool] = None,
+        latitude: Optional[float] = None,
+        longitude: Optional[float] = None,
+        distance_to_ip_location: Optional[int] = None,
+        is_in_ip_country: Optional[bool] = None,
+        **_,
+    ):
+        self.is_postal_in_city = is_postal_in_city
+        self.latitude = latitude
+        self.longitude = longitude
+        self.distance_to_ip_location = distance_to_ip_location
+        self.is_in_ip_country = is_in_ip_country
 
 
-@_inflate_to_namedtuple
-class ShippingAddress:
+class ShippingAddress(SimpleEquality):
     """Information about the shipping address.
 
     .. attribute:: distance_to_ip_location
@@ -746,20 +712,28 @@ class ShippingAddress:
     is_high_risk: Optional[bool]
     distance_to_billing_address: Optional[int]
 
-    __slots__ = ()
-    _fields = {
-        "is_postal_in_city": None,
-        "latitude": None,
-        "longitude": None,
-        "distance_to_ip_location": None,
-        "is_in_ip_country": None,
-        "is_high_risk": None,
-        "distance_to_billing_address": None,
-    }
+    def __init__(
+        self,
+        *,
+        is_postal_in_city: Optional[bool] = None,
+        latitude: Optional[float] = None,
+        longitude: Optional[float] = None,
+        distance_to_ip_location: Optional[int] = None,
+        is_in_ip_country: Optional[bool] = None,
+        is_high_risk: Optional[bool] = None,
+        distance_to_billing_address: Optional[int] = None,
+        **_,
+    ):
+        self.is_postal_in_city = is_postal_in_city
+        self.latitude = latitude
+        self.longitude = longitude
+        self.distance_to_ip_location = distance_to_ip_location
+        self.is_in_ip_country = is_in_ip_country
+        self.is_high_risk = is_high_risk
+        self.distance_to_billing_address = distance_to_billing_address
 
 
-@_inflate_to_namedtuple
-class Phone:
+class Phone(SimpleEquality):
     """Information about the billing or shipping phone number.
 
     .. attribute:: country
@@ -801,17 +775,22 @@ class Phone:
     network_operator: Optional[str]
     number_type: Optional[str]
 
-    __slots__ = ()
-    _fields = {
-        "country": None,
-        "is_voip": None,
-        "network_operator": None,
-        "number_type": None,
-    }
+    def __init__(
+        self,
+        *,
+        country: Optional[str] = None,
+        is_voip: Optional[bool] = None,
+        network_operator: Optional[str] = None,
+        number_type: Optional[str] = None,
+        **_,
+    ):
+        self.country = country
+        self.is_voip = is_voip
+        self.network_operator = network_operator
+        self.number_type = number_type
 
 
-@_inflate_to_namedtuple
-class ServiceWarning:
+class ServiceWarning(SimpleEquality):
     """Warning from the web service.
 
     .. attribute:: code
@@ -845,22 +824,20 @@ class ServiceWarning:
     warning: Optional[str]
     input_pointer: Optional[str]
 
-    __slots__ = ()
-    _fields = {
-        "code": None,
-        "warning": None,
-        "input_pointer": None,
-    }
+    def __init__(
+        self,
+        *,
+        code: Optional[str] = None,
+        warning: Optional[str] = None,
+        input_pointer: Optional[str] = None,
+        **_,
+    ):
+        self.code = code
+        self.warning = warning
+        self.input_pointer = input_pointer
 
 
-def _create_warnings(warnings: List[Dict[str, str]]) -> Tuple[ServiceWarning, ...]:
-    if not warnings:
-        return ()
-    return tuple(ServiceWarning(x) for x in warnings)  # type: ignore
-
-
-@_inflate_to_namedtuple
-class Subscores:
+class Subscores(SimpleEquality):
     """Risk factor scores used in calculating the overall risk score.
 
     .. deprecated:: 2.12.0
@@ -1053,33 +1030,58 @@ class Subscores:
     shipping_address_distance_to_ip_location: Optional[float]
     time_of_day: Optional[float]
 
-    __slots__ = ()
-    _fields = {
-        "avs_result": None,
-        "billing_address": None,
-        "billing_address_distance_to_ip_location": None,
-        "browser": None,
-        "chargeback": None,
-        "country": None,
-        "country_mismatch": None,
-        "cvv_result": None,
-        "device": None,
-        "email_address": None,
-        "email_domain": None,
-        "email_local_part": None,
-        "email_tenure": None,
-        "ip_tenure": None,
-        "issuer_id_number": None,
-        "order_amount": None,
-        "phone_number": None,
-        "shipping_address": None,
-        "shipping_address_distance_to_ip_location": None,
-        "time_of_day": None,
-    }
+    def __init__(
+        self,
+        *,
+        avs_result: Optional[float] = None,
+        billing_address: Optional[float] = None,
+        billing_address_distance_to_ip_location: Optional[float] = None,
+        browser: Optional[float] = None,
+        chargeback: Optional[float] = None,
+        country: Optional[float] = None,
+        country_mismatch: Optional[float] = None,
+        cvv_result: Optional[float] = None,
+        device: Optional[float] = None,
+        email_address: Optional[float] = None,
+        email_domain: Optional[float] = None,
+        email_local_part: Optional[float] = None,
+        email_tenure: Optional[float] = None,
+        ip_tenure: Optional[float] = None,
+        issuer_id_number: Optional[float] = None,
+        order_amount: Optional[float] = None,
+        phone_number: Optional[float] = None,
+        shipping_address: Optional[float] = None,
+        shipping_address_distance_to_ip_location: Optional[float] = None,
+        time_of_day: Optional[float] = None,
+        **_,
+    ):
+        self.avs_result = avs_result
+        self.billing_address = billing_address
+        self.billing_address_distance_to_ip_location = (
+            billing_address_distance_to_ip_location
+        )
+        self.browser = browser
+        self.chargeback = chargeback
+        self.country = country
+        self.country_mismatch = country_mismatch
+        self.cvv_result = cvv_result
+        self.device = device
+        self.email_address = email_address
+        self.email_domain = email_domain
+        self.email_local_part = email_local_part
+        self.email_tenure = email_tenure
+        self.ip_tenure = ip_tenure
+        self.issuer_id_number = issuer_id_number
+        self.order_amount = order_amount
+        self.phone_number = phone_number
+        self.shipping_address = shipping_address
+        self.shipping_address_distance_to_ip_location = (
+            shipping_address_distance_to_ip_location
+        )
+        self.time_of_day = time_of_day
 
 
-@_inflate_to_namedtuple
-class Reason:
+class Reason(SimpleEquality):
     """The risk score reason for the multiplier.
 
     This class provides both a machine-readable code and a human-readable
@@ -1165,21 +1167,14 @@ class Reason:
     code: Optional[str]
     reason: Optional[str]
 
-    __slots__ = ()
-    _fields = {
-        "code": None,
-        "reason": None,
-    }
+    def __init__(
+        self, *, code: Optional[str] = None, reason: Optional[str] = None, **_
+    ):
+        self.code = code
+        self.reason = reason
 
 
-def _create_reasons(reasons: Optional[List[Dict[str, str]]]) -> Tuple[Reason, ...]:
-    if not reasons:
-        return ()
-    return tuple(Reason(x) for x in reasons)  # type: ignore
-
-
-@_inflate_to_namedtuple
-class RiskScoreReason:
+class RiskScoreReason(SimpleEquality):
     """The risk score multiplier and the reasons for that multiplier.
 
     .. attribute:: multiplier
@@ -1201,25 +1196,20 @@ class RiskScoreReason:
     """
 
     multiplier: float
-    reasons: Tuple[Reason, ...]
+    reasons: List[Reason]
 
-    __slots__ = ()
-    _fields = {
-        "multiplier": None,
-        "reasons": _create_reasons,
-    }
-
-
-def _create_risk_score_reasons(
-    risk_score_reasons: Optional[List[Dict[str, str]]]
-) -> Tuple[RiskScoreReason, ...]:
-    if not risk_score_reasons:
-        return ()
-    return tuple(RiskScoreReason(x) for x in risk_score_reasons)  # type: ignore
+    def __init__(
+        self,
+        *,
+        multiplier: float,
+        reasons: Optional[List] = None,
+        **_,
+    ):
+        self.multiplier = multiplier
+        self.reasons = [Reason(**x) for x in reasons or []]
 
 
-@_inflate_to_namedtuple
-class Factors:
+class Factors(SimpleEquality):
     """Model for Factors response.
 
     .. attribute:: id
@@ -1361,32 +1351,52 @@ class Factors:
     shipping_address: ShippingAddress
     shipping_phone: Phone
     subscores: Subscores
-    warnings: Tuple[ServiceWarning, ...]
-    risk_score_reasons: Tuple[RiskScoreReason, ...]
+    warnings: List[ServiceWarning]
+    risk_score_reasons: List[RiskScoreReason]
 
-    __slots__ = ()
-    _fields = {
-        "billing_address": BillingAddress,
-        "billing_phone": Phone,
-        "credit_card": CreditCard,
-        "disposition": Disposition,
-        "funds_remaining": None,
-        "device": Device,
-        "email": Email,
-        "id": None,
-        "ip_address": IPAddress,
-        "queries_remaining": None,
-        "risk_score": None,
-        "shipping_address": ShippingAddress,
-        "shipping_phone": Phone,
-        "subscores": Subscores,
-        "warnings": _create_warnings,
-        "risk_score_reasons": _create_risk_score_reasons,
-    }
+    def __init__(
+        self,
+        *,
+        billing_address: Optional[Dict] = None,
+        billing_phone: Optional[Dict] = None,
+        credit_card: Optional[Dict] = None,
+        disposition: Optional[Dict] = None,
+        funds_remaining: float,
+        device: Optional[Dict] = None,
+        email: Optional[Dict] = None,
+        # pylint:disable=redefined-builtin
+        id: str,
+        ip_address: Optional[Dict] = None,
+        queries_remaining: int,
+        risk_score: float,
+        shipping_address: Optional[Dict] = None,
+        shipping_phone: Optional[Dict] = None,
+        subscores: Optional[Dict] = None,
+        warnings: Optional[List[Dict]] = None,
+        risk_score_reasons: Optional[List[Dict]] = None,
+        **_,
+    ):
+        self.billing_address = BillingAddress(**(billing_address or {}))
+        self.billing_phone = Phone(**(billing_phone or {}))
+        self.credit_card = CreditCard(**(credit_card or {}))
+        self.disposition = Disposition(**(disposition or {}))
+        self.funds_remaining = funds_remaining
+        self.device = Device(**(device or {}))
+        self.email = Email(**(email or {}))
+        self.id = id
+        self.ip_address = IPAddress(**(ip_address or {}))
+        self.queries_remaining = queries_remaining
+        self.risk_score = risk_score
+        self.shipping_address = ShippingAddress(**(shipping_address or {}))
+        self.shipping_phone = Phone(**(shipping_phone or {}))
+        self.subscores = Subscores(**(subscores or {}))
+        self.warnings = [ServiceWarning(**x) for x in warnings or []]
+        self.risk_score_reasons = [
+            RiskScoreReason(**x) for x in risk_score_reasons or []
+        ]
 
 
-@_inflate_to_namedtuple
-class Insights:
+class Insights(SimpleEquality):
     """Model for Insights response.
 
     .. attribute:: id
@@ -1507,29 +1517,45 @@ class Insights:
     risk_score: float
     shipping_address: ShippingAddress
     shipping_phone: Phone
-    warnings: Tuple[ServiceWarning, ...]
+    warnings: List[ServiceWarning]
 
-    __slots__ = ()
-    _fields = {
-        "billing_address": BillingAddress,
-        "billing_phone": Phone,
-        "credit_card": CreditCard,
-        "device": Device,
-        "disposition": Disposition,
-        "email": Email,
-        "funds_remaining": None,
-        "id": None,
-        "ip_address": IPAddress,
-        "queries_remaining": None,
-        "risk_score": None,
-        "shipping_address": ShippingAddress,
-        "shipping_phone": Phone,
-        "warnings": _create_warnings,
-    }
+    def __init__(
+        self,
+        *,
+        billing_address: Optional[Dict] = None,
+        billing_phone: Optional[Dict] = None,
+        credit_card: Optional[Dict] = None,
+        device: Optional[Dict] = None,
+        disposition: Optional[Dict] = None,
+        email: Optional[Dict] = None,
+        funds_remaining: float,
+        # pylint:disable=redefined-builtin
+        id: str,
+        ip_address: Optional[Dict] = None,
+        queries_remaining: int,
+        risk_score: float,
+        shipping_address: Optional[Dict] = None,
+        shipping_phone: Optional[Dict] = None,
+        warnings: Optional[List[Dict]] = None,
+        **_,
+    ):
+        self.billing_address = BillingAddress(**(billing_address or {}))
+        self.billing_phone = Phone(**(billing_phone or {}))
+        self.credit_card = CreditCard(**(credit_card or {}))
+        self.device = Device(**(device or {}))
+        self.disposition = Disposition(**(disposition or {}))
+        self.email = Email(**(email or {}))
+        self.funds_remaining = funds_remaining
+        self.id = id
+        self.ip_address = IPAddress(**(ip_address or {}))
+        self.queries_remaining = queries_remaining
+        self.risk_score = risk_score
+        self.shipping_address = ShippingAddress(**(shipping_address or {}))
+        self.shipping_phone = Phone(**(shipping_phone or {}))
+        self.warnings = [ServiceWarning(**x) for x in warnings or []]
 
 
-@_inflate_to_namedtuple
-class Score:
+class Score(SimpleEquality):
     """Model for Score response.
 
     .. attribute:: id
@@ -1593,15 +1619,25 @@ class Score:
     ip_address: ScoreIPAddress
     queries_remaining: int
     risk_score: float
-    warnings: Tuple[ServiceWarning, ...]
+    warnings: List[ServiceWarning]
 
-    __slots__ = ()
-    _fields = {
-        "disposition": Disposition,
-        "funds_remaining": None,
-        "id": None,
-        "ip_address": ScoreIPAddress,
-        "queries_remaining": None,
-        "risk_score": None,
-        "warnings": _create_warnings,
-    }
+    def __init__(
+        self,
+        *,
+        disposition: Optional[Dict] = None,
+        funds_remaining: float,
+        # pylint:disable=redefined-builtin
+        id: str,
+        ip_address: Optional[Dict] = None,
+        queries_remaining: int,
+        risk_score: float,
+        warnings: Optional[List[Dict]] = None,
+        **_,
+    ):
+        self.disposition = Disposition(**(disposition or {}))
+        self.funds_remaining = funds_remaining
+        self.id = id
+        self.ip_address = ScoreIPAddress(**(ip_address or {}))
+        self.queries_remaining = queries_remaining
+        self.risk_score = risk_score
+        self.warnings = [ServiceWarning(**x) for x in warnings or []]
