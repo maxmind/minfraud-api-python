@@ -12,6 +12,8 @@ History
   classes are no longer immutable. For most users, these differences should
   not impact their integration.
 * BREAKING CHANGE: Model attributes that were formerly tuples are now lists.
+* IMPORTANT: Python 3.9 or greater is required. If you are using an older
+  version, please use an earlier release.
 * Added ``to_dict`` methods to the model classes. These return a dict version
   of the object that is suitable for serialization. It recursively calls
   ``to_dict`` or the equivalent on all objects contained within the object.
