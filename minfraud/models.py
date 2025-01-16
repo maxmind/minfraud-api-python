@@ -7,7 +7,7 @@ This module contains models for the minFraud response object.
 """
 
 # pylint:disable=too-many-lines,too-many-instance-attributes,too-many-locals
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Sequence
 
 from geoip2.mixins import SimpleEquality
 import geoip2.models
@@ -202,8 +202,8 @@ class IPAddress(geoip2.models.Insights):
 
     def __init__(
         self,
+        locales: Sequence[str],
         *,
-        locales: Optional[List[str]] = None,
         country: Optional[Dict] = None,
         location: Optional[Dict] = None,
         risk: Optional[float] = None,
@@ -211,7 +211,7 @@ class IPAddress(geoip2.models.Insights):
         **kwargs,
     ) -> None:
 
-        super().__init__(kwargs, locales=locales)
+        super().__init__(kwargs, locales=list(locales))
         self.country = GeoIP2Country(locales, **(country or {}))
         self.location = GeoIP2Location(**(location or {}))
         self.risk = risk
@@ -1356,6 +1356,7 @@ class Factors(SimpleEquality):
 
     def __init__(
         self,
+        locales: Sequence[str],
         *,
         billing_address: Optional[Dict] = None,
         billing_phone: Optional[Dict] = None,
@@ -1384,7 +1385,7 @@ class Factors(SimpleEquality):
         self.device = Device(**(device or {}))
         self.email = Email(**(email or {}))
         self.id = id
-        self.ip_address = IPAddress(**(ip_address or {}))
+        self.ip_address = IPAddress(locales, **(ip_address or {}))
         self.queries_remaining = queries_remaining
         self.risk_score = risk_score
         self.shipping_address = ShippingAddress(**(shipping_address or {}))
@@ -1521,6 +1522,7 @@ class Insights(SimpleEquality):
 
     def __init__(
         self,
+        locales: Sequence[str],
         *,
         billing_address: Optional[Dict] = None,
         billing_phone: Optional[Dict] = None,
@@ -1547,7 +1549,7 @@ class Insights(SimpleEquality):
         self.email = Email(**(email or {}))
         self.funds_remaining = funds_remaining
         self.id = id
-        self.ip_address = IPAddress(**(ip_address or {}))
+        self.ip_address = IPAddress(locales, **(ip_address or {}))
         self.queries_remaining = queries_remaining
         self.risk_score = risk_score
         self.shipping_address = ShippingAddress(**(shipping_address or {}))

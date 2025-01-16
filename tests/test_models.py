@@ -119,6 +119,7 @@ class TestModels(unittest.TestCase):
     def test_ip_address(self):
         time = "2015-04-19T12:59:23-01:00"
         address = IPAddress(
+            ["en"],
             country={
                 "is_high_risk": True,
                 "is_in_european_union": True,
@@ -180,7 +181,7 @@ class TestModels(unittest.TestCase):
         )
 
     def test_empty_address(self):
-        address = IPAddress()
+        address = IPAddress([])
         self.assertEqual([], address.risk_reasons)
 
     def test_score_ip_address(self):
@@ -189,7 +190,7 @@ class TestModels(unittest.TestCase):
 
     def test_ip_address_locales(self):
         loc = IPAddress(
-            locales=["fr"],
+            ["fr"],
             country={"names": {"fr": "Country"}},
             city={"names": {"fr": "City"}},
         )
@@ -279,12 +280,12 @@ class TestModels(unittest.TestCase):
     def test_insights(self):
         response = self.factors_response()
         del response["subscores"]
-        insights = Insights(**response)
+        insights = Insights(None, **response)
         self.check_insights_data(insights, response["id"])
 
     def test_factors(self):
         response = self.factors_response()
-        factors = Factors(**response)
+        factors = Factors(None, **response)
         self.check_insights_data(factors, response["id"])
         self.check_risk_score_reasons_data(factors.risk_score_reasons)
         self.assertEqual(0.01, factors.subscores.avs_result)
