@@ -4,6 +4,9 @@ from minfraud.models import *
 
 
 class TestModels(unittest.TestCase):
+    def setUp(self):
+        self.maxDiff = 20_000
+
     def test_billing_address(self):
         address = BillingAddress(**self.address_dict)
         self.check_address(address)
@@ -261,14 +264,15 @@ class TestModels(unittest.TestCase):
 
     def test_score(self):
         id = "b643d445-18b2-4b9d-bad4-c9c4366e402a"
-        score = Score(
-            id=id,
-            funds_remaining=10.01,
-            queries_remaining=123,
-            risk_score=0.01,
-            ip_address={"risk": 99},
-            warnings=[{"code": "INVALID_INPUT"}],
-        )
+        response = {
+            "id": id,
+            "funds_remaining": 10.01,
+            "queries_remaining": 123,
+            "risk_score": 0.01,
+            "ip_address": {"risk": 99},
+            "warnings": [{"code": "INVALID_INPUT"}],
+        }
+        score = Score(**response)
 
         self.assertEqual(id, score.id)
         self.assertEqual(10.01, score.funds_remaining)
@@ -277,11 +281,15 @@ class TestModels(unittest.TestCase):
         self.assertEqual("INVALID_INPUT", score.warnings[0].code)
         self.assertEqual(99, score.ip_address.risk)
 
+        self.assertEqual(response, self._remove_empty_values(score.to_dict()))
+
     def test_insights(self):
         response = self.factors_response()
+        del response["risk_score_reasons"]
         del response["subscores"]
         insights = Insights(None, **response)
         self.check_insights_data(insights, response["id"])
+        self.assertEqual(response, self._remove_empty_values(insights.to_dict()))
 
     def test_factors(self):
         response = self.factors_response()
@@ -312,6 +320,8 @@ class TestModels(unittest.TestCase):
             0.16, factors.subscores.shipping_address_distance_to_ip_location
         )
         self.assertEqual(0.17, factors.subscores.time_of_day)
+
+        self.assertEqual(response, self._remove_empty_values(factors.to_dict()))
 
     def factors_response(self):
         return {
@@ -399,3 +409,31 @@ class TestModels(unittest.TestCase):
         self.assertEqual(
             "Risk due to IP being an Anonymous IP", reasons[0].reasons[0].reason
         )
+
+    def _remove_empty_values(self, data):
+        if isinstance(data, dict):
+            m = {}
+            for k, v in data.items():
+                v = self._remove_empty_values(v)
+                if self._is_not_empty(v):
+                    m[k] = v
+            return m
+
+        if isinstance(data, list):
+            ls = []
+            for e in data:
+                e = self._remove_empty_values(e)
+                if self._is_not_empty(e):
+                    ls.append(e)
+            return ls
+
+        return data
+
+    def _is_not_empty(self, v):
+        if v is None:
+            return False
+        if isinstance(v, dict) and not v:
+            return False
+        if isinstance(v, list) and not v:
+            return False
+        return True

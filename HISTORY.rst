@@ -12,6 +12,9 @@ History
   classes are no longer immutable. For most users, these differences should
   not impact their integration.
 * BREAKING CHANGE: Model attributes that were formerly tuples are now lists.
+* Added ``to_dict`` methods to the model classes. These return a dict version
+  of the object that is suitable for serialization. It recursively calls
+  ``to_dict`` or the equivalent on all objects contained within the object.
 * The minFraud Factors subscores have been deprecated. They will be removed
   in March 2025. Please see `our release notes <https://dev.maxmind.com/minfraud/release-notes/2024/#deprecation-of-risk-factor-scoressubscores>`_
   for more information.

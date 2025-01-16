@@ -14,7 +14,31 @@ import geoip2.models
 import geoip2.records
 
 
-class IPRiskReason(SimpleEquality):
+class _Serializable(SimpleEquality):
+    def to_dict(self):
+        """Returns a dict of the object suitable for serialization"""
+        result = {}
+        for key, value in self.__dict__.items():
+            if hasattr(value, "to_dict") and callable(value.to_dict):
+                result[key] = value.to_dict()
+            elif hasattr(value, "raw"):
+                # geoip2 uses "raw" for historical reasons
+                result[key] = value.raw
+            elif isinstance(value, list):
+                result[key] = [
+                    (
+                        item.to_dict()
+                        if hasattr(item, "to_dict") and callable(item.to_dict)
+                        else item
+                    )
+                    for item in value
+                ]
+            else:
+                result[key] = value
+        return result
+
+
+class IPRiskReason(_Serializable):
     """Reason for the IP risk.
 
     This class provides both a machine-readable code and a human-readable
@@ -202,7 +226,7 @@ class IPAddress(geoip2.models.Insights):
 
     def __init__(
         self,
-        locales: Sequence[str],
+        locales: Optional[Sequence[str]],
         *,
         country: Optional[Dict] = None,
         location: Optional[Dict] = None,
@@ -210,15 +234,24 @@ class IPAddress(geoip2.models.Insights):
         risk_reasons: Optional[List[Dict]] = None,
         **kwargs,
     ) -> None:
+        # For raw attribute
+        if country is not None:
+            kwargs["country"] = country
+        if location is not None:
+            kwargs["location"] = location
+        if risk is not None:
+            kwargs["risk"] = risk
+        if risk_reasons is not None:
+            kwargs["risk_reasons"] = risk_reasons
 
-        super().__init__(kwargs, locales=list(locales))
+        super().__init__(kwargs, locales=list(locales or []))
         self.country = GeoIP2Country(locales, **(country or {}))
         self.location = GeoIP2Location(**(location or {}))
         self.risk = risk
         self.risk_reasons = [IPRiskReason(**x) for x in risk_reasons or []]
 
 
-class ScoreIPAddress(SimpleEquality):
+class ScoreIPAddress(_Serializable):
     """Information about the IP address for minFraud Score.
 
     .. attribute:: risk
@@ -235,7 +268,7 @@ class ScoreIPAddress(SimpleEquality):
         self.risk = risk
 
 
-class Issuer(SimpleEquality):
+class Issuer(_Serializable):
     """Information about the credit card issuer.
 
     .. attribute:: name
@@ -293,7 +326,7 @@ class Issuer(SimpleEquality):
         self.matches_provided_phone_number = matches_provided_phone_number
 
 
-class Device(SimpleEquality):
+class Device(_Serializable):
     """Information about the device associated with the IP address.
 
     In order to receive device output from minFraud Insights or minFraud
@@ -353,7 +386,7 @@ class Device(SimpleEquality):
         self.local_time = local_time
 
 
-class Disposition(SimpleEquality):
+class Disposition(_Serializable):
     """Information about disposition for the request as set by custom rules.
 
     In order to receive a disposition, you must be use the minFraud custom
@@ -402,7 +435,7 @@ class Disposition(SimpleEquality):
         self.rule_label = rule_label
 
 
-class EmailDomain(SimpleEquality):
+class EmailDomain(_Serializable):
     """Information about the email domain passed in the request.
 
     .. attribute:: first_seen
@@ -421,7 +454,7 @@ class EmailDomain(SimpleEquality):
         self.first_seen = first_seen
 
 
-class Email(SimpleEquality):
+class Email(_Serializable):
     """Information about the email address passed in the request.
 
     .. attribute:: domain
@@ -484,7 +517,7 @@ class Email(SimpleEquality):
         self.is_high_risk = is_high_risk
 
 
-class CreditCard(SimpleEquality):
+class CreditCard(_Serializable):
     """Information about the credit card based on the issuer ID number.
 
     .. attribute:: country
@@ -578,7 +611,7 @@ class CreditCard(SimpleEquality):
         self.type = type
 
 
-class BillingAddress(SimpleEquality):
+class BillingAddress(_Serializable):
     """Information about the billing address.
 
     .. attribute:: distance_to_ip_location
@@ -644,7 +677,7 @@ class BillingAddress(SimpleEquality):
         self.is_in_ip_country = is_in_ip_country
 
 
-class ShippingAddress(SimpleEquality):
+class ShippingAddress(_Serializable):
     """Information about the shipping address.
 
     .. attribute:: distance_to_ip_location
@@ -733,7 +766,7 @@ class ShippingAddress(SimpleEquality):
         self.distance_to_billing_address = distance_to_billing_address
 
 
-class Phone(SimpleEquality):
+class Phone(_Serializable):
     """Information about the billing or shipping phone number.
 
     .. attribute:: country
@@ -790,7 +823,7 @@ class Phone(SimpleEquality):
         self.number_type = number_type
 
 
-class ServiceWarning(SimpleEquality):
+class ServiceWarning(_Serializable):
     """Warning from the web service.
 
     .. attribute:: code
@@ -837,7 +870,7 @@ class ServiceWarning(SimpleEquality):
         self.input_pointer = input_pointer
 
 
-class Subscores(SimpleEquality):
+class Subscores(_Serializable):
     """Risk factor scores used in calculating the overall risk score.
 
     .. deprecated:: 2.12.0
@@ -1081,7 +1114,7 @@ class Subscores(SimpleEquality):
         self.time_of_day = time_of_day
 
 
-class Reason(SimpleEquality):
+class Reason(_Serializable):
     """The risk score reason for the multiplier.
 
     This class provides both a machine-readable code and a human-readable
@@ -1174,7 +1207,7 @@ class Reason(SimpleEquality):
         self.reason = reason
 
 
-class RiskScoreReason(SimpleEquality):
+class RiskScoreReason(_Serializable):
     """The risk score multiplier and the reasons for that multiplier.
 
     .. attribute:: multiplier
@@ -1209,7 +1242,7 @@ class RiskScoreReason(SimpleEquality):
         self.reasons = [Reason(**x) for x in reasons or []]
 
 
-class Factors(SimpleEquality):
+class Factors(_Serializable):
     """Model for Factors response.
 
     .. attribute:: id
@@ -1397,7 +1430,7 @@ class Factors(SimpleEquality):
         ]
 
 
-class Insights(SimpleEquality):
+class Insights(_Serializable):
     """Model for Insights response.
 
     .. attribute:: id
@@ -1557,7 +1590,7 @@ class Insights(SimpleEquality):
         self.warnings = [ServiceWarning(**x) for x in warnings or []]
 
 
-class Score(SimpleEquality):
+class Score(_Serializable):
     """Model for Score response.
 
     .. attribute:: id
