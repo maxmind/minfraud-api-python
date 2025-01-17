@@ -281,7 +281,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual("INVALID_INPUT", score.warnings[0].code)
         self.assertEqual(99, score.ip_address.risk)
 
-        self.assertEqual(response, self._remove_empty_values(score.to_dict()))
+        self.assertEqual(response, score.to_dict())
 
     def test_insights(self):
         response = self.factors_response()
@@ -289,7 +289,7 @@ class TestModels(unittest.TestCase):
         del response["subscores"]
         insights = Insights(None, **response)
         self.check_insights_data(insights, response["id"])
-        self.assertEqual(response, self._remove_empty_values(insights.to_dict()))
+        self.assertEqual(response, insights.to_dict())
 
     def test_factors(self):
         response = self.factors_response()
@@ -321,7 +321,7 @@ class TestModels(unittest.TestCase):
         )
         self.assertEqual(0.17, factors.subscores.time_of_day)
 
-        self.assertEqual(response, self._remove_empty_values(factors.to_dict()))
+        self.assertEqual(response, factors.to_dict())
 
     def factors_response(self):
         return {
@@ -409,31 +409,3 @@ class TestModels(unittest.TestCase):
         self.assertEqual(
             "Risk due to IP being an Anonymous IP", reasons[0].reasons[0].reason
         )
-
-    def _remove_empty_values(self, data):
-        if isinstance(data, dict):
-            m = {}
-            for k, v in data.items():
-                v = self._remove_empty_values(v)
-                if self._is_not_empty(v):
-                    m[k] = v
-            return m
-
-        if isinstance(data, list):
-            ls = []
-            for e in data:
-                e = self._remove_empty_values(e)
-                if self._is_not_empty(e):
-                    ls.append(e)
-            return ls
-
-        return data
-
-    def _is_not_empty(self, v):
-        if v is None:
-            return False
-        if isinstance(v, dict) and not v:
-            return False
-        if isinstance(v, list) and not v:
-            return False
-        return True

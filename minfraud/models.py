@@ -20,20 +20,23 @@ class _Serializable(SimpleEquality):
         result = {}
         for key, value in self.__dict__.items():
             if hasattr(value, "to_dict") and callable(value.to_dict):
-                result[key] = value.to_dict()
+                if d := value.to_dict():
+                    result[key] = d
             elif hasattr(value, "raw"):
                 # geoip2 uses "raw" for historical reasons
-                result[key] = value.raw
+                if d := value.raw:
+                    result[key] = d
             elif isinstance(value, list):
-                result[key] = [
-                    (
-                        item.to_dict()
-                        if hasattr(item, "to_dict") and callable(item.to_dict)
-                        else item
-                    )
-                    for item in value
-                ]
-            else:
+                ls = []
+                for e in value:
+                    if hasattr(e, "to_dict") and callable(e.to_dict):
+                        if e := e.to_dict():
+                            ls.append(e)
+                    elif e is not None:
+                        ls.append(e)
+                if ls:
+                    result[key] = ls
+            elif value is not None:
                 result[key] = value
         return result
 
