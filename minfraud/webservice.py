@@ -7,7 +7,8 @@ This module contains the webservice client class.
 """
 
 import json
-from typing import Any, cast, Dict, Optional, Tuple, Type, Union
+from functools import partial
+from typing import Any, Callable, cast, Dict, Optional, Sequence, Union
 
 import aiohttp
 import aiohttp.http
@@ -39,7 +40,7 @@ _SCHEME = "https"
 class BaseClient:
     _account_id: str
     _license_key: str
-    _locales: Tuple[str, ...]
+    _locales: Sequence[str]
     _timeout: float
 
     _score_uri: str
@@ -52,7 +53,7 @@ class BaseClient:
         account_id: int,
         license_key: str,
         host: str = "minfraud.maxmind.com",
-        locales: Tuple[str, ...] = ("en",),
+        locales: Sequence[str] = ("en",),
         timeout: float = 60,
     ) -> None:
         self._locales = locales
@@ -69,7 +70,7 @@ class BaseClient:
         self,
         raw_body: str,
         uri: str,
-        model_class: Union[Type[Factors], Type[Score], Type[Insights]],
+        model_class: Callable,
     ) -> Union[Score, Factors, Insights]:
         """Handle successful response."""
         try:
@@ -81,9 +82,7 @@ class BaseClient:
                 200,
                 uri,
             ) from ex
-        if "ip_address" in decoded_body:
-            decoded_body["ip_address"]["_locales"] = self._locales
-        return model_class(decoded_body)  # type: ignore
+        return model_class(**decoded_body)  # type: ignore
 
     def _exception_for_error(
         self, status: int, content_type: Optional[str], raw_body: str, uri: str
@@ -210,7 +209,7 @@ class AsyncClient(BaseClient):
         account_id: int,
         license_key: str,
         host: str = "minfraud.maxmind.com",
-        locales: Tuple[str, ...] = ("en",),
+        locales: Sequence[str] = ("en",),
         timeout: float = 60,
         proxy: Optional[str] = None,
     ) -> None:
@@ -269,7 +268,7 @@ class AsyncClient(BaseClient):
             Factors,
             await self._response_for(
                 self._factors_uri,
-                Factors,
+                partial(Factors, self._locales),
                 transaction,
                 validate,
                 hash_email,
@@ -308,7 +307,7 @@ class AsyncClient(BaseClient):
             Insights,
             await self._response_for(
                 self._insights_uri,
-                Insights,
+                partial(Insights, self._locales),
                 transaction,
                 validate,
                 hash_email,
@@ -387,7 +386,7 @@ class AsyncClient(BaseClient):
     async def _response_for(
         self,
         uri: str,
-        model_class: Union[Type[Factors], Type[Score], Type[Insights]],
+        model_class: Callable,
         request: Dict[str, Any],
         validate: bool,
         hash_email: bool,
@@ -445,7 +444,7 @@ class Client(BaseClient):
         account_id: int,
         license_key: str,
         host: str = "minfraud.maxmind.com",
-        locales: Tuple[str, ...] = ("en",),
+        locales: Sequence[str] = ("en",),
         timeout: float = 60,
         proxy: Optional[str] = None,
     ) -> None:
@@ -518,7 +517,7 @@ class Client(BaseClient):
             Factors,
             self._response_for(
                 self._factors_uri,
-                Factors,
+                partial(Factors, self._locales),
                 transaction,
                 validate,
                 hash_email,
@@ -557,7 +556,7 @@ class Client(BaseClient):
             Insights,
             self._response_for(
                 self._insights_uri,
-                Insights,
+                partial(Insights, self._locales),
                 transaction,
                 validate,
                 hash_email,
@@ -634,7 +633,7 @@ class Client(BaseClient):
     def _response_for(
         self,
         uri: str,
-        model_class: Union[Type[Factors], Type[Score], Type[Insights]],
+        model_class: Callable,
         request: Dict[str, Any],
         validate: bool,
         hash_email: bool,

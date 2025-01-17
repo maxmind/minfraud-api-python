@@ -1,6 +1,7 @@
 import asyncio
 import json
 import os
+from functools import partial
 from io import open
 from typing import Type, Union
 from pytest_httpserver import HTTPServer
@@ -181,9 +182,10 @@ class BaseTransactionTest(BaseTest):
     def test_200(self):
         model = self.create_success()
         response = json.loads(self.response)
+        cls = self.cls
         if self.has_ip_location():
-            response["ip_address"]["_locales"] = ("en",)
-        self.assertEqual(self.cls(response), model)
+            cls = partial(cls, ("en",))
+        self.assertEqual(cls(**response), model)
         if self.has_ip_location():
             self.assertEqual("United Kingdom", model.ip_address.country.name)
             self.assertEqual(True, model.ip_address.traits.is_residential_proxy)
@@ -240,9 +242,10 @@ class BaseTransactionTest(BaseTest):
         )
         model = self.create_success(client=client)
         response = json.loads(self.response)
+        cls = self.cls
         if self.has_ip_location():
-            response["ip_address"]["_locales"] = locales
-        self.assertEqual(self.cls(response), model)
+            cls = partial(cls, locales)
+        self.assertEqual(cls(**response), model)
         if self.has_ip_location():
             self.assertEqual("Royaume-Uni", model.ip_address.country.name)
             self.assertEqual("Londres", model.ip_address.city.name)
@@ -251,6 +254,8 @@ class BaseTransactionTest(BaseTest):
         model = self.create_success(
             """
                 {
+                    "funds_remaining": 10.00,
+                    "queries_remaining": 1000,
                     "risk_score": 12,
                     "id": "0e52f5ac-7690-4780-a939-173cb13ecd75",
                     "warnings": [
@@ -274,7 +279,7 @@ class BaseTransactionTest(BaseTest):
         response = json.loads(self.response)
         del response["risk_score_reasons"]
         model = self.create_success(text=json.dumps(response))
-        self.assertEqual(tuple(), model.risk_score_reasons)
+        self.assertEqual([], model.risk_score_reasons)
 
     def test_200_with_no_body(self):
         with self.assertRaisesRegex(

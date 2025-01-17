@@ -307,7 +307,7 @@ For asynchronous reporting:
 Requirements
 ------------
 
-Python 3.8 or greater is required. Older versions are not supported.
+Python 3.9 or greater is required. Older versions are not supported.
 
 Versioning
 ----------
@@ -327,6 +327,6 @@ for assistance.
 Copyright and License
 ---------------------
 
-This software is Copyright © 2015-2024 by MaxMind, Inc.
+This software is Copyright © 2015-2025 by MaxMind, Inc.
 
 This is free software, licensed under the Apache License, Version 2.0.
