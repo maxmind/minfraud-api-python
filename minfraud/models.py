@@ -116,34 +116,6 @@ class GeoIP2Location(geoip2.records.Location):
         super().__init__(*args, **kwargs)
 
 
-class GeoIP2Country(geoip2.records.Country):
-    """Country information for the IP address.
-
-    In addition to the attributes provided by ``geoip2.records.Country``,
-    this class provides:
-
-    .. attribute:: is_high_risk
-
-      This is true if the IP country is high risk.
-
-      :type: bool | None
-
-      .. deprecated:: 1.8.0
-        Deprecated effective August 29, 2019.
-
-    Parent:
-
-    """
-
-    __doc__ += geoip2.records.Country.__doc__  # type: ignore
-
-    is_high_risk: bool
-
-    def __init__(self, *args, **kwargs) -> None:
-        self.is_high_risk = kwargs.get("is_high_risk", False)
-        super().__init__(*args, **kwargs)
-
-
 class IPAddress(geoip2.models.Insights):
     """Model for minFraud and GeoIP2 data about the IP address.
 
@@ -222,7 +194,6 @@ class IPAddress(geoip2.models.Insights):
 
     """
 
-    country: GeoIP2Country
     location: GeoIP2Location
     risk: Optional[float]
     risk_reasons: List[IPRiskReason]
@@ -248,7 +219,6 @@ class IPAddress(geoip2.models.Insights):
             kwargs["risk_reasons"] = risk_reasons
 
         super().__init__(kwargs, locales=list(locales or []))
-        self.country = GeoIP2Country(locales, **(country or {}))
         self.location = GeoIP2Location(**(location or {}))
         self.risk = risk
         self.risk_reasons = [IPRiskReason(**x) for x in risk_reasons or []]

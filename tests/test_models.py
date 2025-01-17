@@ -108,11 +108,6 @@ class TestModels(unittest.TestCase):
 
         self.assertEqual(first_seen, domain.first_seen)
 
-    def test_geoip2_country(self):
-        country = GeoIP2Country(is_high_risk=True, iso_code="US")
-        self.assertEqual(True, country.is_high_risk)
-        self.assertEqual("US", country.iso_code)
-
     def test_geoip2_location(self):
         time = "2015-04-19T12:59:23-01:00"
         location = GeoIP2Location(local_time=time, latitude=5)
@@ -124,7 +119,6 @@ class TestModels(unittest.TestCase):
         address = IPAddress(
             ["en"],
             country={
-                "is_high_risk": True,
                 "is_in_european_union": True,
             },
             location={
@@ -156,7 +150,6 @@ class TestModels(unittest.TestCase):
         )
 
         self.assertEqual(time, address.location.local_time)
-        self.assertEqual(True, address.country.is_high_risk)
         self.assertEqual(True, address.country.is_in_european_union)
         self.assertEqual(99, address.risk)
         self.assertEqual(True, address.traits.is_anonymous)
@@ -169,7 +162,6 @@ class TestModels(unittest.TestCase):
         self.assertEqual(True, address.traits.is_tor_exit_node)
         self.assertEqual("310", address.traits.mobile_country_code)
         self.assertEqual("004", address.traits.mobile_network_code)
-        self.assertEqual(True, address.country.is_high_risk)
 
         self.assertEqual("ANONYMOUS_IP", address.risk_reasons[0].code)
         self.assertEqual(
