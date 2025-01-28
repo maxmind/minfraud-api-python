@@ -15,7 +15,17 @@ from decimal import Decimal
 from typing import Optional
 
 from email_validator import validate_email  # type: ignore
-from voluptuous import All, Any, In, Match, MultipleInvalid, Range, Required, Schema
+from voluptuous import (
+    All,
+    Any,
+    In,
+    Match,
+    MultipleInvalid,
+    Range,
+    Required,
+    RequiredFieldInvalid,
+    Schema,
+)
 from voluptuous.error import UrlInvalid
 
 # Pylint doesn't like the private function type naming for the callable
@@ -421,7 +431,11 @@ def _validate_at_least_one_identifier_field(report) -> bool:
             "'ip_address', 'maxmind_id', 'minfraud_id', 'transaction_id'."
         )
         raise MultipleInvalid(
-            msg,
+            [
+                RequiredFieldInvalid(
+                    msg,
+                )
+            ]
         )
     return True
 
