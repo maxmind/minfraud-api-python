@@ -37,6 +37,24 @@ test = [
     "pytest-httpserver>=1.0.10",
 ]
 
+[project.urls]
+Homepage = "https://www.maxmind.com/"
+Documentation = "https://minfraud.readthedocs.org/"
+"Source Code" = "https://github.com/maxmind/minfraud-api-python"
+"Issue Tracker" = "https://github.com/maxmind/minfraud-api-python/issues"
+
+[build-system]
+requires = [
+    "setuptools>=61.0.0",
+    "setuptools-scm",
+]
+build-backend = "setuptools.build_meta"
+
+[tool.black]
+# src is showing up in our GitHub linting builds. It seems to
+# contain deps.
+extend-exclude = '^/src/'
+
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
@@ -66,21 +84,3 @@ ignore = [
 
 [tool.setuptools.package-data]
 minfraud = ["py.typed"]
-
-[project.urls]
-Homepage = "https://www.maxmind.com/"
-Documentation = "https://minfraud.readthedocs.org/"
-"Source Code" = "https://github.com/maxmind/minfraud-api-python"
-"Issue Tracker" = "https://github.com/maxmind/minfraud-api-python/issues"
-
-[build-system]
-requires = [
-    "setuptools>=61.0.0",
-    "setuptools-scm",
-]
-build-backend = "setuptools.build_meta"
-
-[tool.black]
-# src is showing up in our GitHub linting builds. It seems to
-# contain deps.
-extend-exclude = '^/src/'
