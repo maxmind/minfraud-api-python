@@ -4,7 +4,7 @@ import json
 import os
 import unittest
 from functools import partial
-from typing import Type, Union
+from typing import Union
 
 import pytest
 from pytest_httpserver import HTTPServer
@@ -25,7 +25,7 @@ minfraud.webservice._SCHEME = "http"
 
 
 class BaseTest(unittest.TestCase):
-    client_class: Union[Type[AsyncClient], Type[Client]] = Client
+    client_class: Union[type[AsyncClient], type[Client]] = Client
 
     @pytest.fixture(autouse=True)
     def setup_httpserver(self, httpserver: HTTPServer):
@@ -39,13 +39,15 @@ class BaseTest(unittest.TestCase):
         )
         test_dir = os.path.join(os.path.dirname(__file__), "data")
         with builtins.open(
-            os.path.join(test_dir, self.request_file), encoding="utf-8"
+            os.path.join(test_dir, self.request_file),
+            encoding="utf-8",
         ) as file:
             content = file.read()
         self.full_request = json.loads(content)
 
         with builtins.open(
-            os.path.join(test_dir, self.response_file), encoding="utf-8"
+            os.path.join(test_dir, self.response_file),
+            encoding="utf-8",
         ) as file:
             self.response = file.read()
 
@@ -217,11 +219,10 @@ class BaseTransactionTest(BaseTest):
                 ],
             },
         )
-        response = self.response
         self.assertEqual(0.01, model.risk_score)
 
     def test_200_with_email_hashing(self):
-        uri = "/".join(["/minfraud/v2.0", self.type])
+        uri = f"/minfraud/v2.0/{self.type}"
         self.httpserver.expect_request(
             uri,
             method="POST",

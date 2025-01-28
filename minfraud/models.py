@@ -8,7 +8,7 @@ This module contains models for the minFraud response object.
 
 # pylint:disable=too-many-lines,too-many-instance-attributes,too-many-locals
 from collections.abc import Sequence
-from typing import Dict, List, Optional
+from typing import Optional
 
 import geoip2.models
 import geoip2.records
@@ -17,7 +17,7 @@ from geoip2.mixins import SimpleEquality
 
 class _Serializable(SimpleEquality):
     def to_dict(self):
-        """Returns a dict of the object suitable for serialization"""
+        """Returns a dict of the object suitable for serialization."""
         result = {}
         for key, value in self.__dict__.items():
             if hasattr(value, "to_dict") and callable(value.to_dict):
@@ -83,7 +83,9 @@ class IPRiskReason(_Serializable):
     code: Optional[str]
     reason: Optional[str]
 
-    def __init__(self, code: Optional[str] = None, reason: Optional[str] = None):
+    def __init__(
+        self, code: Optional[str] = None, reason: Optional[str] = None
+    ) -> None:
         self.code = code
         self.reason = reason
 
@@ -197,16 +199,16 @@ class IPAddress(geoip2.models.Insights):
 
     location: GeoIP2Location
     risk: Optional[float]
-    risk_reasons: List[IPRiskReason]
+    risk_reasons: list[IPRiskReason]
 
     def __init__(
         self,
         locales: Optional[Sequence[str]],
         *,
-        country: Optional[Dict] = None,
-        location: Optional[Dict] = None,
+        country: Optional[dict] = None,
+        location: Optional[dict] = None,
         risk: Optional[float] = None,
-        risk_reasons: Optional[List[Dict]] = None,
+        risk_reasons: Optional[list[dict]] = None,
         **kwargs,
     ) -> None:
         # For raw attribute
@@ -238,7 +240,7 @@ class ScoreIPAddress(_Serializable):
 
     risk: Optional[float]
 
-    def __init__(self, *, risk: Optional[float] = None, **_):
+    def __init__(self, *, risk: Optional[float] = None, **_) -> None:
         self.risk = risk
 
 
@@ -293,7 +295,7 @@ class Issuer(_Serializable):
         phone_number: Optional[str] = None,
         matches_provided_phone_number: Optional[bool] = None,
         **_,
-    ):
+    ) -> None:
         self.name = name
         self.matches_provided_name = matches_provided_name
         self.phone_number = phone_number
@@ -353,7 +355,7 @@ class Device(_Serializable):
         last_seen: Optional[str] = None,
         local_time: Optional[str] = None,
         **_,
-    ):
+    ) -> None:
         self.confidence = confidence
         self.id = id
         self.last_seen = last_seen
@@ -403,7 +405,7 @@ class Disposition(_Serializable):
         reason: Optional[str] = None,
         rule_label: Optional[str] = None,
         **_,
-    ):
+    ) -> None:
         self.action = action
         self.reason = reason
         self.rule_label = rule_label
@@ -424,7 +426,7 @@ class EmailDomain(_Serializable):
 
     first_seen: Optional[str]
 
-    def __init__(self, *, first_seen: Optional[str] = None, **_):
+    def __init__(self, *, first_seen: Optional[str] = None, **_) -> None:
         self.first_seen = first_seen
 
 
@@ -478,12 +480,12 @@ class Email(_Serializable):
 
     def __init__(
         self,
-        domain: Optional[Dict] = None,
+        domain: Optional[dict] = None,
         first_seen: Optional[str] = None,
         is_disposable: Optional[bool] = None,
         is_free: Optional[bool] = None,
         is_high_risk: Optional[bool] = None,
-    ):
+    ) -> None:
         self.domain = EmailDomain(**(domain or {}))
         self.first_seen = first_seen
         self.is_disposable = is_disposable
@@ -565,7 +567,7 @@ class CreditCard(_Serializable):
 
     def __init__(
         self,
-        issuer: Optional[Dict] = None,
+        issuer: Optional[dict] = None,
         country: Optional[str] = None,
         brand: Optional[str] = None,
         is_business: Optional[bool] = None,
@@ -574,7 +576,7 @@ class CreditCard(_Serializable):
         is_virtual: Optional[bool] = None,
         # pylint:disable=redefined-builtin
         type: Optional[str] = None,
-    ):
+    ) -> None:
         self.issuer = Issuer(**(issuer or {}))
         self.country = country
         self.brand = brand
@@ -643,7 +645,7 @@ class BillingAddress(_Serializable):
         distance_to_ip_location: Optional[int] = None,
         is_in_ip_country: Optional[bool] = None,
         **_,
-    ):
+    ) -> None:
         self.is_postal_in_city = is_postal_in_city
         self.latitude = latitude
         self.longitude = longitude
@@ -730,7 +732,7 @@ class ShippingAddress(_Serializable):
         is_high_risk: Optional[bool] = None,
         distance_to_billing_address: Optional[int] = None,
         **_,
-    ):
+    ) -> None:
         self.is_postal_in_city = is_postal_in_city
         self.latitude = latitude
         self.longitude = longitude
@@ -790,7 +792,7 @@ class Phone(_Serializable):
         network_operator: Optional[str] = None,
         number_type: Optional[str] = None,
         **_,
-    ):
+    ) -> None:
         self.country = country
         self.is_voip = is_voip
         self.network_operator = network_operator
@@ -838,7 +840,7 @@ class ServiceWarning(_Serializable):
         warning: Optional[str] = None,
         input_pointer: Optional[str] = None,
         **_,
-    ):
+    ) -> None:
         self.code = code
         self.warning = warning
         self.input_pointer = input_pointer
@@ -1061,7 +1063,7 @@ class Subscores(_Serializable):
         shipping_address_distance_to_ip_location: Optional[float] = None,
         time_of_day: Optional[float] = None,
         **_,
-    ):
+    ) -> None:
         self.avs_result = avs_result
         self.billing_address = billing_address
         self.billing_address_distance_to_ip_location = (
@@ -1180,7 +1182,7 @@ class Reason(_Serializable):
         code: Optional[str] = None,
         reason: Optional[str] = None,
         **_,
-    ):
+    ) -> None:
         self.code = code
         self.reason = reason
 
@@ -1207,15 +1209,15 @@ class RiskScoreReason(_Serializable):
     """
 
     multiplier: float
-    reasons: List[Reason]
+    reasons: list[Reason]
 
     def __init__(
         self,
         *,
         multiplier: float,
-        reasons: Optional[List] = None,
+        reasons: Optional[list] = None,
         **_,
-    ):
+    ) -> None:
         self.multiplier = multiplier
         self.reasons = [Reason(**x) for x in reasons or []]
 
@@ -1362,32 +1364,32 @@ class Factors(_Serializable):
     shipping_address: ShippingAddress
     shipping_phone: Phone
     subscores: Subscores
-    warnings: List[ServiceWarning]
-    risk_score_reasons: List[RiskScoreReason]
+    warnings: list[ServiceWarning]
+    risk_score_reasons: list[RiskScoreReason]
 
     def __init__(
         self,
         locales: Sequence[str],
         *,
-        billing_address: Optional[Dict] = None,
-        billing_phone: Optional[Dict] = None,
-        credit_card: Optional[Dict] = None,
-        disposition: Optional[Dict] = None,
+        billing_address: Optional[dict] = None,
+        billing_phone: Optional[dict] = None,
+        credit_card: Optional[dict] = None,
+        disposition: Optional[dict] = None,
         funds_remaining: float,
-        device: Optional[Dict] = None,
-        email: Optional[Dict] = None,
+        device: Optional[dict] = None,
+        email: Optional[dict] = None,
         # pylint:disable=redefined-builtin
         id: str,
-        ip_address: Optional[Dict] = None,
+        ip_address: Optional[dict] = None,
         queries_remaining: int,
         risk_score: float,
-        shipping_address: Optional[Dict] = None,
-        shipping_phone: Optional[Dict] = None,
-        subscores: Optional[Dict] = None,
-        warnings: Optional[List[Dict]] = None,
-        risk_score_reasons: Optional[List[Dict]] = None,
+        shipping_address: Optional[dict] = None,
+        shipping_phone: Optional[dict] = None,
+        subscores: Optional[dict] = None,
+        warnings: Optional[list[dict]] = None,
+        risk_score_reasons: Optional[list[dict]] = None,
         **_,
-    ):
+    ) -> None:
         self.billing_address = BillingAddress(**(billing_address or {}))
         self.billing_phone = Phone(**(billing_phone or {}))
         self.credit_card = CreditCard(**(credit_card or {}))
@@ -1529,29 +1531,29 @@ class Insights(_Serializable):
     risk_score: float
     shipping_address: ShippingAddress
     shipping_phone: Phone
-    warnings: List[ServiceWarning]
+    warnings: list[ServiceWarning]
 
     def __init__(
         self,
         locales: Sequence[str],
         *,
-        billing_address: Optional[Dict] = None,
-        billing_phone: Optional[Dict] = None,
-        credit_card: Optional[Dict] = None,
-        device: Optional[Dict] = None,
-        disposition: Optional[Dict] = None,
-        email: Optional[Dict] = None,
+        billing_address: Optional[dict] = None,
+        billing_phone: Optional[dict] = None,
+        credit_card: Optional[dict] = None,
+        device: Optional[dict] = None,
+        disposition: Optional[dict] = None,
+        email: Optional[dict] = None,
         funds_remaining: float,
         # pylint:disable=redefined-builtin
         id: str,
-        ip_address: Optional[Dict] = None,
+        ip_address: Optional[dict] = None,
         queries_remaining: int,
         risk_score: float,
-        shipping_address: Optional[Dict] = None,
-        shipping_phone: Optional[Dict] = None,
-        warnings: Optional[List[Dict]] = None,
+        shipping_address: Optional[dict] = None,
+        shipping_phone: Optional[dict] = None,
+        warnings: Optional[list[dict]] = None,
         **_,
-    ):
+    ) -> None:
         self.billing_address = BillingAddress(**(billing_address or {}))
         self.billing_phone = Phone(**(billing_phone or {}))
         self.credit_card = CreditCard(**(credit_card or {}))
@@ -1632,21 +1634,21 @@ class Score(_Serializable):
     ip_address: ScoreIPAddress
     queries_remaining: int
     risk_score: float
-    warnings: List[ServiceWarning]
+    warnings: list[ServiceWarning]
 
     def __init__(
         self,
         *,
-        disposition: Optional[Dict] = None,
+        disposition: Optional[dict] = None,
         funds_remaining: float,
         # pylint:disable=redefined-builtin
         id: str,
-        ip_address: Optional[Dict] = None,
+        ip_address: Optional[dict] = None,
         queries_remaining: int,
         risk_score: float,
-        warnings: Optional[List[Dict]] = None,
+        warnings: Optional[list[dict]] = None,
         **_,
-    ):
+    ) -> None:
         self.disposition = Disposition(**(disposition or {}))
         self.funds_remaining = funds_remaining
         self.id = id

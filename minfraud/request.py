@@ -9,7 +9,7 @@ import hashlib
 import re
 import unicodedata
 import warnings
-from typing import Any, Dict
+from typing import Any
 
 from voluptuous import MultipleInvalid
 
@@ -264,8 +264,8 @@ _YAHOO_DOMAINS = {
 }
 
 
-def prepare_report(request: Dict[str, Any], validate: bool):
-    """Validate and prepare minFraud report"""
+def prepare_report(request: dict[str, Any], validate: bool):
+    """Validate and prepare minFraud report."""
     cleaned_request = _copy_and_clean(request)
     if validate:
         try:
@@ -276,11 +276,11 @@ def prepare_report(request: Dict[str, Any], validate: bool):
 
 
 def prepare_transaction(
-    request: Dict[str, Any],
+    request: dict[str, Any],
     validate: bool,
     hash_email: bool,
 ):
-    """Validate and prepare minFraud transaction"""
+    """Validate and prepare minFraud transaction."""
     cleaned_request = _copy_and_clean(request)
     if validate:
         try:
@@ -300,25 +300,26 @@ def prepare_transaction(
 def _copy_and_clean(data: Any) -> Any:
     """Create a copy of the data structure with Nones removed."""
     if isinstance(data, dict):
-        return dict((k, _copy_and_clean(v)) for (k, v) in data.items() if v is not None)
+        return {k: _copy_and_clean(v) for (k, v) in data.items() if v is not None}
     if isinstance(data, (list, set, tuple)):
         return [_copy_and_clean(x) for x in data if x is not None]
     return data
 
 
-def clean_credit_card(credit_card):
-    """Clean the credit_card input of a transaction request"""
+def clean_credit_card(credit_card) -> None:
+    """Clean the credit_card input of a transaction request."""
     last4 = credit_card.pop("last_4_digits", None)
     if last4:
         warnings.warn(
             "last_4_digits has been deprecated in favor of last_digits",
             DeprecationWarning,
+            stacklevel=2,
         )
         credit_card["last_digits"] = last4
 
 
-def maybe_hash_email(transaction):
-    """Hash email address in transaction, if present"""
+def maybe_hash_email(transaction) -> None:
+    """Hash email address in transaction, if present."""
     try:
         email = transaction["email"]
         address = email["address"]
@@ -346,14 +347,12 @@ def _clean_domain(domain):
 
     idx = domain.rfind(".")
     if idx != -1:
-        tld = domain[idx + 1 :]
+        tld = domain[idx + 1:]
         if tld in _TYPO_TLDS:
             domain = domain[:idx] + "." + _TYPO_TLDS.get(tld)
 
     domain = _TYPO_DOMAINS.get(domain, domain)
-    domain = _EQUIVALENT_DOMAINS.get(domain, domain)
-
-    return domain
+    return _EQUIVALENT_DOMAINS.get(domain, domain)
 
 
 def _clean_email(address):
@@ -363,16 +362,13 @@ def _clean_email(address):
     if at_idx == -1:
         return None, None
 
-    domain = _clean_domain(address[at_idx + 1 :])
+    domain = _clean_domain(address[at_idx + 1:])
     local_part = address[:at_idx]
 
     local_part = unicodedata.normalize("NFC", local_part)
 
     # Strip off aliased part of email address.
-    if domain in _YAHOO_DOMAINS:
-        divider = "-"
-    else:
-        divider = "+"
+    divider = "-" if domain in _YAHOO_DOMAINS else "+"
 
     alias_idx = local_part.find(divider)
     if alias_idx > 0:

@@ -411,19 +411,22 @@ _validate_report_schema = Schema(
 )
 
 
-def _validate_at_least_one_identifier_field(report):
+def _validate_at_least_one_identifier_field(report) -> bool:
     optional_fields = ["ip_address", "maxmind_id", "minfraud_id", "transaction_id"]
     if not any(field in report for field in optional_fields):
         # We return MultipleInvalid instead of ValueError to be consistent with what
         # voluptuous returns.
-        raise MultipleInvalid(
+        msg = (
             "The report must contain at least one of the following fields: "
-            "'ip_address', 'maxmind_id', 'minfraud_id', 'transaction_id'.",
+            "'ip_address', 'maxmind_id', 'minfraud_id', 'transaction_id'."
+        )
+        raise MultipleInvalid(
+            msg,
         )
     return True
 
 
-def validate_report(report):
+def validate_report(report) -> bool:
     """Validate minFraud Transaction Report fields."""
     _validate_report_schema(report)
     _validate_at_least_one_identifier_field(report)

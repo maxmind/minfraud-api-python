@@ -9,7 +9,7 @@ This module contains the webservice client class.
 import json
 from collections.abc import Sequence
 from functools import partial
-from typing import Any, Callable, Dict, Optional, Union, cast
+from typing import Any, Callable, Optional, Union, cast
 
 import aiohttp
 import aiohttp.http
@@ -61,10 +61,10 @@ class BaseClient:
         self._license_key = license_key
         self._timeout = timeout
         base_uri = f"{_SCHEME}://{host}/minfraud/v2.0"
-        self._score_uri = "/".join([base_uri, "score"])
-        self._insights_uri = "/".join([base_uri, "insights"])
-        self._factors_uri = "/".join([base_uri, "factors"])
-        self._report_uri = "/".join([base_uri, "transactions", "report"])
+        self._score_uri = f"{base_uri}/score"
+        self._insights_uri = f"{base_uri}/insights"
+        self._factors_uri = f"{base_uri}/factors"
+        self._report_uri = f"{base_uri}/transactions/report"
 
     def _handle_success(
         self,
@@ -254,7 +254,7 @@ class AsyncClient(BaseClient):
 
     async def factors(
         self,
-        transaction: Dict[str, Any],
+        transaction: dict[str, Any],
         validate: bool = True,
         hash_email: bool = False,
     ) -> Factors:
@@ -293,7 +293,7 @@ class AsyncClient(BaseClient):
 
     async def insights(
         self,
-        transaction: Dict[str, Any],
+        transaction: dict[str, Any],
         validate: bool = True,
         hash_email: bool = False,
     ) -> Insights:
@@ -332,7 +332,7 @@ class AsyncClient(BaseClient):
 
     async def score(
         self,
-        transaction: Dict[str, Any],
+        transaction: dict[str, Any],
         validate: bool = True,
         hash_email: bool = False,
     ) -> Score:
@@ -371,7 +371,7 @@ class AsyncClient(BaseClient):
 
     async def report(
         self,
-        report: Dict[str, Optional[str]],
+        report: dict[str, Optional[str]],
         validate: bool = True,
     ) -> None:
         """Send a transaction report to the Report Transaction endpoint.
@@ -405,7 +405,7 @@ class AsyncClient(BaseClient):
         self,
         uri: str,
         model_class: Callable,
-        request: Dict[str, Any],
+        request: dict[str, Any],
         validate: bool,
         hash_email: bool,
     ) -> Union[Score, Factors, Insights]:
@@ -423,7 +423,7 @@ class AsyncClient(BaseClient):
     async def _do_request(
         self,
         uri: str,
-        data: Dict[str, Any],
+        data: dict[str, Any],
     ) -> aiohttp.ClientResponse:
         session = await self._session()
         return await session.post(uri, json=data, proxy=self._proxy)
@@ -438,8 +438,8 @@ class AsyncClient(BaseClient):
 
         return self._existing_session
 
-    async def close(self):
-        """Close underlying session
+    async def close(self) -> None:
+        """Close underlying session.
 
         This will close the session and any associated connections.
         """
@@ -456,7 +456,7 @@ class AsyncClient(BaseClient):
 class Client(BaseClient):
     """Synchronous client for accessing the minFraud web services."""
 
-    _proxies: Optional[Dict[str, str]]
+    _proxies: Optional[dict[str, str]]
     _session: requests.Session
 
     def __init__(
@@ -507,7 +507,7 @@ class Client(BaseClient):
 
     def factors(
         self,
-        transaction: Dict[str, Any],
+        transaction: dict[str, Any],
         validate: bool = True,
         hash_email: bool = False,
     ) -> Factors:
@@ -546,7 +546,7 @@ class Client(BaseClient):
 
     def insights(
         self,
-        transaction: Dict[str, Any],
+        transaction: dict[str, Any],
         validate: bool = True,
         hash_email: bool = False,
     ) -> Insights:
@@ -585,7 +585,7 @@ class Client(BaseClient):
 
     def score(
         self,
-        transaction: Dict[str, Any],
+        transaction: dict[str, Any],
         validate: bool = True,
         hash_email: bool = False,
     ) -> Score:
@@ -622,7 +622,7 @@ class Client(BaseClient):
             ),
         )
 
-    def report(self, report: Dict[str, Optional[str]], validate: bool = True) -> None:
+    def report(self, report: dict[str, Optional[str]], validate: bool = True) -> None:
         """Send a transaction report to the Report Transaction endpoint.
 
         :param report: A dictionary containing the transaction report to be sent
@@ -654,7 +654,7 @@ class Client(BaseClient):
         self,
         uri: str,
         model_class: Callable,
-        request: Dict[str, Any],
+        request: dict[str, Any],
         validate: bool,
         hash_email: bool,
     ) -> Union[Score, Factors, Insights]:
@@ -669,7 +669,7 @@ class Client(BaseClient):
             raise self._exception_for_error(status, content_type, raw_body, uri)
         return self._handle_success(raw_body, uri, model_class)
 
-    def _do_request(self, uri: str, data: Dict[str, Any]) -> Response:
+    def _do_request(self, uri: str, data: dict[str, Any]) -> Response:
         return self._session.post(
             uri,
             json=data,
@@ -677,8 +677,8 @@ class Client(BaseClient):
             proxies=self._proxies,
         )
 
-    def close(self):
-        """Close underlying session
+    def close(self) -> None:
+        """Close underlying session.
 
         This will close the session and any associated connections.
         """
