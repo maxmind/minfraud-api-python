@@ -1,28 +1,29 @@
 import unittest
+from typing import Any, Union
 
 from minfraud.models import *
 
 
 class TestModels(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.maxDiff = 20_000
 
-    def test_billing_address(self):
-        address = BillingAddress(**self.address_dict)
+    def test_billing_address(self) -> None:
+        address = BillingAddress(**self.address_dict)  # type: ignore[arg-type]
         self.check_address(address)
 
-    def test_shipping_address(self):
+    def test_shipping_address(self) -> None:
         address_dict = self.address_dict
         address_dict["is_high_risk"] = False
         address_dict["distance_to_billing_address"] = 200
 
-        address = ShippingAddress(**address_dict)
+        address = ShippingAddress(**address_dict)  # type:ignore[arg-type]
         self.check_address(address)
         self.assertEqual(False, address.is_high_risk)
         self.assertEqual(200, address.distance_to_billing_address)
 
     @property
-    def address_dict(self):
+    def address_dict(self) -> dict[str, Union[bool, float]]:
         return {
             "is_in_ip_country": True,
             "latitude": 43.1,
@@ -31,14 +32,14 @@ class TestModels(unittest.TestCase):
             "is_postal_in_city": True,
         }
 
-    def check_address(self, address):
+    def check_address(self, address) -> None:
         self.assertEqual(True, address.is_in_ip_country)
         self.assertEqual(True, address.is_postal_in_city)
         self.assertEqual(100, address.distance_to_ip_location)
         self.assertEqual(32.1, address.longitude)
         self.assertEqual(43.1, address.latitude)
 
-    def test_credit_card(self):
+    def test_credit_card(self) -> None:
         cc = CreditCard(
             issuer={"name": "Bank"},
             brand="Visa",
@@ -59,7 +60,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual(True, cc.is_issued_in_billing_address_country)
         self.assertEqual("credit", cc.type)
 
-    def test_device(self):
+    def test_device(self) -> None:
         id = "b643d445-18b2-4b9d-bad4-c9c4366e402a"
         last_seen = "2016-06-08T14:16:38Z"
         local_time = "2016-06-10T14:19:10-08:00"
@@ -75,7 +76,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual(last_seen, device.last_seen)
         self.assertEqual(local_time, device.local_time)
 
-    def test_disposition(self):
+    def test_disposition(self) -> None:
         disposition = Disposition(
             action="accept",
             reason="default",
@@ -86,7 +87,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual("default", disposition.reason)
         self.assertEqual("custom rule label", disposition.rule_label)
 
-    def test_email(self):
+    def test_email(self) -> None:
         first_seen = "2016-01-01"
         email = Email(
             first_seen=first_seen,
@@ -100,7 +101,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual(True, email.is_free)
         self.assertEqual(False, email.is_high_risk)
 
-    def test_email_domain(self):
+    def test_email_domain(self) -> None:
         first_seen = "2016-01-01"
         domain = EmailDomain(
             first_seen=first_seen,
@@ -108,13 +109,13 @@ class TestModels(unittest.TestCase):
 
         self.assertEqual(first_seen, domain.first_seen)
 
-    def test_geoip2_location(self):
+    def test_geoip2_location(self) -> None:
         time = "2015-04-19T12:59:23-01:00"
         location = GeoIP2Location(local_time=time, latitude=5)
         self.assertEqual(time, location.local_time)
         self.assertEqual(5, location.latitude)
 
-    def test_ip_address(self):
+    def test_ip_address(self) -> None:
         time = "2015-04-19T12:59:23-01:00"
         address = IPAddress(
             ["en"],
@@ -175,15 +176,15 @@ class TestModels(unittest.TestCase):
             address.risk_reasons[1].reason,
         )
 
-    def test_empty_address(self):
+    def test_empty_address(self) -> None:
         address = IPAddress([])
         self.assertEqual([], address.risk_reasons)
 
-    def test_score_ip_address(self):
+    def test_score_ip_address(self) -> None:
         address = ScoreIPAddress(risk=99)
         self.assertEqual(99, address.risk)
 
-    def test_ip_address_locales(self):
+    def test_ip_address_locales(self) -> None:
         loc = IPAddress(
             ["fr"],
             country={"names": {"fr": "Country"}},
@@ -193,7 +194,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual("City", loc.city.name)
         self.assertEqual("Country", loc.country.name)
 
-    def test_issuer(self):
+    def test_issuer(self) -> None:
         phone = "132-342-2131"
 
         issuer = Issuer(
@@ -208,7 +209,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual(phone, issuer.phone_number)
         self.assertEqual(True, issuer.matches_provided_phone_number)
 
-    def test_phone(self):
+    def test_phone(self) -> None:
         phone = Phone(
             country="US",
             is_voip=True,
@@ -221,7 +222,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual("Verizon/1", phone.network_operator)
         self.assertEqual("fixed", phone.number_type)
 
-    def test_warning(self):
+    def test_warning(self) -> None:
         code = "INVALID_INPUT"
         msg = "Input invalid"
 
@@ -231,7 +232,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual(msg, warning.warning)
         self.assertEqual("/first/second", warning.input_pointer)
 
-    def test_reason(self):
+    def test_reason(self) -> None:
         code = "EMAIL_ADDRESS_NEW"
         msg = "Riskiness of newly-sighted email address"
 
@@ -240,7 +241,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual(code, reason.code)
         self.assertEqual(msg, reason.reason)
 
-    def test_risk_score_reason(self):
+    def test_risk_score_reason(self) -> None:
         multiplier = 0.34
         code = "EMAIL_ADDRESS_NEW"
         msg = "Riskiness of newly-sighted email address"
@@ -254,7 +255,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual(code, reason.reasons[0].code)
         self.assertEqual(msg, reason.reasons[0].reason)
 
-    def test_score(self):
+    def test_score(self) -> None:
         id = "b643d445-18b2-4b9d-bad4-c9c4366e402a"
         response = {
             "id": id,
@@ -264,7 +265,7 @@ class TestModels(unittest.TestCase):
             "ip_address": {"risk": 99},
             "warnings": [{"code": "INVALID_INPUT"}],
         }
-        score = Score(**response)
+        score = Score(**response)  # type: ignore[arg-type]
 
         self.assertEqual(id, score.id)
         self.assertEqual(10.01, score.funds_remaining)
@@ -275,17 +276,17 @@ class TestModels(unittest.TestCase):
 
         self.assertEqual(response, score.to_dict())
 
-    def test_insights(self):
+    def test_insights(self) -> None:
         response = self.factors_response()
         del response["risk_score_reasons"]
         del response["subscores"]
-        insights = Insights(None, **response)
+        insights = Insights(None, **response)  # type: ignore[arg-type]
         self.check_insights_data(insights, response["id"])
         self.assertEqual(response, insights.to_dict())
 
-    def test_factors(self):
+    def test_factors(self) -> None:
         response = self.factors_response()
-        factors = Factors(None, **response)
+        factors = Factors(None, **response)  # type: ignore[arg-type]
         self.check_insights_data(factors, response["id"])
         self.check_risk_score_reasons_data(factors.risk_score_reasons)
         self.assertEqual(0.01, factors.subscores.avs_result)
@@ -317,7 +318,7 @@ class TestModels(unittest.TestCase):
 
         self.assertEqual(response, factors.to_dict())
 
-    def factors_response(self):
+    def factors_response(self) -> dict[str, Any]:
         return {
             "id": "b643d445-18b2-4b9d-bad4-c9c4366e402a",
             "disposition": {"action": "reject"},
@@ -373,7 +374,7 @@ class TestModels(unittest.TestCase):
             ],
         }
 
-    def check_insights_data(self, insights, uuid):
+    def check_insights_data(self, insights, uuid) -> None:
         self.assertEqual("US", insights.ip_address.country.iso_code)
         self.assertEqual(False, insights.ip_address.country.is_in_european_union)
         self.assertEqual(True, insights.credit_card.is_business)
@@ -395,7 +396,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual("INVALID_INPUT", insights.warnings[0].code)
         self.assertIsInstance(insights.warnings, list, "warnings is a list")
 
-    def check_risk_score_reasons_data(self, reasons):
+    def check_risk_score_reasons_data(self, reasons) -> None:
         self.assertEqual(1, len(reasons))
         self.assertEqual(45, reasons[0].multiplier)
         self.assertEqual(1, len(reasons[0].reasons))

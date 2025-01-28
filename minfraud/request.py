@@ -9,7 +9,7 @@ import hashlib
 import re
 import unicodedata
 import warnings
-from typing import Any
+from typing import Any, Optional
 
 from voluptuous import MultipleInvalid
 
@@ -339,7 +339,7 @@ def maybe_hash_email(transaction) -> None:
     email["address"] = hashlib.md5(address.encode("UTF-8")).hexdigest()
 
 
-def _clean_domain(domain):
+def _clean_domain(domain: str) -> str:
     domain = domain.strip().rstrip(".").encode("idna").decode("ASCII")
 
     domain = re.sub(r"(?:\.com){2,}$", ".com", domain)
@@ -347,22 +347,24 @@ def _clean_domain(domain):
 
     idx = domain.rfind(".")
     if idx != -1:
-        tld = domain[idx + 1:]
-        if tld in _TYPO_TLDS:
-            domain = domain[:idx] + "." + _TYPO_TLDS.get(tld)
+        # flake8: noqa: E203
+        tld = domain[idx + 1 :]
+        if typo_tld := _TYPO_TLDS.get(tld):
+            domain = domain[:idx] + "." + typo_tld
 
     domain = _TYPO_DOMAINS.get(domain, domain)
     return _EQUIVALENT_DOMAINS.get(domain, domain)
 
 
-def _clean_email(address):
+def _clean_email(address: str) -> tuple[Optional[str], Optional[str]]:
     address = address.lower().strip()
 
     at_idx = address.rfind("@")
     if at_idx == -1:
         return None, None
 
-    domain = _clean_domain(address[at_idx + 1:])
+    # flake8: noqa: E203
+    domain = _clean_domain(address[at_idx + 1 :])
     local_part = address[:at_idx]
 
     local_part = unicodedata.normalize("NFC", local_part)

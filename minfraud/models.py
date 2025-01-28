@@ -16,7 +16,7 @@ from geoip2.mixins import SimpleEquality
 
 
 class _Serializable(SimpleEquality):
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Returns a dict of the object suitable for serialization."""
         result = {}
         for key, value in self.__dict__.items():

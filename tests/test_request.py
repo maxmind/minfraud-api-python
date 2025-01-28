@@ -8,7 +8,7 @@ from minfraud.request import (
 
 
 class TestRequest(unittest.TestCase):
-    def test_maybe_hash_email(self):
+    def test_maybe_hash_email(self) -> None:
         tests = [
             {
                 "name": "no email",
@@ -171,7 +171,7 @@ class TestRequest(unittest.TestCase):
 
                 self.assertEqual(test["expected"], transaction)
 
-    def test_clean_credit_card(self):
+    def test_clean_credit_card(self) -> None:
         tests = [
             {
                 "name": "deprecated last_4_digits is cleaned to last_digits",
@@ -217,7 +217,7 @@ class TestRequest(unittest.TestCase):
                 self.assertEqual(test["expected"], transaction)
 
 
-def test_clean_email():
+def test_clean_email() -> None:
     tests = [
         {"input": "", "output": None},
         {"input": "fasfs", "output": None},
@@ -256,5 +256,5 @@ def test_clean_email():
     ]
 
     for test in tests:
-        got, _ = _clean_email(test["input"])
-        assert test["output"] == got
+        got, _ = _clean_email(test["input"])  # type: ignore
+        assert test["output"] == got  # type: ignore
