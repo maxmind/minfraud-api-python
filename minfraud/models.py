@@ -12,20 +12,21 @@ from typing import Optional
 
 import geoip2.models
 import geoip2.records
-from geoip2.mixins import SimpleEquality
 
 
-class _Serializable(SimpleEquality):
+class _Serializable:
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, self.__class__) and self.to_dict() == other.to_dict()
+
+    def __ne__(self, other: object) -> bool:
+        return not self.__eq__(other)
+
     def to_dict(self) -> dict:
         """Returns a dict of the object suitable for serialization."""
         result = {}
         for key, value in self.__dict__.items():
             if hasattr(value, "to_dict") and callable(value.to_dict):
                 if d := value.to_dict():
-                    result[key] = d
-            elif hasattr(value, "raw"):
-                # geoip2 uses "raw" for historical reasons
-                if d := value.raw:
                     result[key] = d
             elif isinstance(value, list):
                 ls = []
@@ -221,7 +222,7 @@ class IPAddress(geoip2.models.Insights):
         if risk_reasons is not None:
             kwargs["risk_reasons"] = risk_reasons
 
-        super().__init__(kwargs, locales=list(locales or []))
+        super().__init__(locales, **kwargs)
         self.location = GeoIP2Location(**(location or {}))
         self.risk = risk
         self.risk_reasons = [IPRiskReason(**x) for x in risk_reasons or []]
