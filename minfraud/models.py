@@ -7,11 +7,12 @@ This module contains models for the minFraud response object.
 """
 
 # pylint:disable=too-many-lines,too-many-instance-attributes,too-many-locals
-from typing import Dict, List, Optional, Sequence
+from collections.abc import Sequence
+from typing import Dict, List, Optional
 
-from geoip2.mixins import SimpleEquality
 import geoip2.models
 import geoip2.records
+from geoip2.mixins import SimpleEquality
 
 
 class _Serializable(SimpleEquality):
@@ -112,7 +113,7 @@ class GeoIP2Location(geoip2.records.Location):
     local_time: Optional[str]
 
     def __init__(self, *args, **kwargs) -> None:
-        self.local_time = kwargs.get("local_time", None)
+        self.local_time = kwargs.get("local_time")
         super().__init__(*args, **kwargs)
 
 
@@ -1174,7 +1175,11 @@ class Reason(_Serializable):
     reason: Optional[str]
 
     def __init__(
-        self, *, code: Optional[str] = None, reason: Optional[str] = None, **_
+        self,
+        *,
+        code: Optional[str] = None,
+        reason: Optional[str] = None,
+        **_,
     ):
         self.code = code
         self.reason = reason

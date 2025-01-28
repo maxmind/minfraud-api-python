@@ -1,9 +1,9 @@
+import unittest
 from decimal import Decimal
+
 from voluptuous import MultipleInvalid
 
-from minfraud.validation import validate_transaction, validate_report
-
-import unittest
+from minfraud.validation import validate_report, validate_transaction
 
 
 class ValidationBase:
@@ -77,7 +77,7 @@ class TestTransaction(unittest.TestCase, ValidationBase):
         transaction = {
             "account": {
                 "user_id": "usr",
-            }
+            },
         }
         validate_transaction(transaction)
 
@@ -88,15 +88,15 @@ class TestAccount(unittest.TestCase, ValidationBase):
 
     def test_account_username_md5(self):
         self.check_transaction(
-            {"account": {"username_md5": "14c4b06b824ec593239362517f538b29"}}
+            {"account": {"username_md5": "14c4b06b824ec593239362517f538b29"}},
         )
 
     def test_invalid_account_username_md5s(self):
         self.check_invalid_transaction(
-            {"account": {"username_md5": "14c4b06b824ec593239362517f538b2"}}
+            {"account": {"username_md5": "14c4b06b824ec593239362517f538b2"}},
         )
         self.check_invalid_transaction(
-            {"account": {"username_md5": "14c4b06b824ec593239362517f538b29a"}}
+            {"account": {"username_md5": "14c4b06b824ec593239362517f538b29a"}},
         )
 
 
@@ -159,7 +159,7 @@ class TestCreditCard(ValidationBase, unittest.TestCase):
             self.check_transaction({"credit_card": {"issuer_id_number": iin}})
         for invalid in ("12345", "1234567", 123456, "12345a"):
             self.check_invalid_transaction(
-                {"credit_card": {"issuer_id_number": invalid}}
+                {"credit_card": {"issuer_id_number": invalid}},
             )
 
     def test_last_digits(self):
@@ -168,16 +168,16 @@ class TestCreditCard(ValidationBase, unittest.TestCase):
         for invalid in ("12345", "123", 1234, "123a"):
             self.check_invalid_transaction({"credit_card": {"last_digits": invalid}})
         self.check_transaction(
-            {"credit_card": {"issuer_id_number": "88888888", "last_digits": "12"}}
+            {"credit_card": {"issuer_id_number": "88888888", "last_digits": "12"}},
         )
         self.check_transaction(
-            {"credit_card": {"issuer_id_number": "88888888", "last_digits": "1234"}}
+            {"credit_card": {"issuer_id_number": "88888888", "last_digits": "1234"}},
         )
         self.check_transaction(
-            {"credit_card": {"issuer_id_number": "666666", "last_digits": "1234"}}
+            {"credit_card": {"issuer_id_number": "666666", "last_digits": "1234"}},
         )
         self.check_transaction(
-            {"credit_card": {"issuer_id_number": "666666", "last_digits": "34"}}
+            {"credit_card": {"issuer_id_number": "666666", "last_digits": "34"}},
         )
 
     def test_last_4_digits(self):
@@ -197,7 +197,7 @@ class TestCreditCard(ValidationBase, unittest.TestCase):
             self.check_transaction({"credit_card": {"bank_phone_country_code": code}})
         for invalid in ("", "12345", "U"):
             self.check_invalid_transaction(
-                {"credit_card": {"bank_phone_country_code": invalid}}
+                {"credit_card": {"bank_phone_country_code": invalid}},
             )
 
     def test_avs_and_cvv(self):
@@ -206,7 +206,7 @@ class TestCreditCard(ValidationBase, unittest.TestCase):
                 self.check_transaction({"credit_card": {key: code}})
             for invalid in ("", "12"):
                 self.check_invalid_transaction(
-                    {"credit_card": {"credit_card": invalid}}
+                    {"credit_card": {"credit_card": invalid}},
                 )
 
     def test_token(self):
@@ -228,8 +228,8 @@ class TestCustomInputs(ValidationBase, unittest.TestCase):
                     "int_input": 19,
                     "float_input": 3.2,
                     "bool_input": True,
-                }
-            }
+                },
+            },
         )
 
     def test_invalid(self):
@@ -239,7 +239,7 @@ class TestCustomInputs(ValidationBase, unittest.TestCase):
             {"has_newline": "test\n"},
             {"too_big": 1e13},
             {"too_small": -1e13},
-            {"too_big_float": float(1e13)},
+            {"too_big_float": 1e13},
         ):
             self.check_invalid_transaction({"custom_inputs": invalid})
 
@@ -257,8 +257,8 @@ class TestDevice(ValidationBase, unittest.TestCase):
             {
                 "device": {
                     "user_agent": "foo",
-                }
-            }
+                },
+            },
         )
 
     def test_missing_device(self):
@@ -276,11 +276,11 @@ class TestDevice(ValidationBase, unittest.TestCase):
     def test_session_age(self):
         for valid in (3600, 0, 25.5):
             self.check_transaction(
-                {"device": {"ip_address": "4.4.4.4", "session_age": valid}}
+                {"device": {"ip_address": "4.4.4.4", "session_age": valid}},
             )
         for invalid in ("foo", -1):
             self.check_invalid_transaction(
-                {"device": {"ip_address": "4.4.4.4", "session_age": invalid}}
+                {"device": {"ip_address": "4.4.4.4", "session_age": invalid}},
             )
 
 
@@ -444,7 +444,10 @@ class TestReport(unittest.TestCase, ValidationBase):
 
         self.check_report_no_setup({"tag": "chargeback", "ip_address": "1.1.1.1"})
         self.check_report_no_setup(
-            {"tag": "chargeback", "minfraud_id": "58fa38d8-4b87-458b-a22b-f00eda1aa20d"}
+            {
+                "tag": "chargeback",
+                "minfraud_id": "58fa38d8-4b87-458b-a22b-f00eda1aa20d",
+            },
         )
         self.check_report_no_setup({"tag": "chargeback", "maxmind_id": "12345678"})
         self.check_report_no_setup({"tag": "chargeback", "transaction_id": "abc123"})

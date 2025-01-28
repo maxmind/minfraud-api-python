@@ -1,9 +1,9 @@
 import unittest
 
 from minfraud.request import (
-    maybe_hash_email,
-    clean_credit_card,
     _clean_email,
+    clean_credit_card,
+    maybe_hash_email,
 )
 
 
@@ -37,7 +37,7 @@ class TestRequest(unittest.TestCase):
                     "email": {
                         "address": "977577b140bfb7c516e4746204fbdb01",
                         "domain": "maxmind.com",
-                    }
+                    },
                 },
             },
             {
@@ -47,19 +47,19 @@ class TestRequest(unittest.TestCase):
                     "email": {
                         "address": "977577b140bfb7c516e4746204fbdb01",
                         "domain": "maxmind.com",
-                    }
+                    },
                 },
             },
             {
                 "name": "domain already set",
                 "input": {
-                    "email": {"address": "test@maxmind.com", "domain": "google.com"}
+                    "email": {"address": "test@maxmind.com", "domain": "google.com"},
                 },
                 "expected": {
                     "email": {
                         "address": "977577b140bfb7c516e4746204fbdb01",
                         "domain": "google.com",
-                    }
+                    },
                 },
             },
             {
@@ -69,7 +69,7 @@ class TestRequest(unittest.TestCase):
                     "email": {
                         "address": "977577b140bfb7c516e4746204fbdb01",
                         "domain": "maxmind.com",
-                    }
+                    },
                 },
             },
             {
@@ -79,7 +79,7 @@ class TestRequest(unittest.TestCase):
                     "email": {
                         "address": "977577b140bfb7c516e4746204fbdb01",
                         "domain": "maxmind.com",
-                    }
+                    },
                 },
             },
             {
@@ -89,7 +89,7 @@ class TestRequest(unittest.TestCase):
                     "email": {
                         "address": "977577b140bfb7c516e4746204fbdb01",
                         "domain": "maxmind.com",
-                    }
+                    },
                 },
             },
             {
@@ -99,7 +99,7 @@ class TestRequest(unittest.TestCase):
                     "email": {
                         "address": "667a28047b6caade43c7e75f66aab5f5",
                         "domain": "yahoo.com",
-                    }
+                    },
                 },
             },
             {
@@ -109,7 +109,7 @@ class TestRequest(unittest.TestCase):
                     "email": {
                         "address": "a5f830c699fd71ad653aa59fa688c6d9",
                         "domain": "yahoo.com",
-                    }
+                    },
                 },
             },
             {
@@ -119,7 +119,7 @@ class TestRequest(unittest.TestCase):
                     "email": {
                         "address": "24948acabac551360cd510d5e5e2b464",
                         "domain": "xn--bcher-kva.com",
-                    }
+                    },
                 },
             },
             {
@@ -129,7 +129,7 @@ class TestRequest(unittest.TestCase):
                     "email": {
                         "address": "aa57884e48f0dda9fc6f4cb2bffb1dd2",
                         "domain": "maxmind.com",
-                    }
+                    },
                 },
             },
             {
@@ -138,7 +138,7 @@ class TestRequest(unittest.TestCase):
                 "expected": {
                     "email": {
                         "address": "246a848af2f8394e3adbc738dbe43720",
-                    }
+                    },
                 },
             },
             {
@@ -148,7 +148,7 @@ class TestRequest(unittest.TestCase):
                     "email": {
                         "address": "53550c712b146287a2d0dd30e5ed6f4b",
                         "domain": "example.com",
-                    }
+                    },
                 },
             },
             {
@@ -158,7 +158,7 @@ class TestRequest(unittest.TestCase):
                     "email": {
                         "address": "53550c712b146287a2d0dd30e5ed6f4b",
                         "domain": "example.com",
-                    }
+                    },
                 },
             },
         ]

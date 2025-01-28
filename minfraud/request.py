@@ -5,11 +5,12 @@ that may break any direct use of it.
 
 """
 
-import re
-import warnings
 import hashlib
+import re
 import unicodedata
+import warnings
 from typing import Any, Dict
+
 from voluptuous import MultipleInvalid
 
 from .errors import InvalidRequestError
@@ -345,7 +346,7 @@ def _clean_domain(domain):
 
     idx = domain.rfind(".")
     if idx != -1:
-        tld = domain[idx + 1 :]  # noqa
+        tld = domain[idx + 1 :]
         if tld in _TYPO_TLDS:
             domain = domain[:idx] + "." + _TYPO_TLDS.get(tld)
 
@@ -362,7 +363,7 @@ def _clean_email(address):
     if at_idx == -1:
         return None, None
 
-    domain = _clean_domain(address[at_idx + 1 :])  # noqa
+    domain = _clean_domain(address[at_idx + 1 :])
     local_part = address[:at_idx]
 
     local_part = unicodedata.normalize("NFC", local_part)

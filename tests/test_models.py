@@ -291,7 +291,8 @@ class TestModels(unittest.TestCase):
         self.assertEqual(0.01, factors.subscores.avs_result)
         self.assertEqual(0.02, factors.subscores.billing_address)
         self.assertEqual(
-            0.03, factors.subscores.billing_address_distance_to_ip_location
+            0.03,
+            factors.subscores.billing_address_distance_to_ip_location,
         )
         self.assertEqual(0.04, factors.subscores.browser)
         self.assertEqual(0.05, factors.subscores.chargeback)
@@ -309,7 +310,8 @@ class TestModels(unittest.TestCase):
         self.assertEqual(0.15, factors.subscores.phone_number)
         self.assertEqual(0.2, factors.subscores.shipping_address)
         self.assertEqual(
-            0.16, factors.subscores.shipping_address_distance_to_ip_location
+            0.16,
+            factors.subscores.shipping_address_distance_to_ip_location,
         )
         self.assertEqual(0.17, factors.subscores.time_of_day)
 
@@ -365,9 +367,9 @@ class TestModels(unittest.TestCase):
                         {
                             "code": "ANONYMOUS_IP",
                             "reason": "Risk due to IP being an Anonymous IP",
-                        }
+                        },
                     ],
-                }
+                },
             ],
         }
 
@@ -399,5 +401,6 @@ class TestModels(unittest.TestCase):
         self.assertEqual(1, len(reasons[0].reasons))
         self.assertEqual("ANONYMOUS_IP", reasons[0].reasons[0].code)
         self.assertEqual(
-            "Risk due to IP being an Anonymous IP", reasons[0].reasons[0].reason
+            "Risk due to IP being an Anonymous IP",
+            reasons[0].reasons[0].reason,
         )

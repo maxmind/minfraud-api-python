@@ -1,25 +1,25 @@
 import asyncio
+import builtins
 import json
 import os
+import unittest
 from functools import partial
-from io import open
 from typing import Type, Union
-from pytest_httpserver import HTTPServer
-import pytest
 
+import pytest
+from pytest_httpserver import HTTPServer
+
+import minfraud.webservice
 from minfraud.errors import (
-    HTTPError,
-    InvalidRequestError,
     AuthenticationError,
+    HTTPError,
     InsufficientFundsError,
+    InvalidRequestError,
     MinFraudError,
     PermissionRequiredError,
 )
 from minfraud.models import Factors, Insights, Score
 from minfraud.webservice import AsyncClient, Client
-
-import minfraud.webservice
-import unittest
 
 minfraud.webservice._SCHEME = "http"
 
@@ -35,14 +35,18 @@ class BaseTest(unittest.TestCase):
         self.client = self.client_class(
             42,
             "abcdef123456",
-            host="{0}:{1}".format(self.httpserver.host, self.httpserver.port),
+            host=f"{self.httpserver.host}:{self.httpserver.port}",
         )
         test_dir = os.path.join(os.path.dirname(__file__), "data")
-        with open(os.path.join(test_dir, self.request_file), encoding="utf-8") as file:
+        with builtins.open(
+            os.path.join(test_dir, self.request_file), encoding="utf-8"
+        ) as file:
             content = file.read()
         self.full_request = json.loads(content)
 
-        with open(os.path.join(test_dir, self.response_file), encoding="utf-8") as file:
+        with builtins.open(
+            os.path.join(test_dir, self.response_file), encoding="utf-8"
+        ) as file:
             self.response = file.read()
 
     def test_invalid_auth(self):
@@ -64,7 +68,8 @@ class BaseTest(unittest.TestCase):
 
     def test_300_error(self):
         with self.assertRaisesRegex(
-            HTTPError, r"Received an unexpected HTTP status \(300\) for"
+            HTTPError,
+            r"Received an unexpected HTTP status \(300\) for",
         ):
             self.create_error(status_code=300)
 
@@ -89,7 +94,8 @@ class BaseTest(unittest.TestCase):
 
     def test_400_with_unexpected_content_type(self):
         with self.assertRaisesRegex(
-            HTTPError, "Received a 400 with the following body: b?'?plain'?"
+            HTTPError,
+            "Received a 400 with the following body: b?'?plain'?",
         ):
             self.create_error(content_type="text/plain", text="plain")
 
@@ -115,9 +121,11 @@ class BaseTest(unittest.TestCase):
 
     def create_error(self, status_code=400, text="", content_type=None):
         uri = "/".join(
-            ["/minfraud/v2.0", "transactions", "report"]
-            if self.type == "report"
-            else ["/minfraud/v2.0", self.type]
+            (
+                ["/minfraud/v2.0", "transactions", "report"]
+                if self.type == "report"
+                else ["/minfraud/v2.0", self.type]
+            ),
         )
         if content_type is None:
             content_type = (
@@ -134,9 +142,11 @@ class BaseTest(unittest.TestCase):
 
     def create_success(self, text=None, client=None, request=None):
         uri = "/".join(
-            ["/minfraud/v2.0", "transactions", "report"]
-            if self.type == "report"
-            else ["/minfraud/v2.0", self.type]
+            (
+                ["/minfraud/v2.0", "transactions", "report"]
+                if self.type == "report"
+                else ["/minfraud/v2.0", self.type]
+            ),
         )
         if request is None:
             request = self.full_request
@@ -205,7 +215,7 @@ class BaseTransactionTest(BaseTest):
                     },
                     None,
                 ],
-            }
+            },
         )
         response = self.response
         self.assertEqual(0.01, model.risk_score)
@@ -219,7 +229,7 @@ class BaseTransactionTest(BaseTest):
                 "email": {
                     "address": "977577b140bfb7c516e4746204fbdb01",
                     "domain": "maxmind.com",
-                }
+                },
             },
         ).respond_with_data(
             self.response,
@@ -238,7 +248,7 @@ class BaseTransactionTest(BaseTest):
             42,
             "abcdef123456",
             locales=locales,
-            host="{0}:{1}".format(self.httpserver.host, self.httpserver.port),
+            host=f"{self.httpserver.host}:{self.httpserver.port}",
         )
         model = self.create_success(client=client)
         response = json.loads(self.response)
@@ -267,7 +277,7 @@ class BaseTransactionTest(BaseTest):
                         }
                     ]
                 }
-            """
+            """,
         )
 
         self.assertEqual(12, model.risk_score)
@@ -343,7 +353,7 @@ class TestReportTransaction(BaseTest):
                 "maxmind_id": None,
                 "minfraud_id": None,
                 "notes": None,
-            }
+            },
         )
 
 
