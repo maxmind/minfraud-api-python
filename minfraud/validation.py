@@ -274,7 +274,7 @@ _credit_card_last_digits = Match("^(?:[0-9]{2}|[0-9]{4})$")
 
 
 def _credit_card_token(s: str) -> str:
-    if re.match("^[\x21-\x7E]{1,255}$", s) and not re.match("^[0-9]{1,19}$", s):
+    if re.match("^[\x21-\x7e]{1,255}$", s) and not re.match("^[0-9]{1,19}$", s):
         return s
     raise ValueError
 
