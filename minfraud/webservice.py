@@ -7,8 +7,9 @@ This module contains the webservice client class.
 """
 
 import json
+from collections.abc import Sequence
 from functools import partial
-from typing import Any, Callable, cast, Dict, Optional, Sequence, Union
+from typing import Any, Callable, Optional, Union, cast
 
 import aiohttp
 import aiohttp.http
@@ -16,18 +17,17 @@ import requests
 import requests.utils
 from requests.models import Response
 
-from .version import __version__
 from .errors import (
-    MinFraudError,
-    HTTPError,
     AuthenticationError,
+    HTTPError,
     InsufficientFundsError,
     InvalidRequestError,
+    MinFraudError,
     PermissionRequiredError,
 )
 from .models import Factors, Insights, Score
 from .request import prepare_report, prepare_transaction
-
+from .version import __version__
 
 _AIOHTTP_UA = f"minFraud-API/{__version__} {aiohttp.http.SERVER_SOFTWARE}"
 
@@ -61,10 +61,10 @@ class BaseClient:
         self._license_key = license_key
         self._timeout = timeout
         base_uri = f"{_SCHEME}://{host}/minfraud/v2.0"
-        self._score_uri = "/".join([base_uri, "score"])
-        self._insights_uri = "/".join([base_uri, "insights"])
-        self._factors_uri = "/".join([base_uri, "factors"])
-        self._report_uri = "/".join([base_uri, "transactions", "report"])
+        self._score_uri = f"{base_uri}/score"
+        self._insights_uri = f"{base_uri}/insights"
+        self._factors_uri = f"{base_uri}/factors"
+        self._report_uri = f"{base_uri}/transactions/report"
 
     def _handle_success(
         self,
@@ -85,7 +85,11 @@ class BaseClient:
         return model_class(**decoded_body)  # type: ignore
 
     def _exception_for_error(
-        self, status: int, content_type: Optional[str], raw_body: str, uri: str
+        self,
+        status: int,
+        content_type: Optional[str],
+        raw_body: str,
+        uri: str,
     ) -> Union[
         AuthenticationError,
         InsufficientFundsError,
@@ -94,7 +98,6 @@ class BaseClient:
         PermissionRequiredError,
     ]:
         """Returns the exception for the error responses."""
-
         if 400 <= status < 500:
             return self._exception_for_4xx_status(status, content_type, raw_body, uri)
         if 500 <= status < 600:
@@ -102,7 +105,11 @@ class BaseClient:
         return self._exception_for_unexpected_status(status, raw_body, uri)
 
     def _exception_for_4xx_status(
-        self, status: int, content_type: Optional[str], raw_body: str, uri: str
+        self,
+        status: int,
+        content_type: Optional[str],
+        raw_body: str,
+        uri: str,
     ) -> Union[
         AuthenticationError,
         InsufficientFundsError,
@@ -113,7 +120,10 @@ class BaseClient:
         """Returns exception for error responses with 4xx status codes."""
         if not raw_body:
             return HTTPError(
-                f"Received a {status} error with no body", status, uri, raw_body
+                f"Received a {status} error with no body",
+                status,
+                uri,
+                raw_body,
             )
         if content_type is None or content_type.find("json") == -1:
             return HTTPError(
@@ -135,7 +145,10 @@ class BaseClient:
 
         if "code" in decoded_body and "error" in decoded_body:
             return self._exception_for_web_service_error(
-                decoded_body.get("error"), decoded_body.get("code"), status, uri
+                decoded_body.get("error"),
+                decoded_body.get("code"),
+                status,
+                uri,
             )
         return HTTPError(
             "Error response contains JSON but it does not "
@@ -147,7 +160,10 @@ class BaseClient:
 
     @staticmethod
     def _exception_for_web_service_error(
-        message: str, code: str, status: int, uri: str
+        message: str,
+        code: str,
+        status: int,
+        uri: str,
     ) -> Union[
         InvalidRequestError,
         AuthenticationError,
@@ -238,7 +254,7 @@ class AsyncClient(BaseClient):
 
     async def factors(
         self,
-        transaction: Dict[str, Any],
+        transaction: dict[str, Any],
         validate: bool = True,
         hash_email: bool = False,
     ) -> Factors:
@@ -277,7 +293,7 @@ class AsyncClient(BaseClient):
 
     async def insights(
         self,
-        transaction: Dict[str, Any],
+        transaction: dict[str, Any],
         validate: bool = True,
         hash_email: bool = False,
     ) -> Insights:
@@ -316,7 +332,7 @@ class AsyncClient(BaseClient):
 
     async def score(
         self,
-        transaction: Dict[str, Any],
+        transaction: dict[str, Any],
         validate: bool = True,
         hash_email: bool = False,
     ) -> Score:
@@ -354,7 +370,9 @@ class AsyncClient(BaseClient):
         )
 
     async def report(
-        self, report: Dict[str, Optional[str]], validate: bool = True
+        self,
+        report: dict[str, Optional[str]],
+        validate: bool = True,
     ) -> None:
         """Send a transaction report to the Report Transaction endpoint.
 
@@ -387,7 +405,7 @@ class AsyncClient(BaseClient):
         self,
         uri: str,
         model_class: Callable,
-        request: Dict[str, Any],
+        request: dict[str, Any],
         validate: bool,
         hash_email: bool,
     ) -> Union[Score, Factors, Insights]:
@@ -403,7 +421,9 @@ class AsyncClient(BaseClient):
             return self._handle_success(raw_body, uri, model_class)
 
     async def _do_request(
-        self, uri: str, data: Dict[str, Any]
+        self,
+        uri: str,
+        data: dict[str, Any],
     ) -> aiohttp.ClientResponse:
         session = await self._session()
         return await session.post(uri, json=data, proxy=self._proxy)
@@ -418,8 +438,8 @@ class AsyncClient(BaseClient):
 
         return self._existing_session
 
-    async def close(self):
-        """Close underlying session
+    async def close(self) -> None:
+        """Close underlying session.
 
         This will close the session and any associated connections.
         """
@@ -436,7 +456,7 @@ class AsyncClient(BaseClient):
 class Client(BaseClient):
     """Synchronous client for accessing the minFraud web services."""
 
-    _proxies: Optional[Dict[str, str]]
+    _proxies: Optional[dict[str, str]]
     _session: requests.Session
 
     def __init__(
@@ -487,7 +507,7 @@ class Client(BaseClient):
 
     def factors(
         self,
-        transaction: Dict[str, Any],
+        transaction: dict[str, Any],
         validate: bool = True,
         hash_email: bool = False,
     ) -> Factors:
@@ -526,7 +546,7 @@ class Client(BaseClient):
 
     def insights(
         self,
-        transaction: Dict[str, Any],
+        transaction: dict[str, Any],
         validate: bool = True,
         hash_email: bool = False,
     ) -> Insights:
@@ -565,7 +585,7 @@ class Client(BaseClient):
 
     def score(
         self,
-        transaction: Dict[str, Any],
+        transaction: dict[str, Any],
         validate: bool = True,
         hash_email: bool = False,
     ) -> Score:
@@ -602,7 +622,7 @@ class Client(BaseClient):
             ),
         )
 
-    def report(self, report: Dict[str, Optional[str]], validate: bool = True) -> None:
+    def report(self, report: dict[str, Optional[str]], validate: bool = True) -> None:
         """Send a transaction report to the Report Transaction endpoint.
 
         :param report: A dictionary containing the transaction report to be sent
@@ -634,7 +654,7 @@ class Client(BaseClient):
         self,
         uri: str,
         model_class: Callable,
-        request: Dict[str, Any],
+        request: dict[str, Any],
         validate: bool,
         hash_email: bool,
     ) -> Union[Score, Factors, Insights]:
@@ -649,13 +669,16 @@ class Client(BaseClient):
             raise self._exception_for_error(status, content_type, raw_body, uri)
         return self._handle_success(raw_body, uri, model_class)
 
-    def _do_request(self, uri: str, data: Dict[str, Any]) -> Response:
+    def _do_request(self, uri: str, data: dict[str, Any]) -> Response:
         return self._session.post(
-            uri, json=data, timeout=self._timeout, proxies=self._proxies
+            uri,
+            json=data,
+            timeout=self._timeout,
+            proxies=self._proxies,
         )
 
-    def close(self):
-        """Close underlying session
+    def close(self) -> None:
+        """Close underlying session.
 
         This will close the session and any associated connections.
         """

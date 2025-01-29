@@ -9,13 +9,23 @@ that may break any direct use of it.
 
 import ipaddress
 import re
-import uuid
 import urllib.parse
+import uuid
 from decimal import Decimal
 from typing import Optional
 
 from email_validator import validate_email  # type: ignore
-from voluptuous import All, Any, In, Match, MultipleInvalid, Range, Required, Schema
+from voluptuous import (
+    All,
+    Any,
+    In,
+    Match,
+    MultipleInvalid,
+    Range,
+    Required,
+    RequiredFieldInvalid,
+    Schema,
+)
 from voluptuous.error import UrlInvalid
 
 # Pylint doesn't like the private function type naming for the callable
@@ -31,7 +41,8 @@ _custom_input_key = All(str, Match(r"^[a-z0-9_]{1,25}$"))
 _custom_input_value = Any(
     All(str, Match(r"^[^\n]{1,255}\Z")),
     All(
-        _any_number, Range(min=-1e13, max=1e13, min_included=False, max_included=False)
+        _any_number,
+        Range(min=-1e13, max=1e13, min_included=False, max_included=False),
     ),
     bool,
 )
@@ -41,7 +52,8 @@ _md5 = All(str, Match(r"^[0-9A-Fa-f]{32}$"))
 _country_code = All(str, Match(r"^[A-Z]{2}$"))
 
 _telephone_country_code = Any(
-    All(str, Match("^[0-9]{1,4}$")), All(int, Range(min=1, max=9999))
+    All(str, Match("^[0-9]{1,4}$")),
+    All(int, Range(min=1, max=9999)),
 )
 
 _subdivision_iso_code = All(str, Match(r"^[0-9A-Z]{1,4}$"))
@@ -251,7 +263,7 @@ _payment_processor = In(
         "windcave",
         "wirecard",
         "worldpay",
-    ]
+    ],
 )
 
 _single_char = Match("^[A-Za-z0-9]$")
@@ -268,7 +280,7 @@ def _credit_card_token(s: str) -> str:
 
 
 _rfc3339_datetime = Match(
-    r"(?a)\A\d{4}-\d{2}-\d{2}[Tt]\d{2}:\d{2}:\d{2}(\.\d+)?(?:[Zz]|[+-]\d{2}:\d{2})\Z"
+    r"(?a)\A\d{4}-\d{2}-\d{2}[Tt]\d{2}:\d{2}:\d{2}(\.\d+)?(?:[Zz]|[+-]\d{2}:\d{2})\Z",
 )
 
 
@@ -283,7 +295,7 @@ _event_type = In(
         "recurring_purchase",
         "referral",
         "survey",
-    ]
+    ],
 )
 
 _currency_code = Match("^[A-Z]{3}$")
@@ -409,19 +421,26 @@ _validate_report_schema = Schema(
 )
 
 
-def _validate_at_least_one_identifier_field(report):
+def _validate_at_least_one_identifier_field(report) -> bool:
     optional_fields = ["ip_address", "maxmind_id", "minfraud_id", "transaction_id"]
     if not any(field in report for field in optional_fields):
         # We return MultipleInvalid instead of ValueError to be consistent with what
         # voluptuous returns.
-        raise MultipleInvalid(
+        msg = (
             "The report must contain at least one of the following fields: "
             "'ip_address', 'maxmind_id', 'minfraud_id', 'transaction_id'."
+        )
+        raise MultipleInvalid(
+            [
+                RequiredFieldInvalid(
+                    msg,
+                )
+            ]
         )
     return True
 
 
-def validate_report(report):
+def validate_report(report) -> bool:
     """Validate minFraud Transaction Report fields."""
     _validate_report_schema(report)
     _validate_at_least_one_identifier_field(report)

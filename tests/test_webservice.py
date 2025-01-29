@@ -1,51 +1,61 @@
 import asyncio
+import builtins
 import json
 import os
+import unittest
 from functools import partial
-from io import open
-from typing import Type, Union
-from pytest_httpserver import HTTPServer
-import pytest
+from typing import Callable, Union, cast
 
+import pytest
+from pytest_httpserver import HTTPServer
+
+import minfraud.webservice
 from minfraud.errors import (
-    HTTPError,
-    InvalidRequestError,
     AuthenticationError,
+    HTTPError,
     InsufficientFundsError,
+    InvalidRequestError,
     MinFraudError,
     PermissionRequiredError,
 )
 from minfraud.models import Factors, Insights, Score
 from minfraud.webservice import AsyncClient, Client
 
-import minfraud.webservice
-import unittest
-
 minfraud.webservice._SCHEME = "http"
 
 
 class BaseTest(unittest.TestCase):
-    client_class: Union[Type[AsyncClient], Type[Client]] = Client
+    client: Union[AsyncClient, Client]
+    client_class: Union[type[AsyncClient], type[Client]] = Client
+    type: str
+    request_file: str
+    response_file: str
 
     @pytest.fixture(autouse=True)
-    def setup_httpserver(self, httpserver: HTTPServer):
+    def setup_httpserver(self, httpserver: HTTPServer) -> None:
         self.httpserver = httpserver
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.client = self.client_class(
             42,
             "abcdef123456",
-            host="{0}:{1}".format(self.httpserver.host, self.httpserver.port),
+            host=f"{self.httpserver.host}:{self.httpserver.port}",
         )
         test_dir = os.path.join(os.path.dirname(__file__), "data")
-        with open(os.path.join(test_dir, self.request_file), encoding="utf-8") as file:
+        with builtins.open(
+            os.path.join(test_dir, self.request_file),
+            encoding="utf-8",
+        ) as file:
             content = file.read()
         self.full_request = json.loads(content)
 
-        with open(os.path.join(test_dir, self.response_file), encoding="utf-8") as file:
+        with builtins.open(
+            os.path.join(test_dir, self.response_file),
+            encoding="utf-8",
+        ) as file:
             self.response = file.read()
 
-    def test_invalid_auth(self):
+    def test_invalid_auth(self) -> None:
         for error in (
             "ACCOUNT_ID_REQUIRED",
             "AUTHORIZATION_INVALID",
@@ -58,24 +68,25 @@ class BaseTest(unittest.TestCase):
                     status_code=401,
                 )
 
-    def test_invalid_request(self):
+    def test_invalid_request(self) -> None:
         with self.assertRaisesRegex(InvalidRequestError, "IP invalid"):
             self.create_error(text='{"code":"IP_ADDRESS_INVALID","error":"IP invalid"}')
 
-    def test_300_error(self):
+    def test_300_error(self) -> None:
         with self.assertRaisesRegex(
-            HTTPError, r"Received an unexpected HTTP status \(300\) for"
+            HTTPError,
+            r"Received an unexpected HTTP status \(300\) for",
         ):
             self.create_error(status_code=300)
 
-    def test_permission_required(self):
+    def test_permission_required(self) -> None:
         with self.assertRaisesRegex(PermissionRequiredError, "permission"):
             self.create_error(
                 text='{"code":"PERMISSION_REQUIRED","error":"permission required"}',
                 status_code=403,
             )
 
-    def test_400_with_invalid_json(self):
+    def test_400_with_invalid_json(self) -> None:
         with self.assertRaisesRegex(
             HTTPError,
             "Received a 400 error but it did not include the expected JSON"
@@ -83,17 +94,18 @@ class BaseTest(unittest.TestCase):
         ):
             self.create_error(text="{blah}")
 
-    def test_400_with_no_body(self):
+    def test_400_with_no_body(self) -> None:
         with self.assertRaisesRegex(HTTPError, "Received a 400 error with no body"):
             self.create_error()
 
-    def test_400_with_unexpected_content_type(self):
+    def test_400_with_unexpected_content_type(self) -> None:
         with self.assertRaisesRegex(
-            HTTPError, "Received a 400 with the following body: b?'?plain'?"
+            HTTPError,
+            "Received a 400 with the following body: b?'?plain'?",
         ):
             self.create_error(content_type="text/plain", text="plain")
 
-    def test_400_without_json_body(self):
+    def test_400_without_json_body(self) -> None:
         with self.assertRaisesRegex(
             HTTPError,
             "Received a 400 error but it did not include the expected JSON"
@@ -101,7 +113,7 @@ class BaseTest(unittest.TestCase):
         ):
             self.create_error(text="plain")
 
-    def test_400_with_unexpected_json(self):
+    def test_400_with_unexpected_json(self) -> None:
         with self.assertRaisesRegex(
             HTTPError,
             "Error response contains JSON but it does not specify code or"
@@ -109,15 +121,17 @@ class BaseTest(unittest.TestCase):
         ):
             self.create_error(text='{"not":"expected"}')
 
-    def test_500_error(self):
+    def test_500_error(self) -> None:
         with self.assertRaisesRegex(HTTPError, r"Received a server error \(500\) for"):
             self.create_error(status_code=500)
 
     def create_error(self, status_code=400, text="", content_type=None):
         uri = "/".join(
-            ["/minfraud/v2.0", "transactions", "report"]
-            if self.type == "report"
-            else ["/minfraud/v2.0", self.type]
+            (
+                ["/minfraud/v2.0", "transactions", "report"]
+                if self.type == "report"
+                else ["/minfraud/v2.0", self.type]
+            ),
         )
         if content_type is None:
             content_type = (
@@ -134,9 +148,11 @@ class BaseTest(unittest.TestCase):
 
     def create_success(self, text=None, client=None, request=None):
         uri = "/".join(
-            ["/minfraud/v2.0", "transactions", "report"]
-            if self.type == "report"
-            else ["/minfraud/v2.0", self.type]
+            (
+                ["/minfraud/v2.0", "transactions", "report"]
+                if self.type == "report"
+                else ["/minfraud/v2.0", self.type]
+            ),
         )
         if request is None:
             request = self.full_request
@@ -156,35 +172,39 @@ class BaseTest(unittest.TestCase):
     def run_client(self, v):
         return v
 
-    def test_named_constructor_args(self):
-        id = "47"
+    def test_named_constructor_args(self) -> None:
+        id = 47
         key = "1234567890ab"
         for client in (
             self.client_class(account_id=id, license_key=key),
             self.client_class(account_id=id, license_key=key),
         ):
-            self.assertEqual(client._account_id, id)
+            self.assertEqual(client._account_id, str(id))
             self.assertEqual(client._license_key, key)
 
-    def test_missing_constructor_args(self):
+    def test_missing_constructor_args(self) -> None:
         with self.assertRaises(TypeError):
-            self.client_class(license_key="1234567890ab")
+            self.client_class(license_key="1234567890ab")  # type: ignore[call-arg]
 
         with self.assertRaises(TypeError):
-            self.client_class("47")
+            self.client_class("47")  # type: ignore
 
 
 class BaseTransactionTest(BaseTest):
+    type: str
+    cls: Callable
+    request_file: str
+    response_file: str
 
-    def has_ip_location(self):
+    def has_ip_location(self) -> bool:
         return self.type in ["factors", "insights"]
 
-    def test_200(self):
+    def test_200(self) -> None:
         model = self.create_success()
         response = json.loads(self.response)
         cls = self.cls
         if self.has_ip_location():
-            cls = partial(cls, ("en",))
+            cls = cast(Callable, partial(cls, ("en",)))
         self.assertEqual(cls(**response), model)
         if self.has_ip_location():
             self.assertEqual("United Kingdom", model.ip_address.country.name)
@@ -193,7 +213,7 @@ class BaseTransactionTest(BaseTest):
             self.assertEqual("004", model.ip_address.traits.mobile_network_code)
             self.assertEqual("ANONYMOUS_IP", model.ip_address.risk_reasons[0].code)
 
-    def test_200_on_request_with_nones(self):
+    def test_200_on_request_with_nones(self) -> None:
         model = self.create_success(
             request={
                 "device": {"ip_address": "152.216.7.110", "accept_language": None},
@@ -205,13 +225,12 @@ class BaseTransactionTest(BaseTest):
                     },
                     None,
                 ],
-            }
+            },
         )
-        response = self.response
         self.assertEqual(0.01, model.risk_score)
 
-    def test_200_with_email_hashing(self):
-        uri = "/".join(["/minfraud/v2.0", self.type])
+    def test_200_with_email_hashing(self) -> None:
+        uri = f"/minfraud/v2.0/{self.type}"
         self.httpserver.expect_request(
             uri,
             method="POST",
@@ -219,7 +238,7 @@ class BaseTransactionTest(BaseTest):
                 "email": {
                     "address": "977577b140bfb7c516e4746204fbdb01",
                     "domain": "maxmind.com",
-                }
+                },
             },
         ).respond_with_data(
             self.response,
@@ -232,13 +251,13 @@ class BaseTransactionTest(BaseTest):
 
     # This was fixed in https://github.com/maxmind/minfraud-api-python/pull/78
 
-    def test_200_with_locales(self):
+    def test_200_with_locales(self) -> None:
         locales = ("fr",)
         client = self.client_class(
             42,
             "abcdef123456",
             locales=locales,
-            host="{0}:{1}".format(self.httpserver.host, self.httpserver.port),
+            host=f"{self.httpserver.host}:{self.httpserver.port}",
         )
         model = self.create_success(client=client)
         response = json.loads(self.response)
@@ -250,7 +269,7 @@ class BaseTransactionTest(BaseTest):
             self.assertEqual("Royaume-Uni", model.ip_address.country.name)
             self.assertEqual("Londres", model.ip_address.city.name)
 
-    def test_200_with_reserved_ip_warning(self):
+    def test_200_with_reserved_ip_warning(self) -> None:
         model = self.create_success(
             """
                 {
@@ -267,12 +286,12 @@ class BaseTransactionTest(BaseTest):
                         }
                     ]
                 }
-            """
+            """,
         )
 
         self.assertEqual(12, model.risk_score)
 
-    def test_200_with_no_risk_score_reasons(self):
+    def test_200_with_no_risk_score_reasons(self) -> None:
         if "risk_score_reasons" not in self.response:
             return
 
@@ -281,7 +300,7 @@ class BaseTransactionTest(BaseTest):
         model = self.create_success(text=json.dumps(response))
         self.assertEqual([], model.risk_score_reasons)
 
-    def test_200_with_no_body(self):
+    def test_200_with_no_body(self) -> None:
         with self.assertRaisesRegex(
             MinFraudError,
             "Received a 200 response but could not decode the response as"
@@ -289,7 +308,7 @@ class BaseTransactionTest(BaseTest):
         ):
             self.create_success(text="")
 
-    def test_200_with_invalid_json(self):
+    def test_200_with_invalid_json(self) -> None:
         with self.assertRaisesRegex(
             MinFraudError,
             "Received a 200 response but could not decode the response as"
@@ -297,7 +316,7 @@ class BaseTransactionTest(BaseTest):
         ):
             self.create_success(text="{")
 
-    def test_insufficient_funds(self):
+    def test_insufficient_funds(self) -> None:
         with self.assertRaisesRegex(InsufficientFundsError, "out of funds"):
             self.create_error(
                 text='{"code":"INSUFFICIENT_FUNDS","error":"out of funds"}',
@@ -331,10 +350,10 @@ class TestReportTransaction(BaseTest):
     request_file = "full-report-request.json"
     response_file = "report-response.json"
 
-    def test_204(self):
+    def test_204(self) -> None:
         self.create_success()
 
-    def test_204_on_request_with_nones(self):
+    def test_204_on_request_with_nones(self) -> None:
         self.create_success(
             request={
                 "ip_address": "81.2.69.60",
@@ -343,17 +362,17 @@ class TestReportTransaction(BaseTest):
                 "maxmind_id": None,
                 "minfraud_id": None,
                 "notes": None,
-            }
+            },
         )
 
 
-class AsyncBase:
-    def setUp(self):
+class AsyncBase(unittest.TestCase):
+    def setUp(self) -> None:
         self._loop = asyncio.new_event_loop()
         super().setUp()
 
-    def tearDown(self):
-        self._loop.run_until_complete(self.client.close())
+    def tearDown(self) -> None:
+        self._loop.run_until_complete(self.client.close())  # type: ignore
         self._loop.close()
         super().tearDown()
 
@@ -377,4 +396,4 @@ class TestAsyncReportTransaction(AsyncBase, TestReportTransaction):
     client_class = AsyncClient
 
 
-del BaseTest, BaseTransactionTest
+del AsyncBase, BaseTest, BaseTransactionTest
