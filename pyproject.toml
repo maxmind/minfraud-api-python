@@ -1,6 +1,6 @@
 [project]
 name = "minfraud"
-version = "2.12.0b1"
+version = "3.0.0"
 description = "MaxMind minFraud API"
 authors = [
     {name = "Gregory Oschwald", email = "goschwald@maxmind.com"},

@@ -1,3 +1,3 @@
 """Internal module for version (to prevent cyclic imports)."""
 
-__version__ = "2.12.0b1"
+__version__ = "3.0.0"
