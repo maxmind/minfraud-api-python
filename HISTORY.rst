@@ -3,8 +3,8 @@
 History
 -------
 
-3.0.0
-+++++++++++++++++++
+3.0.0 (2025-02-10)
+++++++++++++++++++
 
 * BREAKING CHANGE: The ``minfraud.model.*`` classes have been refactored to
   simplify them and make them more flexible. They are no longer subclass
