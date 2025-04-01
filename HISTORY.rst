@@ -3,6 +3,11 @@
 History
 -------
 
+3.1.0
+++++++++++++++++++
+
+* Added ``cryptomus`` to the ``/payment/processor`` validation.
+
 3.0.0 (2025-02-10)
 ++++++++++++++++++
 

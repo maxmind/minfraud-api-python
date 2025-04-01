@@ -139,6 +139,7 @@ _payment_processor = In(
         "coregateway",
         "creditguard",
         "credorax",
+        "cryptomus",
         "ct_payments",
         "cuentadigital",
         "curopayments",
