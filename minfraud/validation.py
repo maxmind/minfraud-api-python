@@ -1,4 +1,4 @@
-"""This is an internal module used for validating the minFraud request.
+"""Internal module used for validating the minFraud request.
 
 Internal code for validating the transaction dictionary.
 

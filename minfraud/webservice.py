@@ -91,7 +91,7 @@ class BaseClient:
         HTTPError,
         PermissionRequiredError,
     ]:
-        """Returns the exception for the error responses."""
+        """Return the exception for the error responses."""
         if 400 <= status < 500:
             return self._exception_for_4xx_status(status, content_type, raw_body, uri)
         if 500 <= status < 600:
@@ -111,7 +111,7 @@ class BaseClient:
         HTTPError,
         PermissionRequiredError,
     ]:
-        """Returns exception for error responses with 4xx status codes."""
+        """Return exception for error responses with 4xx status codes."""
         if not raw_body:
             return HTTPError(
                 f"Received a {status} error with no body",
@@ -164,7 +164,7 @@ class BaseClient:
         PermissionRequiredError,
         InsufficientFundsError,
     ]:
-        """Returns exception for error responses with the JSON body."""
+        """Return exception for error responses with the JSON body."""
         if code in (
             "ACCOUNT_ID_REQUIRED",
             "AUTHORIZATION_INVALID",
@@ -185,7 +185,7 @@ class BaseClient:
         raw_body: Optional[str],
         uri: str,
     ) -> HTTPError:
-        """Returns exception for error response with 5xx status codes."""
+        """Return exception for error response with 5xx status codes."""
         return HTTPError(
             f"Received a server error ({status}) for {uri}",
             status,
@@ -199,7 +199,7 @@ class BaseClient:
         raw_body: Optional[str],
         uri: str,
     ) -> HTTPError:
-        """Returns exception for responses with unexpected status codes."""
+        """Return exception for responses with unexpected status codes."""
         return HTTPError(
             f"Received an unexpected HTTP status ({status}) for {uri}",
             status,
@@ -223,7 +223,7 @@ class AsyncClient(BaseClient):
         timeout: float = 60,
         proxy: Optional[str] = None,
     ) -> None:
-        """Constructor for AsyncClient.
+        """Construct AsyncClient.
 
         :param account_id: Your MaxMind account ID
         :type account_id: int
@@ -462,7 +462,7 @@ class Client(BaseClient):
         timeout: float = 60,
         proxy: Optional[str] = None,
     ) -> None:
-        """Constructor for Client.
+        """Construct Client.
 
         :param account_id: Your MaxMind account ID
         :type account_id: int

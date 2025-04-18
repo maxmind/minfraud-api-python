@@ -1,4 +1,4 @@
-"""This is an internal module used for preparing the minFraud request.
+"""Internal module used for preparing the minFraud request.
 
 This code is only intended for internal use and is subject to change in ways
 that may break any direct use of it.
