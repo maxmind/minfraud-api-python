@@ -1,10 +1,4 @@
-"""
-minfraud.models
-~~~~~~~~~~~~~~~
-
-This module contains models for the minFraud response object.
-
-"""
+"""Models for the minFraud response object."""
 
 # pylint:disable=too-many-lines,too-many-instance-attributes,too-many-locals
 from collections.abc import Sequence
@@ -22,7 +16,7 @@ class _Serializable:
         return not self.__eq__(other)
 
     def to_dict(self) -> dict:
-        """Returns a dict of the object suitable for serialization."""
+        """Return a dict of the object suitable for serialization."""
         result = {}
         for key, value in self.__dict__.items():
             if hasattr(value, "to_dict") and callable(value.to_dict):

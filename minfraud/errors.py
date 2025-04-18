@@ -1,10 +1,4 @@
-"""
-minfraud.errors
-~~~~~~~~~~~~~~~
-
-This module contains errors that are raised by this package.
-
-"""
+"""Typed errors thrown by this library."""
 
 from typing import Optional
 

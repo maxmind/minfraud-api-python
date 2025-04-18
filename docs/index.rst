@@ -3,9 +3,9 @@
 
 .. include:: ../README.rst
 
-=======
-Modules
-=======
+==================
+Web Service Client
+==================
 
 .. automodule:: minfraud
     :members:
@@ -15,9 +15,17 @@ Modules
     :members:
     :no-undoc-members:
 
+===============
+Response Models
+===============
+
 .. automodule:: minfraud.models
     :members:
     :no-undoc-members:
+
+======
+Errors
+======
 
 .. automodule:: minfraud.errors
     :members:

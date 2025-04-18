@@ -1,10 +1,4 @@
-"""
-minfraud.webservice
-~~~~~~~~~~~~~~~~~~~
-
-This module contains the webservice client class.
-
-"""
+"""Client for minFraud Score, Insights, and Factors."""
 
 import json
 from collections.abc import Sequence
