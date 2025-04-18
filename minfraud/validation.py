@@ -435,8 +435,8 @@ def _validate_at_least_one_identifier_field(report) -> bool:
             [
                 RequiredFieldInvalid(
                     msg,
-                )
-            ]
+                ),
+            ],
         )
     return True
 

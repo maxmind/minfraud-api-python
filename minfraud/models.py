@@ -79,7 +79,9 @@ class IPRiskReason(_Serializable):
     reason: Optional[str]
 
     def __init__(
-        self, code: Optional[str] = None, reason: Optional[str] = None
+        self,
+        code: Optional[str] = None,
+        reason: Optional[str] = None,
     ) -> None:
         self.code = code
         self.reason = reason
