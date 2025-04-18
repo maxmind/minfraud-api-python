@@ -30,8 +30,10 @@ _REQUEST_UA = f"minFraud-API/{__version__} {requests.utils.default_user_agent()}
 _SCHEME = "https"
 
 
-# pylint: disable=too-many-instance-attributes, missing-class-docstring
+# pylint: disable=too-many-instance-attributes
 class BaseClient:
+    """Base class for minFraud clients."""
+
     _account_id: str
     _license_key: str
     _locales: Sequence[str]
@@ -50,6 +52,7 @@ class BaseClient:
         locales: Sequence[str] = ("en",),
         timeout: float = 60,
     ) -> None:
+        """Initialize the base client."""
         self._locales = locales
         self._account_id = str(account_id)
         self._license_key = license_key

@@ -20,30 +20,16 @@ class HTTPError(MinFraudError):
 
     This class represents an HTTP transport error. It extends
     :py:exc:`MinFraudError` and adds attributes of its own.
-
-    .. attribute:: http_status:
-
-      The HTTP status code returned
-
-      :type: int
-
-    .. attribute:: uri:
-
-      The URI queried
-
-      :type: str
-
-    .. attribute:: decoded_content:
-
-      The decoded response content
-
-      :type: str
-
     """
 
     http_status: Optional[int]
+    """The HTTP status code returned"""
+
     uri: Optional[str]
+    """The URI queried"""
+
     decoded_content: Optional[str]
+    """The decoded response content"""
 
     def __init__(
         self,
@@ -52,6 +38,7 @@ class HTTPError(MinFraudError):
         uri: Optional[str] = None,
         decoded_content: Optional[str] = None,
     ) -> None:
+        """Initialize an HTTPError instance."""
         super().__init__(message)
         self.http_status = http_status
         self.uri = uri
