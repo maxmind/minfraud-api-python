@@ -382,7 +382,7 @@ class CreditCard(_Serializable):
         is_prepaid: Optional[bool] = None,
         is_virtual: Optional[bool] = None,
         # pylint:disable=redefined-builtin
-        type: Optional[str] = None,
+        type: Optional[str] = None,  # noqa: A002
     ) -> None:
         """Initialize a CreditCard instance."""
         self.issuer = Issuer(**(issuer or {}))

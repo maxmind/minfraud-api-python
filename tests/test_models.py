@@ -1,7 +1,28 @@
-import unittest
-from typing import Any, Union
+from __future__ import annotations
 
-from minfraud.models import *
+import unittest
+from typing import Any
+
+from minfraud.models import (
+    BillingAddress,
+    CreditCard,
+    Device,
+    Disposition,
+    Email,
+    EmailDomain,
+    Factors,
+    GeoIP2Location,
+    Insights,
+    IPAddress,
+    Issuer,
+    Phone,
+    Reason,
+    RiskScoreReason,
+    Score,
+    ScoreIPAddress,
+    ServiceWarning,
+    ShippingAddress,
+)
 
 
 class TestModels(unittest.TestCase):
@@ -23,7 +44,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual(200, address.distance_to_billing_address)
 
     @property
-    def address_dict(self) -> dict[str, Union[bool, float]]:
+    def address_dict(self) -> dict[str, bool | float]:
         return {
             "is_in_ip_country": True,
             "latitude": 43.1,
@@ -32,7 +53,7 @@ class TestModels(unittest.TestCase):
             "is_postal_in_city": True,
         }
 
-    def check_address(self, address) -> None:
+    def check_address(self, address: BillingAddress | ShippingAddress) -> None:
         self.assertEqual(True, address.is_in_ip_country)
         self.assertEqual(True, address.is_postal_in_city)
         self.assertEqual(100, address.distance_to_ip_location)
@@ -374,7 +395,7 @@ class TestModels(unittest.TestCase):
             ],
         }
 
-    def check_insights_data(self, insights, uuid) -> None:
+    def check_insights_data(self, insights: Insights | Factors, uuid: str) -> None:
         self.assertEqual("US", insights.ip_address.country.iso_code)
         self.assertEqual(False, insights.ip_address.country.is_in_european_union)
         self.assertEqual(True, insights.credit_card.is_business)
@@ -396,7 +417,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual("INVALID_INPUT", insights.warnings[0].code)
         self.assertIsInstance(insights.warnings, list, "warnings is a list")
 
-    def check_risk_score_reasons_data(self, reasons) -> None:
+    def check_risk_score_reasons_data(self, reasons: list[RiskScoreReason]) -> None:
         self.assertEqual(1, len(reasons))
         self.assertEqual(45, reasons[0].multiplier)
         self.assertEqual(1, len(reasons[0].reasons))

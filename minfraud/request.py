@@ -264,7 +264,7 @@ _YAHOO_DOMAINS = {
 }
 
 
-def prepare_report(request: dict[str, Any], validate: bool):
+def prepare_report(request: dict[str, Any], validate: bool) -> dict[str, Any]:
     """Validate and prepare minFraud report."""
     cleaned_request = _copy_and_clean(request)
     if validate:
@@ -279,7 +279,7 @@ def prepare_transaction(
     request: dict[str, Any],
     validate: bool,
     hash_email: bool,
-):
+) -> dict[str, Any]:
     """Validate and prepare minFraud transaction."""
     cleaned_request = _copy_and_clean(request)
     if validate:
@@ -306,7 +306,7 @@ def _copy_and_clean(data: Any) -> Any:
     return data
 
 
-def clean_credit_card(credit_card) -> None:
+def clean_credit_card(credit_card: dict[str, Any]) -> None:
     """Clean the credit_card input of a transaction request."""
     last4 = credit_card.pop("last_4_digits", None)
     if last4:
@@ -318,7 +318,7 @@ def clean_credit_card(credit_card) -> None:
         credit_card["last_digits"] = last4
 
 
-def maybe_hash_email(transaction) -> None:
+def maybe_hash_email(transaction: dict[str, Any]) -> None:
     """Hash email address in transaction, if present."""
     try:
         email = transaction["email"]

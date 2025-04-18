@@ -660,6 +660,7 @@ dependencies = [
     { name = "email-validator" },
     { name = "geoip2" },
     { name = "requests" },
+    { name = "typing-extensions" },
     { name = "voluptuous" },
 ]
 
@@ -683,6 +684,7 @@ requires-dist = [
     { name = "email-validator", specifier = ">=2.0.0,<3.0.0" },
     { name = "geoip2", specifier = ">=5.0.1,<6.0.0" },
     { name = "requests", specifier = ">=2.24.0,<3.0.0" },
+    { name = "typing-extensions", specifier = ">=4.13.2" },
     { name = "voluptuous" },
 ]
 

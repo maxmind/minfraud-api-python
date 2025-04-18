@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import unittest
 from decimal import Decimal
+from typing import Any
 
 from voluptuous import MultipleInvalid
 
@@ -7,26 +10,26 @@ from minfraud.validation import validate_report, validate_transaction
 
 
 class ValidationBase(unittest.TestCase):
-    def setup_transaction(self, transaction) -> None:
+    def setup_transaction(self, transaction: dict[str, Any]) -> None:
         if "device" not in transaction:
             transaction["device"] = {}
 
         if "ip_address" not in transaction["device"]:
             transaction["device"]["ip_address"] = "1.1.1.1"
 
-    def check_invalid_transaction(self, transaction) -> None:
+    def check_invalid_transaction(self, transaction: dict[str, Any]) -> None:
         self.setup_transaction(transaction)
         with self.assertRaises(MultipleInvalid, msg=f"{transaction} is invalid"):
             validate_transaction(transaction)
 
-    def check_transaction(self, transaction) -> None:
+    def check_transaction(self, transaction: dict[str, Any]) -> None:
         self.setup_transaction(transaction)
         try:
             validate_transaction(transaction)
         except MultipleInvalid as e:
             self.fail(f"MultipleInvalid {e.msg} thrown for {transaction}")
 
-    def check_transaction_str_type(self, object, key) -> None:
+    def check_transaction_str_type(self, object: str, key: str) -> None:
         self.check_transaction({object: {key: "string"}})
         self.check_invalid_transaction({object: {key: 12}})
 
@@ -36,38 +39,38 @@ class ValidationBase(unittest.TestCase):
         for bad in ("1.2", "1", -1, -1.1, 0):
             self.check_invalid_transaction(f(bad))
 
-    def check_bool(self, object, key) -> None:
+    def check_bool(self, object: str, key: str) -> None:
         for good in (True, False):
             self.check_transaction({object: {key: good}})
         for bad in ("", 0, "True"):
             self.check_invalid_transaction({object: {key: bad}})
 
-    def setup_report(self, report) -> None:
+    def setup_report(self, report: dict[str, Any]) -> None:
         if "ip_address" not in report:
             report["ip_address"] = "1.2.3.4"
 
         if "tag" not in report:
             report["tag"] = "chargeback"
 
-    def check_invalid_report(self, report) -> None:
+    def check_invalid_report(self, report: dict[str, Any]) -> None:
         self.setup_report(report)
         self.check_invalid_report_no_setup(report)
 
-    def check_invalid_report_no_setup(self, report) -> None:
+    def check_invalid_report_no_setup(self, report: dict[str, Any]) -> None:
         with self.assertRaises(MultipleInvalid, msg=f"{report} is invalid"):
             validate_report(report)
 
-    def check_report(self, report) -> None:
+    def check_report(self, report: dict[str, Any]) -> None:
         self.setup_report(report)
         self.check_report_no_setup(report)
 
-    def check_report_no_setup(self, report) -> None:
+    def check_report_no_setup(self, report: dict[str, Any]) -> None:
         try:
             validate_report(report)
         except MultipleInvalid as e:
             self.fail(f"MultipleInvalid {e.msg} thrown for {report}")
 
-    def check_report_str_type(self, key) -> None:
+    def check_report_str_type(self, key: str) -> None:
         self.check_report({key: "string"})
         self.check_invalid_report({key: 12})
 

@@ -14,7 +14,7 @@ import uuid
 from decimal import Decimal
 from typing import Optional
 
-from email_validator import validate_email  # type: ignore
+from email_validator import validate_email
 from voluptuous import (
     All,
     Any,

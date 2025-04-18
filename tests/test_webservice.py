@@ -1,13 +1,14 @@
+from __future__ import annotations
+
 import asyncio
 import builtins
 import json
 import os
 import unittest
 from functools import partial
-from typing import Callable, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, cast
 
 import pytest
-from pytest_httpserver import HTTPServer
 
 import minfraud.webservice
 from minfraud.errors import (
@@ -21,12 +22,15 @@ from minfraud.errors import (
 from minfraud.models import Factors, Insights, Score
 from minfraud.webservice import AsyncClient, Client
 
-minfraud.webservice._SCHEME = "http"
+if TYPE_CHECKING:
+    from pytest_httpserver import HTTPServer
+
+minfraud.webservice._SCHEME = "http"  # noqa: SLF001
 
 
 class BaseTest(unittest.TestCase):
-    client: Union[AsyncClient, Client]
-    client_class: Union[type[AsyncClient], type[Client]] = Client
+    client: AsyncClient | Client
+    client_class: type[AsyncClient | Client] = Client
     type: str
     request_file: str
     response_file: str
@@ -125,7 +129,12 @@ class BaseTest(unittest.TestCase):
         with self.assertRaisesRegex(HTTPError, r"Received a server error \(500\) for"):
             self.create_error(status_code=500)
 
-    def create_error(self, status_code=400, text="", content_type=None):
+    def create_error(
+        self,
+        status_code: int = 400,
+        text: str = "",
+        content_type: str | None = None,
+    ):
         uri = "/".join(
             (
                 ["/minfraud/v2.0", "transactions", "report"]
@@ -146,7 +155,12 @@ class BaseTest(unittest.TestCase):
         )
         return self.run_client(getattr(self.client, self.type)(self.full_request))
 
-    def create_success(self, text=None, client=None, request=None):
+    def create_success(
+        self,
+        text: str | None = None,
+        client: AsyncClient | Client | None = None,
+        request: dict[str, Any] | None = None,
+    ):
         uri = "/".join(
             (
                 ["/minfraud/v2.0", "transactions", "report"]
