@@ -149,7 +149,7 @@ class BaseClient:
         except ValueError:
             return HTTPError(
                 f"Received a {status} error but it did not "
-                + f"include the expected JSON body: {raw_body}",
+                f"include the expected JSON body: {raw_body}",
                 status,
                 uri,
                 raw_body,
@@ -293,7 +293,7 @@ class AsyncClient(BaseClient):
           InvalidRequestError, HTTPError, MinFraudError,
         """
         return cast(
-            Factors,
+            "Factors",
             await self._response_for(
                 self._factors_uri,
                 partial(Factors, self._locales),
@@ -332,7 +332,7 @@ class AsyncClient(BaseClient):
           InvalidRequestError, HTTPError, MinFraudError,
         """
         return cast(
-            Insights,
+            "Insights",
             await self._response_for(
                 self._insights_uri,
                 partial(Insights, self._locales),
@@ -371,7 +371,7 @@ class AsyncClient(BaseClient):
           InvalidRequestError, HTTPError, MinFraudError,
         """
         return cast(
-            Score,
+            "Score",
             await self._response_for(
                 self._score_uri,
                 Score,
@@ -551,7 +551,7 @@ class Client(BaseClient):
           InvalidRequestError, HTTPError, MinFraudError,
         """
         return cast(
-            Factors,
+            "Factors",
             self._response_for(
                 self._factors_uri,
                 partial(Factors, self._locales),
@@ -590,7 +590,7 @@ class Client(BaseClient):
           InvalidRequestError, HTTPError, MinFraudError,
         """
         return cast(
-            Insights,
+            "Insights",
             self._response_for(
                 self._insights_uri,
                 partial(Insights, self._locales),
@@ -629,7 +629,7 @@ class Client(BaseClient):
           InvalidRequestError, HTTPError, MinFraudError,
         """
         return cast(
-            Score,
+            "Score",
             self._response_for(
                 self._score_uri,
                 Score,

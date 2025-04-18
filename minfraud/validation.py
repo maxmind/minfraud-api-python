@@ -307,7 +307,8 @@ _price = All(_any_number, Range(min=0, min_included=False))
 def _uri(s: str) -> str:
     parsed = urllib.parse.urlparse(s)
     if parsed.scheme not in ["http", "https"] or not parsed.netloc:
-        raise UrlInvalid("URL is invalid")
+        msg = "URL is invalid"
+        raise UrlInvalid(msg)
     return s
 
 

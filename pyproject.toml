@@ -88,6 +88,9 @@ ignore = [
     "PT027",
 ]
 
+[tool.ruff.lint.flake8-builtins]
+ignorelist = ["id"]
+
 [tool.ruff.lint.per-file-ignores]
 "minfraud/models,.py" = [ "D107", "PLR0913" ]
 "tests/*" = ["ANN201", "D"]

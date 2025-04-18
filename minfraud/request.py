@@ -271,7 +271,8 @@ def prepare_report(request: dict[str, Any], validate: bool) -> dict[str, Any]:
         try:
             validate_report(cleaned_request)
         except MultipleInvalid as ex:
-            raise InvalidRequestError(f"Invalid report data: {ex}") from ex
+            msg = f"Invalid report data: {ex}"
+            raise InvalidRequestError(msg) from ex
     return cleaned_request
 
 
@@ -286,7 +287,8 @@ def prepare_transaction(
         try:
             validate_transaction(cleaned_request)
         except MultipleInvalid as ex:
-            raise InvalidRequestError(f"Invalid transaction data: {ex}") from ex
+            msg = f"Invalid transaction data: {ex}"
+            raise InvalidRequestError(msg) from ex
 
     if hash_email:
         maybe_hash_email(cleaned_request)

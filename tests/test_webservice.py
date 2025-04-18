@@ -218,7 +218,7 @@ class BaseTransactionTest(BaseTest):
         response = json.loads(self.response)
         cls = self.cls
         if self.has_ip_location():
-            cls = cast(Callable, partial(cls, ("en",)))
+            cls = cast("Callable", partial(cls, ("en",)))
         self.assertEqual(cls(**response), model)
         if self.has_ip_location():
             self.assertEqual("United Kingdom", model.ip_address.country.name)
