@@ -1,9 +1,4 @@
-"""
-minfraud
-~~~~~~~~
-
-A client API to MaxMind's minFraud Score and Insights web services.
-"""
+"""minFraud client module."""
 
 # flake8: noqa: F401
 from .errors import (

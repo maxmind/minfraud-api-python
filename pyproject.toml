@@ -10,6 +10,7 @@ dependencies = [
     "email_validator>=2.0.0,<3.0.0",
     "geoip2>=5.0.1,<6.0.0",
     "requests>=2.24.0,<3.0.0",
+    "typing-extensions>=4.13.2",
     "voluptuous",
 ]
 requires-python = ">=3.9"
@@ -32,9 +33,18 @@ classifiers = [
     "Topic :: Internet :: WWW/HTTP",
 ]
 
-[project.optional-dependencies]
-test = [
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
     "pytest-httpserver>=1.0.10",
+    "types-requests>=2.32.0.20250328",
+]
+lint = [
+    "black>=25.1.0",
+    "flake8>=7.2.0",
+    "mypy>=1.15.0",
+    "pylint>=3.3.6",
+    "ruff>=0.11.6",
 ]
 
 [project.urls]
@@ -77,6 +87,9 @@ ignore = [
     "PT009",
     "PT027",
 ]
+
+[tool.ruff.lint.flake8-builtins]
+ignorelist = ["id"]
 
 [tool.ruff.lint.per-file-ignores]
 "minfraud/models,.py" = [ "D107", "PLR0913" ]
