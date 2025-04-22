@@ -1,21 +1,15 @@
-"""
-minfraud.webservice
-~~~~~~~~~~~~~~~~~~~
+"""Client for minFraud Score, Insights, and Factors."""
 
-This module contains the webservice client class.
-
-"""
+from __future__ import annotations
 
 import json
-from collections.abc import Sequence
 from functools import partial
-from typing import Any, Callable, Optional, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, cast
 
 import aiohttp
 import aiohttp.http
 import requests
 import requests.utils
-from requests.models import Response
 
 from .errors import (
     AuthenticationError,
@@ -29,6 +23,18 @@ from .models import Factors, Insights, Score
 from .request import prepare_report, prepare_transaction
 from .version import __version__
 
+if TYPE_CHECKING:
+    import sys
+    import types
+    from collections.abc import Sequence
+
+    from requests.models import Response
+
+    if sys.version_info >= (3, 11):
+        from typing import Self
+    else:
+        from typing_extensions import Self
+
 _AIOHTTP_UA = f"minFraud-API/{__version__} {aiohttp.http.SERVER_SOFTWARE}"
 
 _REQUEST_UA = f"minFraud-API/{__version__} {requests.utils.default_user_agent()}"
@@ -36,8 +42,10 @@ _REQUEST_UA = f"minFraud-API/{__version__} {requests.utils.default_user_agent()}
 _SCHEME = "https"
 
 
-# pylint: disable=too-many-instance-attributes, missing-class-docstring
+# pylint: disable=too-many-instance-attributes
 class BaseClient:
+    """Base class for minFraud clients."""
+
     _account_id: str
     _license_key: str
     _locales: Sequence[str]
@@ -56,6 +64,7 @@ class BaseClient:
         locales: Sequence[str] = ("en",),
         timeout: float = 60,
     ) -> None:
+        """Initialize the base client."""
         self._locales = locales
         self._account_id = str(account_id)
         self._license_key = license_key
@@ -71,33 +80,36 @@ class BaseClient:
         raw_body: str,
         uri: str,
         model_class: Callable,
-    ) -> Union[Score, Factors, Insights]:
+    ) -> Score | Factors | Insights:
         """Handle successful response."""
         try:
             decoded_body = json.loads(raw_body)
         except ValueError as ex:
-            raise MinFraudError(
+            msg = (
                 "Received a 200 response but could not decode the "
-                f"response as JSON: {raw_body}",
+                f"response as JSON: {raw_body}"
+            )
+            raise MinFraudError(
+                msg,
                 200,
                 uri,
             ) from ex
-        return model_class(**decoded_body)  # type: ignore
+        return model_class(**decoded_body)
 
     def _exception_for_error(
         self,
         status: int,
-        content_type: Optional[str],
+        content_type: str | None,
         raw_body: str,
         uri: str,
-    ) -> Union[
-        AuthenticationError,
-        InsufficientFundsError,
-        InvalidRequestError,
-        HTTPError,
-        PermissionRequiredError,
-    ]:
-        """Returns the exception for the error responses."""
+    ) -> (
+        AuthenticationError
+        | InsufficientFundsError
+        | InvalidRequestError
+        | HTTPError
+        | PermissionRequiredError
+    ):
+        """Return the exception for the error responses."""
         if 400 <= status < 500:
             return self._exception_for_4xx_status(status, content_type, raw_body, uri)
         if 500 <= status < 600:
@@ -107,17 +119,17 @@ class BaseClient:
     def _exception_for_4xx_status(
         self,
         status: int,
-        content_type: Optional[str],
+        content_type: str | None,
         raw_body: str,
         uri: str,
-    ) -> Union[
-        AuthenticationError,
-        InsufficientFundsError,
-        InvalidRequestError,
-        HTTPError,
-        PermissionRequiredError,
-    ]:
-        """Returns exception for error responses with 4xx status codes."""
+    ) -> (
+        AuthenticationError
+        | InsufficientFundsError
+        | InvalidRequestError
+        | HTTPError
+        | PermissionRequiredError
+    ):
+        """Return exception for error responses with 4xx status codes."""
         if not raw_body:
             return HTTPError(
                 f"Received a {status} error with no body",
@@ -137,7 +149,7 @@ class BaseClient:
         except ValueError:
             return HTTPError(
                 f"Received a {status} error but it did not "
-                + f"include the expected JSON body: {raw_body}",
+                f"include the expected JSON body: {raw_body}",
                 status,
                 uri,
                 raw_body,
@@ -164,13 +176,13 @@ class BaseClient:
         code: str,
         status: int,
         uri: str,
-    ) -> Union[
-        InvalidRequestError,
-        AuthenticationError,
-        PermissionRequiredError,
-        InsufficientFundsError,
-    ]:
-        """Returns exception for error responses with the JSON body."""
+    ) -> (
+        InvalidRequestError
+        | AuthenticationError
+        | PermissionRequiredError
+        | InsufficientFundsError
+    ):
+        """Return exception for error responses with the JSON body."""
         if code in (
             "ACCOUNT_ID_REQUIRED",
             "AUTHORIZATION_INVALID",
@@ -188,10 +200,10 @@ class BaseClient:
     @staticmethod
     def _exception_for_5xx_status(
         status: int,
-        raw_body: Optional[str],
+        raw_body: str | None,
         uri: str,
     ) -> HTTPError:
-        """Returns exception for error response with 5xx status codes."""
+        """Return exception for error response with 5xx status codes."""
         return HTTPError(
             f"Received a server error ({status}) for {uri}",
             status,
@@ -202,10 +214,10 @@ class BaseClient:
     @staticmethod
     def _exception_for_unexpected_status(
         status: int,
-        raw_body: Optional[str],
+        raw_body: str | None,
         uri: str,
     ) -> HTTPError:
-        """Returns exception for responses with unexpected status codes."""
+        """Return exception for responses with unexpected status codes."""
         return HTTPError(
             f"Received an unexpected HTTP status ({status}) for {uri}",
             status,
@@ -218,7 +230,7 @@ class AsyncClient(BaseClient):
     """Async client for accessing the minFraud web services."""
 
     _existing_session: aiohttp.ClientSession
-    _proxy: Optional[str]
+    _proxy: str | None
 
     def __init__(
         self,
@@ -227,9 +239,9 @@ class AsyncClient(BaseClient):
         host: str = "minfraud.maxmind.com",
         locales: Sequence[str] = ("en",),
         timeout: float = 60,
-        proxy: Optional[str] = None,
+        proxy: str | None = None,
     ) -> None:
-        """Constructor for AsyncClient.
+        """Construct AsyncClient.
 
         :param account_id: Your MaxMind account ID
         :type account_id: int
@@ -281,7 +293,7 @@ class AsyncClient(BaseClient):
           InvalidRequestError, HTTPError, MinFraudError,
         """
         return cast(
-            Factors,
+            "Factors",
             await self._response_for(
                 self._factors_uri,
                 partial(Factors, self._locales),
@@ -320,7 +332,7 @@ class AsyncClient(BaseClient):
           InvalidRequestError, HTTPError, MinFraudError,
         """
         return cast(
-            Insights,
+            "Insights",
             await self._response_for(
                 self._insights_uri,
                 partial(Insights, self._locales),
@@ -359,7 +371,7 @@ class AsyncClient(BaseClient):
           InvalidRequestError, HTTPError, MinFraudError,
         """
         return cast(
-            Score,
+            "Score",
             await self._response_for(
                 self._score_uri,
                 Score,
@@ -371,7 +383,7 @@ class AsyncClient(BaseClient):
 
     async def report(
         self,
-        report: dict[str, Optional[str]],
+        report: dict[str, str | None],
         validate: bool = True,
     ) -> None:
         """Send a transaction report to the Report Transaction endpoint.
@@ -408,7 +420,7 @@ class AsyncClient(BaseClient):
         request: dict[str, Any],
         validate: bool,
         hash_email: bool,
-    ) -> Union[Score, Factors, Insights]:
+    ) -> Score | Factors | Insights:
         """Send request and create response object."""
         prepared_request = prepare_transaction(request, validate, hash_email)
         async with await self._do_request(uri, prepared_request) as response:
@@ -446,17 +458,22 @@ class AsyncClient(BaseClient):
         if hasattr(self, "_existing_session"):
             await self._existing_session.close()
 
-    async def __aenter__(self) -> "AsyncClient":
+    async def __aenter__(self) -> Self:
         return self
 
-    async def __aexit__(self, exc_type: None, exc_value: None, traceback: None) -> None:
+    async def __aexit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: types.TracebackType | None,
+    ) -> None:
         await self.close()
 
 
 class Client(BaseClient):
     """Synchronous client for accessing the minFraud web services."""
 
-    _proxies: Optional[dict[str, str]]
+    _proxies: dict[str, str] | None
     _session: requests.Session
 
     def __init__(
@@ -466,9 +483,9 @@ class Client(BaseClient):
         host: str = "minfraud.maxmind.com",
         locales: Sequence[str] = ("en",),
         timeout: float = 60,
-        proxy: Optional[str] = None,
+        proxy: str | None = None,
     ) -> None:
-        """Constructor for Client.
+        """Construct Client.
 
         :param account_id: Your MaxMind account ID
         :type account_id: int
@@ -534,7 +551,7 @@ class Client(BaseClient):
           InvalidRequestError, HTTPError, MinFraudError,
         """
         return cast(
-            Factors,
+            "Factors",
             self._response_for(
                 self._factors_uri,
                 partial(Factors, self._locales),
@@ -573,7 +590,7 @@ class Client(BaseClient):
           InvalidRequestError, HTTPError, MinFraudError,
         """
         return cast(
-            Insights,
+            "Insights",
             self._response_for(
                 self._insights_uri,
                 partial(Insights, self._locales),
@@ -612,7 +629,7 @@ class Client(BaseClient):
           InvalidRequestError, HTTPError, MinFraudError,
         """
         return cast(
-            Score,
+            "Score",
             self._response_for(
                 self._score_uri,
                 Score,
@@ -622,7 +639,7 @@ class Client(BaseClient):
             ),
         )
 
-    def report(self, report: dict[str, Optional[str]], validate: bool = True) -> None:
+    def report(self, report: dict[str, str | None], validate: bool = True) -> None:
         """Send a transaction report to the Report Transaction endpoint.
 
         :param report: A dictionary containing the transaction report to be sent
@@ -657,7 +674,7 @@ class Client(BaseClient):
         request: dict[str, Any],
         validate: bool,
         hash_email: bool,
-    ) -> Union[Score, Factors, Insights]:
+    ) -> Score | Factors | Insights:
         """Send request and create response object."""
         prepared_request = prepare_transaction(request, validate, hash_email)
 
@@ -684,8 +701,13 @@ class Client(BaseClient):
         """
         self._session.close()
 
-    def __enter__(self) -> "Client":
+    def __enter__(self) -> Self:
         return self
 
-    def __exit__(self, exc_type: None, exc_value: None, traceback: None) -> None:
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: types.TracebackType | None,
+    ) -> None:
         self.close()

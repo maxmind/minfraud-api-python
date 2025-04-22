@@ -1,4 +1,4 @@
-"""This is an internal module used for validating the minFraud request.
+"""Internal module used for validating the minFraud request.
 
 Internal code for validating the transaction dictionary.
 
@@ -14,7 +14,7 @@ import uuid
 from decimal import Decimal
 from typing import Optional
 
-from email_validator import validate_email  # type: ignore
+from email_validator import validate_email
 from voluptuous import (
     All,
     Any,
@@ -307,7 +307,8 @@ _price = All(_any_number, Range(min=0, min_included=False))
 def _uri(s: str) -> str:
     parsed = urllib.parse.urlparse(s)
     if parsed.scheme not in ["http", "https"] or not parsed.netloc:
-        raise UrlInvalid("URL is invalid")
+        msg = "URL is invalid"
+        raise UrlInvalid(msg)
     return s
 
 
@@ -435,8 +436,8 @@ def _validate_at_least_one_identifier_field(report) -> bool:
             [
                 RequiredFieldInvalid(
                     msg,
-                )
-            ]
+                ),
+            ],
         )
     return True
 

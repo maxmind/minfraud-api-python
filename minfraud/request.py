@@ -1,4 +1,4 @@
-"""This is an internal module used for preparing the minFraud request.
+"""Internal module used for preparing the minFraud request.
 
 This code is only intended for internal use and is subject to change in ways
 that may break any direct use of it.
@@ -264,14 +264,15 @@ _YAHOO_DOMAINS = {
 }
 
 
-def prepare_report(request: dict[str, Any], validate: bool):
+def prepare_report(request: dict[str, Any], validate: bool) -> dict[str, Any]:
     """Validate and prepare minFraud report."""
     cleaned_request = _copy_and_clean(request)
     if validate:
         try:
             validate_report(cleaned_request)
         except MultipleInvalid as ex:
-            raise InvalidRequestError(f"Invalid report data: {ex}") from ex
+            msg = f"Invalid report data: {ex}"
+            raise InvalidRequestError(msg) from ex
     return cleaned_request
 
 
@@ -279,14 +280,15 @@ def prepare_transaction(
     request: dict[str, Any],
     validate: bool,
     hash_email: bool,
-):
+) -> dict[str, Any]:
     """Validate and prepare minFraud transaction."""
     cleaned_request = _copy_and_clean(request)
     if validate:
         try:
             validate_transaction(cleaned_request)
         except MultipleInvalid as ex:
-            raise InvalidRequestError(f"Invalid transaction data: {ex}") from ex
+            msg = f"Invalid transaction data: {ex}"
+            raise InvalidRequestError(msg) from ex
 
     if hash_email:
         maybe_hash_email(cleaned_request)
@@ -306,7 +308,7 @@ def _copy_and_clean(data: Any) -> Any:
     return data
 
 
-def clean_credit_card(credit_card) -> None:
+def clean_credit_card(credit_card: dict[str, Any]) -> None:
     """Clean the credit_card input of a transaction request."""
     last4 = credit_card.pop("last_4_digits", None)
     if last4:
@@ -318,7 +320,7 @@ def clean_credit_card(credit_card) -> None:
         credit_card["last_digits"] = last4
 
 
-def maybe_hash_email(transaction) -> None:
+def maybe_hash_email(transaction: dict[str, Any]) -> None:
     """Hash email address in transaction, if present."""
     try:
         email = transaction["email"]

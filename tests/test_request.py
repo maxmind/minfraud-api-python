@@ -1,4 +1,5 @@
 import unittest
+from typing import Any, cast
 
 from minfraud.request import (
     _clean_email,
@@ -167,7 +168,7 @@ class TestRequest(unittest.TestCase):
             with self.subTest(test["name"]):
                 transaction = test["input"]
 
-                maybe_hash_email(transaction)
+                maybe_hash_email(cast("dict[str, Any]", transaction))
 
                 self.assertEqual(test["expected"], transaction)
 
@@ -212,49 +213,51 @@ class TestRequest(unittest.TestCase):
             with self.subTest(test["name"]):
                 transaction = test["input"]
 
-                clean_credit_card(transaction)
+                clean_credit_card(cast("dict[str, Any]", transaction))
 
                 self.assertEqual(test["expected"], transaction)
 
+    def test_clean_email(self) -> None:
+        tests: list[dict[str, str | None]] = [
+            {"input": "", "output": None},
+            {"input": "fasfs", "output": None},
+            {"input": "test@gmail", "output": "test@gmail"},
+            {"input": "e4d909c290d0fb1ca068ffaddf22cbd0", "output": None},
+            {"input": "Test@maxmind", "output": "test@maxmind"},
+            {"input": "Test@maxmind.com", "output": "test@maxmind.com"},
+            {"input": "Test+007@maxmind.com", "output": "test@maxmind.com"},
+            {"input": "Test+007+008@maxmind.com", "output": "test@maxmind.com"},
+            {"input": "Test+@maxmind.com", "output": "test@maxmind.com"},
+            {"input": "+@maxmind.com", "output": "+@maxmind.com"},
+            {"input": "  Test@maxmind.com", "output": "test@maxmind.com"},
+            {
+                "input": "Test@maxmind.com|abc124472372",
+                "output": "test@maxmind.com|abc124472372",
+            },
+            {"input": "Test+foo@yahoo.com", "output": "test+foo@yahoo.com"},
+            {"input": "Test-foo@yahoo.com", "output": "test@yahoo.com"},
+            {"input": "Test-foo-foo2@yahoo.com", "output": "test@yahoo.com"},
+            {"input": "Test-foo@gmail.com", "output": "test-foo@gmail.com"},
+            {"input": "gamil.com@gamil.com", "output": "gamilcom@gmail.com"},
+            {"input": "Test+alias@bücher.com", "output": "test@xn--bcher-kva.com"},
+            {"input": "foo@googlemail.com", "output": "foo@gmail.com"},
+            {"input": "foo.bar@gmail.com", "output": "foobar@gmail.com"},
+            {"input": "alias@user.fastmail.com", "output": "user@fastmail.com"},
+            {"input": "foo-bar@ymail.com", "output": "foo@ymail.com"},
+            {"input": "foo@example.com.com", "output": "foo@example.com"},
+            {"input": "foo@example.comfoo", "output": "foo@example.comfoo"},
+            {"input": "foo@example.cam", "output": "foo@example.cam"},
+            {"input": "foo@10000gmail.com", "output": "foo@gmail.com"},
+            {"input": "foo@example.comcom", "output": "foo@example.com"},
+            {"input": "foo@example.com.", "output": "foo@example.com"},
+            {"input": "foo@example.com...", "output": "foo@example.com"},
+            {
+                "input": "example@bu\u0308cher.com",
+                "output": "example@xn--bcher-kva.com",
+            },
+            {"input": "example@b\u00fccher.com", "output": "example@xn--bcher-kva.com"},
+        ]
 
-def test_clean_email() -> None:
-    tests = [
-        {"input": "", "output": None},
-        {"input": "fasfs", "output": None},
-        {"input": "test@gmail", "output": "test@gmail"},
-        {"input": "e4d909c290d0fb1ca068ffaddf22cbd0", "output": None},
-        {"input": "Test@maxmind", "output": "test@maxmind"},
-        {"input": "Test@maxmind.com", "output": "test@maxmind.com"},
-        {"input": "Test+007@maxmind.com", "output": "test@maxmind.com"},
-        {"input": "Test+007+008@maxmind.com", "output": "test@maxmind.com"},
-        {"input": "Test+@maxmind.com", "output": "test@maxmind.com"},
-        {"input": "+@maxmind.com", "output": "+@maxmind.com"},
-        {"input": "  Test@maxmind.com", "output": "test@maxmind.com"},
-        {
-            "input": "Test@maxmind.com|abc124472372",
-            "output": "test@maxmind.com|abc124472372",
-        },
-        {"input": "Test+foo@yahoo.com", "output": "test+foo@yahoo.com"},
-        {"input": "Test-foo@yahoo.com", "output": "test@yahoo.com"},
-        {"input": "Test-foo-foo2@yahoo.com", "output": "test@yahoo.com"},
-        {"input": "Test-foo@gmail.com", "output": "test-foo@gmail.com"},
-        {"input": "gamil.com@gamil.com", "output": "gamilcom@gmail.com"},
-        {"input": "Test+alias@bücher.com", "output": "test@xn--bcher-kva.com"},
-        {"input": "foo@googlemail.com", "output": "foo@gmail.com"},
-        {"input": "foo.bar@gmail.com", "output": "foobar@gmail.com"},
-        {"input": "alias@user.fastmail.com", "output": "user@fastmail.com"},
-        {"input": "foo-bar@ymail.com", "output": "foo@ymail.com"},
-        {"input": "foo@example.com.com", "output": "foo@example.com"},
-        {"input": "foo@example.comfoo", "output": "foo@example.comfoo"},
-        {"input": "foo@example.cam", "output": "foo@example.cam"},
-        {"input": "foo@10000gmail.com", "output": "foo@gmail.com"},
-        {"input": "foo@example.comcom", "output": "foo@example.com"},
-        {"input": "foo@example.com.", "output": "foo@example.com"},
-        {"input": "foo@example.com...", "output": "foo@example.com"},
-        {"input": "example@bu\u0308cher.com", "output": "example@xn--bcher-kva.com"},
-        {"input": "example@b\u00fccher.com", "output": "example@xn--bcher-kva.com"},
-    ]
-
-    for test in tests:
-        got, _ = _clean_email(test["input"])  # type: ignore
-        assert test["output"] == got  # type: ignore
+        for test in tests:
+            got, _ = _clean_email(cast("str", test["input"]))
+            self.assertEqual(test["output"], got)

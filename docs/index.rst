@@ -3,24 +3,40 @@
 
 .. include:: ../README.rst
 
-=======
-Modules
-=======
+==================
+Web Service Client
+==================
 
 .. automodule:: minfraud
     :members:
+    :inherited-members:
+    :show-inheritance:
     :no-undoc-members:
 
 .. automodule:: minfraud.webservice
     :members:
+    :inherited-members:
+    :show-inheritance:
     :no-undoc-members:
+
+===============
+Response Models
+===============
 
 .. automodule:: minfraud.models
     :members:
+    :inherited-members:
+    :show-inheritance:
     :no-undoc-members:
+
+======
+Errors
+======
 
 .. automodule:: minfraud.errors
     :members:
+    :inherited-members:
+    :show-inheritance:
     :no-undoc-members:
 
 ==================
