@@ -36,7 +36,6 @@ classifiers = [
 dev = [
     "pytest>=8.3.5",
     "pytest-httpserver>=1.0.10",
-    "types-requests>=2.32.0.20250328",
 ]
 lint = [
     "black>=25.1.0",
@@ -44,6 +43,7 @@ lint = [
     "mypy>=1.15.0",
     "pylint>=3.3.6",
     "ruff>=0.11.6",
+    "types-requests>=2.32.0.20250328",
 ]
 
 [project.urls]
@@ -96,3 +96,43 @@ ignorelist = ["id"]
 
 [tool.setuptools.package-data]
 minfraud = ["py.typed"]
+
+[tool.tox]
+env_list = [
+    "3.9",
+    "3.10",
+    "3.11",
+    "3.12",
+    "3.13",
+    "lint",
+]
+skip_missing_interpreters = false
+
+[tool.tox.env_run_base]
+dependency_groups = [
+  "dev",
+]
+commands = [
+    ["pytest", "tests"],
+]
+
+[tool.tox.env.lint]
+description = "Code linting"
+python = "3.13"
+dependency_groups = [
+    "dev",
+    "lint",
+]
+commands = [
+    ["black", "--check", "--diff", "."],
+    ["flake8", "minfraud"],
+    ["mypy", "minfraud", "tests"],
+    ["pylint", "minfraud"],
+]
+
+[tool.tox.gh.python]
+"3.13" = ["3.13", "lint"]
+"3.12" = ["3.12"]
+"3.11" = ["3.11"]
+"3.10" = ["3.10"]
+"3.9" = ["3.9"]
