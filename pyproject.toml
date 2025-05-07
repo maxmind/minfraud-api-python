@@ -8,7 +8,7 @@ authors = [
 dependencies = [
     "aiohttp>=3.6.2,<4.0.0",
     "email_validator>=2.0.0,<3.0.0",
-    "geoip2>=5.0.1,<6.0.0",
+    "geoip2>=5.1.0,<6.0.0",
     "requests>=2.24.0,<3.0.0",
     "typing-extensions>=4.13.2",
     "voluptuous",
