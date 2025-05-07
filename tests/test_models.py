@@ -234,12 +234,14 @@ class TestModels(unittest.TestCase):
         phone = Phone(
             country="US",
             is_voip=True,
+            matches_postal=True,
             network_operator="Verizon/1",
             number_type="fixed",
         )
 
         self.assertEqual("US", phone.country)
         self.assertEqual(True, phone.is_voip)
+        self.assertEqual(True, phone.matches_postal)
         self.assertEqual("Verizon/1", phone.network_operator)
         self.assertEqual("fixed", phone.number_type)
 

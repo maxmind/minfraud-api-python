@@ -509,6 +509,14 @@ class Phone(_Serializable):
     ``False`` when the number is not VoIP. If the phone number was not
     provided or we do not have data for it, the property will be ``None``."""
 
+    matches_postal: Optional[bool]
+    """This is ```True``` if the phone number's prefix is commonly
+    associated with the postal code. It is ```False``` if the prefix is not
+    associated with the postal code. It is non-```None``` only when the phone
+    number is in the US, the number prefix is in our database, and the
+    postal code and country are provided in the request.
+    """
+
     network_operator: Optional[str]
     """The name of the original network operator associated with the phone
     number. This field does not reflect phone numbers that have been ported
@@ -524,6 +532,7 @@ class Phone(_Serializable):
         *,
         country: Optional[str] = None,
         is_voip: Optional[bool] = None,
+        matches_postal: Optional[bool] = None,
         network_operator: Optional[str] = None,
         number_type: Optional[str] = None,
         **_,
@@ -531,6 +540,7 @@ class Phone(_Serializable):
         """Initialize a Phone instance."""
         self.country = country
         self.is_voip = is_voip
+        self.matches_postal = matches_postal
         self.network_operator = network_operator
         self.number_type = number_type
 
