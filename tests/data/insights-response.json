@@ -125,6 +125,7 @@
   "billing_phone": {
     "country": "US",
     "is_voip": true,
+    "matches_postal": true,
     "network_operator": "Verizon/1",
     "number_type": "fixed"
   },
@@ -168,6 +169,7 @@
   "shipping_phone": {
     "country": "CA",
     "is_voip": true,
+    "matches_postal": true,
     "network_operator": "Telus Mobility-SVR/2",
     "number_type": "mobile"
   },
