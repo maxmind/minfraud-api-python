@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-# pylint:disable=too-many-lines,too-many-instance-attributes,too-many-locals
 from typing import TYPE_CHECKING
 
 import geoip2.models
@@ -232,7 +231,6 @@ class Device(_Serializable):
         self,
         *,
         confidence: float | None = None,
-        # pylint:disable=redefined-builtin
         id: str | None = None,
         last_seen: str | None = None,
         local_time: str | None = None,
@@ -382,7 +380,6 @@ class CreditCard(_Serializable):
         is_issued_in_billing_address_country: bool | None = None,
         is_prepaid: bool | None = None,
         is_virtual: bool | None = None,
-        # pylint:disable=redefined-builtin
         type: str | None = None,  # noqa: A002
     ) -> None:
         """Initialize a CreditCard instance."""
@@ -752,7 +749,7 @@ class Reason(_Serializable):
 
     See the `risk reasons documentation <https://dev.maxmind.com/minfraud/api-documentation/responses/#schema--response--risk-score-reason--multiplier-reason>`_
     for the current list of reason codes.
-    """  # pylint:disable=line-too-long
+    """
 
     code: str | None
     """This value is a machine-readable code identifying the reason.
@@ -953,7 +950,6 @@ class Factors(_Serializable):
         funds_remaining: float,
         device: dict | None = None,
         email: dict | None = None,
-        # pylint:disable=redefined-builtin
         id: str,
         ip_address: dict | None = None,
         queries_remaining: int,
@@ -1062,7 +1058,6 @@ class Insights(_Serializable):
         disposition: dict | None = None,
         email: dict | None = None,
         funds_remaining: float,
-        # pylint:disable=redefined-builtin
         id: str,
         ip_address: dict | None = None,
         queries_remaining: int,
@@ -1130,7 +1125,6 @@ class Score(_Serializable):
         *,
         disposition: dict | None = None,
         funds_remaining: float,
-        # pylint:disable=redefined-builtin
         id: str,
         ip_address: dict | None = None,
         queries_remaining: int,

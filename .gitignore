@@ -67,9 +67,7 @@ MANIFEST
 .project
 .pydevproject
 .python-version
-pylint.txt
 *.swp
-violations.pyflakes.txt
 
 /t.py
 /test*.py

@@ -38,9 +38,7 @@ dev = [
     "pytest-httpserver>=1.0.10",
 ]
 lint = [
-    "flake8>=7.2.0",
     "mypy>=1.15.0",
-    "pylint>=3.3.6",
     "ruff>=0.11.6",
     "types-requests>=2.32.0.20250328",
 ]
@@ -122,9 +120,8 @@ dependency_groups = [
     "lint",
 ]
 commands = [
-    ["flake8", "minfraud"],
     ["mypy", "minfraud", "tests"],
-    ["pylint", "minfraud"],
+    ["ruff", "check"],
     ["ruff", "format", "--check", "--diff", "."],
 ]
 

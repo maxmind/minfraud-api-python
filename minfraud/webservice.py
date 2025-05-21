@@ -42,7 +42,6 @@ _REQUEST_UA = f"minFraud-API/{__version__} {requests.utils.default_user_agent()}
 _SCHEME = "https"
 
 
-# pylint: disable=too-many-instance-attributes
 class BaseClient:
     """Base class for minFraud clients."""
 

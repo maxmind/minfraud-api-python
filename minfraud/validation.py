@@ -29,12 +29,6 @@ from voluptuous import (
 )
 from voluptuous.error import UrlInvalid
 
-# Pylint doesn't like the private function type naming for the callable
-# objects below. Given the consistent use of them, the current names seem
-# preferable to blindly following pylint.
-#
-# pylint: disable=invalid-name,undefined-variable
-
 _any_number = Any(float, int, Decimal)
 
 _custom_input_key = All(str, Match(r"^[a-z0-9_]{1,25}$"))
