@@ -201,7 +201,7 @@ class BaseTest(unittest.TestCase):
             self.client_class(license_key="1234567890ab")  # type: ignore[call-arg]
 
         with self.assertRaises(TypeError):
-            self.client_class("47")  # type: ignore
+            self.client_class("47")  # type: ignore[arg-type,call-arg]
 
 
 class BaseTransactionTest(BaseTest):
@@ -385,7 +385,7 @@ class AsyncBase(unittest.TestCase):
         super().setUp()
 
     def tearDown(self) -> None:
-        self._loop.run_until_complete(self.client.close())  # type: ignore
+        self._loop.run_until_complete(self.client.close())  # type: ignore[attr-defined]
         self._loop.close()
         super().tearDown()
 

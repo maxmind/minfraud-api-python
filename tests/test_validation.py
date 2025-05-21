@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 from decimal import Decimal
-from typing import Any
+from typing import Any, Callable
 
 from voluptuous import MultipleInvalid
 
@@ -33,7 +33,7 @@ class ValidationBase(unittest.TestCase):
         self.check_transaction({object: {key: "string"}})
         self.check_invalid_transaction({object: {key: 12}})
 
-    def check_positive_number(self, f) -> None:
+    def check_positive_number(self, f: Callable) -> None:
         for good in (1, 1.1, Decimal("1.1")):
             self.check_transaction(f(good))
         for bad in ("1.2", "1", -1, -1.1, 0):
