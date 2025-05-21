@@ -317,8 +317,7 @@ class BaseTransactionTest(BaseTest):
     def test_200_with_no_body(self) -> None:
         with self.assertRaisesRegex(
             MinFraudError,
-            "Received a 200 response but could not decode the response as"
-            " JSON: b?'?'?",
+            "Received a 200 response but could not decode the response as JSON: b?'?'?",
         ):
             self.create_success(text="")
 
