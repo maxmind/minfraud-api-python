@@ -1,11 +1,15 @@
 """Models for the minFraud response object."""
 
+from __future__ import annotations
+
 # pylint:disable=too-many-lines,too-many-instance-attributes,too-many-locals
-from collections.abc import Sequence
-from typing import Optional
+from typing import TYPE_CHECKING
 
 import geoip2.models
 import geoip2.records
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 class _Serializable:
@@ -60,18 +64,18 @@ class IPRiskReason(_Serializable):
       IP address across minFraud customers.
     """
 
-    code: Optional[str]
+    code: str | None
     """This value is a machine-readable code identifying the reason."""
 
-    reason: Optional[str]
+    reason: str | None
     """This property provides a human-readable explanation of the
     reason. The text may change at any time and should not be matched
     against."""
 
     def __init__(
         self,
-        code: Optional[str] = None,
-        reason: Optional[str] = None,
+        code: str | None = None,
+        reason: str | None = None,
     ) -> None:
         """Initialize an IPRiskReason instance."""
         self.code = code
@@ -86,7 +90,7 @@ class GeoIP2Location(geoip2.records.Location):
 
     """
 
-    local_time: Optional[str]
+    local_time: str | None
     """The date and time of the transaction in the time
     zone associated with the IP address. The value is formatted according to
     `RFC 3339 <https://tools.ietf.org/html/rfc3339>`_. For instance, the
@@ -110,7 +114,7 @@ class IPAddress(geoip2.models.Insights):
     location: GeoIP2Location
     """Location object for the requested IP address."""
 
-    risk: Optional[float]
+    risk: float | None
     """This field contains the risk associated with the IP address. The value
     ranges from 0.01 to 99. A higher score indicates a higher risk."""
 
@@ -121,12 +125,12 @@ class IPAddress(geoip2.models.Insights):
 
     def __init__(
         self,
-        locales: Optional[Sequence[str]],
+        locales: Sequence[str] | None,
         *,
-        country: Optional[dict] = None,
-        location: Optional[dict] = None,
-        risk: Optional[float] = None,
-        risk_reasons: Optional[list[dict]] = None,
+        country: dict | None = None,
+        location: dict | None = None,
+        risk: float | None = None,
+        risk_reasons: list[dict] | None = None,
         **kwargs,
     ) -> None:
         """Initialize an IPAddress instance."""
@@ -149,11 +153,11 @@ class IPAddress(geoip2.models.Insights):
 class ScoreIPAddress(_Serializable):
     """Information about the IP address for minFraud Score."""
 
-    risk: Optional[float]
+    risk: float | None
     """This field contains the risk associated with the IP address. The value
     ranges from 0.01 to 99. A higher score indicates a higher risk."""
 
-    def __init__(self, *, risk: Optional[float] = None, **_) -> None:
+    def __init__(self, *, risk: float | None = None, **_) -> None:
         """Initialize a ScoreIPAddress instance."""
         self.risk = risk
 
@@ -161,21 +165,21 @@ class ScoreIPAddress(_Serializable):
 class Issuer(_Serializable):
     """Information about the credit card issuer."""
 
-    name: Optional[str]
+    name: str | None
     """The name of the bank which issued the credit card."""
 
-    matches_provided_name: Optional[bool]
+    matches_provided_name: bool | None
     """This property is ``True`` if the name matches
     the name provided in the request for the card issuer. It is ``False`` if
     the name does not match. The property is ``None`` if either no name or
     no issuer ID number (IIN) was provided in the request or if MaxMind does
     not have a name associated with the IIN."""
 
-    phone_number: Optional[str]
+    phone_number: str | None
     """The phone number of the bank which issued the credit
     card. In some cases the phone number we return may be out of date."""
 
-    matches_provided_phone_number: Optional[bool]
+    matches_provided_phone_number: bool | None
     """This property is ``True`` if the phone
     number matches the number provided in the request for the card issuer. It
     is ``False`` if the number does not match. It is ``None`` if either no
@@ -185,10 +189,10 @@ class Issuer(_Serializable):
     def __init__(
         self,
         *,
-        name: Optional[str] = None,
-        matches_provided_name: Optional[bool] = None,
-        phone_number: Optional[str] = None,
-        matches_provided_phone_number: Optional[bool] = None,
+        name: str | None = None,
+        matches_provided_name: bool | None = None,
+        phone_number: str | None = None,
+        matches_provided_phone_number: bool | None = None,
         **_,
     ) -> None:
         """Initialize an Issuer instance."""
@@ -206,20 +210,20 @@ class Device(_Serializable):
     <https://dev.maxmind.com/minfraud/track-devices?lang=en>`_.
     """
 
-    confidence: Optional[float]
+    confidence: float | None
     """This number represents our confidence that the ``device_id`` refers to
     a unique device as opposed to a cluster of similar devices. A confidence
     of 0.01 indicates very low confidence that the device is unique, whereas
     99 indicates very high confidence."""
 
-    id: Optional[str]
+    id: str | None
     """A UUID that MaxMind uses for the device associated with this IP address."""
 
-    last_seen: Optional[str]
+    last_seen: str | None
     """This is the date and time of the last sighting of the device. This is an
     RFC 3339 date-time."""
 
-    local_time: Optional[str]
+    local_time: str | None
     """This is the local date and time of the transaction in the time zone of
     the device. This is determined by using the UTC offset associated with
     the device. This is an RFC 3339 date-time."""
@@ -227,11 +231,11 @@ class Device(_Serializable):
     def __init__(
         self,
         *,
-        confidence: Optional[float] = None,
+        confidence: float | None = None,
         # pylint:disable=redefined-builtin
-        id: Optional[str] = None,
-        last_seen: Optional[str] = None,
-        local_time: Optional[str] = None,
+        id: str | None = None,
+        last_seen: str | None = None,
+        local_time: str | None = None,
         **_,
     ) -> None:
         """Initialize a Device instance."""
@@ -248,18 +252,18 @@ class Disposition(_Serializable):
     rules.
     """
 
-    action: Optional[str]
+    action: str | None
     """The action to take on the transaction as defined by your custom rules.
     The current set of values are "accept", "manual_review", "reject", and
     "test". If you do not have custom rules set up, ``None`` will be
     returned."""
 
-    reason: Optional[str]
+    reason: str | None
     """The reason for the action. The current possible values are "custom_rule"
     and "default". If you do not have custom rules set up, ``None`` will be
     returned."""
 
-    rule_label: Optional[str]
+    rule_label: str | None
     """The label of the custom rule that was triggered. If you do not have
     custom rules set up, the triggered custom rule does not have a label, or
     no custom rule was triggered, ``None`` will be returned."""
@@ -267,9 +271,9 @@ class Disposition(_Serializable):
     def __init__(
         self,
         *,
-        action: Optional[str] = None,
-        reason: Optional[str] = None,
-        rule_label: Optional[str] = None,
+        action: str | None = None,
+        reason: str | None = None,
+        rule_label: str | None = None,
         **_,
     ) -> None:
         """Initialize a Disposition instance."""
@@ -281,12 +285,12 @@ class Disposition(_Serializable):
 class EmailDomain(_Serializable):
     """Information about the email domain passed in the request."""
 
-    first_seen: Optional[str]
+    first_seen: str | None
     """A date string (e.g. 2017-04-24) to identify the date an email domain
     was first seen by MaxMind. This is expressed using the ISO 8601 date
     format."""
 
-    def __init__(self, *, first_seen: Optional[str] = None, **_) -> None:
+    def __init__(self, *, first_seen: str | None = None, **_) -> None:
         """Initialize an EmailDomain instance."""
         self.first_seen = first_seen
 
@@ -297,32 +301,32 @@ class Email(_Serializable):
     domain: EmailDomain
     """An object containing information about the email domain."""
 
-    first_seen: Optional[str]
+    first_seen: str | None
     """A date string (e.g. 2017-04-24) to identify the date an email address
     was first seen by MaxMind. This is expressed using the ISO 8601 date
     format."""
 
-    is_disposable: Optional[bool]
+    is_disposable: bool | None
     """This field indicates whether the email is from a disposable email
     provider. It will be ``None`` when an email address was not passed in
     the inputs."""
 
-    is_free: Optional[bool]
+    is_free: bool | None
     """This field is true if MaxMind believes that this email is hosted by a
     free email provider such as Gmail or Yahoo! Mail."""
 
-    is_high_risk: Optional[bool]
+    is_high_risk: bool | None
     """This field is true if MaxMind believes that this email is likely to be
     used for fraud. Note that this is also factored into the overall
     `risk_score` in the response as well."""
 
     def __init__(
         self,
-        domain: Optional[dict] = None,
-        first_seen: Optional[str] = None,
-        is_disposable: Optional[bool] = None,
-        is_free: Optional[bool] = None,
-        is_high_risk: Optional[bool] = None,
+        domain: dict | None = None,
+        first_seen: str | None = None,
+        is_disposable: bool | None = None,
+        is_free: bool | None = None,
+        is_high_risk: bool | None = None,
     ) -> None:
         """Initialize an Email instance."""
         self.domain = EmailDomain(**(domain or {}))
@@ -338,7 +342,7 @@ class CreditCard(_Serializable):
     issuer: Issuer
     """An object containing information about the credit card issuer."""
 
-    country: Optional[str]
+    country: str | None
     """This property contains the `ISO 3166-1 alpha-2 country code
     <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ associated with the
     location of the majority of customers using this credit card as
@@ -346,40 +350,40 @@ class CreditCard(_Serializable):
     customers is highly mixed, this defaults to the country of the bank
     issuing the card."""
 
-    brand: Optional[str]
+    brand: str | None
     """The card brand, such as "Visa", "Discover", "American Express", etc."""
 
-    is_business: Optional[bool]
+    is_business: bool | None
     """This property is ``True`` if the card is a business card."""
 
-    is_issued_in_billing_address_country: Optional[bool]
+    is_issued_in_billing_address_country: bool | None
     """This property is true if the country of the billing address matches the
     country of the majority of customers using this credit card. In cases
     where the location of customers is highly mixed, the match is to the
     country of the bank issuing the card."""
 
-    is_prepaid: Optional[bool]
+    is_prepaid: bool | None
     """This property is ``True`` if the card is a prepaid card."""
 
-    is_virtual: Optional[bool]
+    is_virtual: bool | None
     """This property is ``True`` if the card is a virtual card."""
 
-    type: Optional[str]
+    type: str | None
     """The card's type. The valid values are "charge", "credit", and "debit".
     See Wikipedia for an explanation of the difference between charge and
     credit cards."""
 
     def __init__(
         self,
-        issuer: Optional[dict] = None,
-        country: Optional[str] = None,
-        brand: Optional[str] = None,
-        is_business: Optional[bool] = None,
-        is_issued_in_billing_address_country: Optional[bool] = None,
-        is_prepaid: Optional[bool] = None,
-        is_virtual: Optional[bool] = None,
+        issuer: dict | None = None,
+        country: str | None = None,
+        brand: str | None = None,
+        is_business: bool | None = None,
+        is_issued_in_billing_address_country: bool | None = None,
+        is_prepaid: bool | None = None,
+        is_virtual: bool | None = None,
         # pylint:disable=redefined-builtin
-        type: Optional[str] = None,  # noqa: A002
+        type: str | None = None,  # noqa: A002
     ) -> None:
         """Initialize a CreditCard instance."""
         self.issuer = Issuer(**(issuer or {}))
@@ -395,24 +399,24 @@ class CreditCard(_Serializable):
 class BillingAddress(_Serializable):
     """Information about the billing address."""
 
-    is_postal_in_city: Optional[bool]
+    is_postal_in_city: bool | None
     """This property is ``True`` if the postal code
     provided with the address is in the city for the address. The property is
     ``False`` when the postal code is not in the city. If the address was
     not provided, could not be parsed, or was outside USA, the property will
     be ``None``."""
 
-    latitude: Optional[float]
+    latitude: float | None
     """The latitude associated with the address."""
 
-    longitude: Optional[float]
+    longitude: float | None
     """The longitude associated with the address."""
 
-    distance_to_ip_location: Optional[int]
+    distance_to_ip_location: int | None
     """The distance in kilometers from the
     address to the IP location."""
 
-    is_in_ip_country: Optional[bool]
+    is_in_ip_country: bool | None
     """This property is ``True`` if the address is in the
     IP country. The property is ``False`` when the address is not in the IP
     country. If the address could not be parsed or was not provided or if the
@@ -421,11 +425,11 @@ class BillingAddress(_Serializable):
     def __init__(
         self,
         *,
-        is_postal_in_city: Optional[bool] = None,
-        latitude: Optional[float] = None,
-        longitude: Optional[float] = None,
-        distance_to_ip_location: Optional[int] = None,
-        is_in_ip_country: Optional[bool] = None,
+        is_postal_in_city: bool | None = None,
+        latitude: float | None = None,
+        longitude: float | None = None,
+        distance_to_ip_location: int | None = None,
+        is_in_ip_country: bool | None = None,
         **_,
     ) -> None:
         """Initialize a BillingAddress instance."""
@@ -439,48 +443,48 @@ class BillingAddress(_Serializable):
 class ShippingAddress(_Serializable):
     """Information about the shipping address."""
 
-    is_postal_in_city: Optional[bool]
+    is_postal_in_city: bool | None
     """This property is ``True`` if the postal code
     provided with the address is in the city for the address. The property is
     ``False`` when the postal code is not in the city. If the address was
     not provided, could not be parsed, or was not in USA, the property will
     be ``None``."""
 
-    latitude: Optional[float]
+    latitude: float | None
     """The latitude associated with the address."""
 
-    longitude: Optional[float]
+    longitude: float | None
     """The longitude associated with the address."""
 
-    distance_to_ip_location: Optional[int]
+    distance_to_ip_location: int | None
     """The distance in kilometers from the
     address to the IP location."""
 
-    is_in_ip_country: Optional[bool]
+    is_in_ip_country: bool | None
     """This property is ``True`` if the address is in the
     IP country. The property is ``False`` when the address is not in the IP
     country. If the address could not be parsed or was not provided or if the
     IP address could not be geolocated, the property will be ``None``."""
 
-    is_high_risk: Optional[bool]
+    is_high_risk: bool | None
     """This property is ``True`` if the shipping address is high risk.
     If the address could not be parsed or was not provided, the property is
     ``None``."""
 
-    distance_to_billing_address: Optional[int]
+    distance_to_billing_address: int | None
     """The distance in kilometers from the
     shipping address to billing address."""
 
     def __init__(
         self,
         *,
-        is_postal_in_city: Optional[bool] = None,
-        latitude: Optional[float] = None,
-        longitude: Optional[float] = None,
-        distance_to_ip_location: Optional[int] = None,
-        is_in_ip_country: Optional[bool] = None,
-        is_high_risk: Optional[bool] = None,
-        distance_to_billing_address: Optional[int] = None,
+        is_postal_in_city: bool | None = None,
+        latitude: float | None = None,
+        longitude: float | None = None,
+        distance_to_ip_location: int | None = None,
+        is_in_ip_country: bool | None = None,
+        is_high_risk: bool | None = None,
+        distance_to_billing_address: int | None = None,
         **_,
     ) -> None:
         """Initialize a ShippingAddress instance."""
@@ -496,17 +500,17 @@ class ShippingAddress(_Serializable):
 class Phone(_Serializable):
     """Information about the billing or shipping phone number."""
 
-    country: Optional[str]
+    country: str | None
     """The two-character ISO 3166-1 country code for the country associated with
     the phone number."""
 
-    is_voip: Optional[bool]
+    is_voip: bool | None
     """This property is ``True`` if the phone number is a Voice over Internet
     Protocol (VoIP) number allocated by a regulator. The property is
     ``False`` when the number is not VoIP. If the phone number was not
     provided or we do not have data for it, the property will be ``None``."""
 
-    matches_postal: Optional[bool]
+    matches_postal: bool | None
     """This is ```True``` if the phone number's prefix is commonly
     associated with the postal code. It is ```False``` if the prefix is not
     associated with the postal code. It is non-```None``` only when the phone
@@ -514,24 +518,24 @@ class Phone(_Serializable):
     postal code and country are provided in the request.
     """
 
-    network_operator: Optional[str]
+    network_operator: str | None
     """The name of the original network operator associated with the phone
     number. This field does not reflect phone numbers that have been ported
     from the original operator to another, nor does it identify mobile
     virtual network operators."""
 
-    number_type: Optional[str]
+    number_type: str | None
     """One of the following values: fixed or mobile. Additional values may be
     added in the future."""
 
     def __init__(
         self,
         *,
-        country: Optional[str] = None,
-        is_voip: Optional[bool] = None,
-        matches_postal: Optional[bool] = None,
-        network_operator: Optional[str] = None,
-        number_type: Optional[str] = None,
+        country: str | None = None,
+        is_voip: bool | None = None,
+        matches_postal: bool | None = None,
+        network_operator: str | None = None,
+        number_type: str | None = None,
         **_,
     ) -> None:
         """Initialize a Phone instance."""
@@ -545,18 +549,18 @@ class Phone(_Serializable):
 class ServiceWarning(_Serializable):
     """Warning from the web service."""
 
-    code: Optional[str]
+    code: str | None
     """This value is a machine-readable code identifying the
     warning. See the `response warnings documentation
     <https://dev.maxmind.com/minfraud/api-documentation/responses?lang=en#schema--response--warning>`_
     for the current list of of warning codes."""
 
-    warning: Optional[str]
+    warning: str | None
     """This property provides a human-readable explanation of the
     warning. The description may change at any time and should not be matched
     against."""
 
-    input_pointer: Optional[str]
+    input_pointer: str | None
     """This is a string representing the path to the input that
     the warning is associated with. For instance, if the warning was about
     the billing city, the string would be ``"/billing/city"``."""
@@ -564,9 +568,9 @@ class ServiceWarning(_Serializable):
     def __init__(
         self,
         *,
-        code: Optional[str] = None,
-        warning: Optional[str] = None,
-        input_pointer: Optional[str] = None,
+        code: str | None = None,
+        warning: str | None = None,
+        input_pointer: str | None = None,
         **_,
     ) -> None:
         """Initialize a ServiceWarning instance."""
@@ -582,61 +586,61 @@ class Subscores(_Serializable):
      Use RiskScoreReason instead.
     """
 
-    avs_result: Optional[float]
+    avs_result: float | None
     """The risk associated with the AVS result. If present, this is a value
     in the range 0.01 to 99."""
 
-    billing_address: Optional[float]
+    billing_address: float | None
     """The risk associated with the billing address. If present, this is a
     value in the range 0.01 to 99."""
 
-    billing_address_distance_to_ip_location: Optional[float]
+    billing_address_distance_to_ip_location: float | None
     """The risk associated with the distance between the billing address and
     the location for the given IP address. If present, this is a value in
     the range 0.01 to 99."""
 
-    browser: Optional[float]
+    browser: float | None
     """The risk associated with the browser attributes such as the User-Agent
     and Accept-Language. If present, this is a value in the range 0.01 to
     99."""
 
-    chargeback: Optional[float]
+    chargeback: float | None
     """Individualized risk of chargeback for the given IP address given for
     your account and any shop ID passed. This is only available to users
     sending chargeback data to MaxMind. If present, this is a value in the
     range 0.01 to 99."""
 
-    country: Optional[float]
+    country: float | None
     """The risk associated with the country the transaction originated from. If
     present, this is a value in the range 0.01 to 99."""
 
-    country_mismatch: Optional[float]
+    country_mismatch: float | None
     """The risk associated with the combination of IP country, card issuer
     country, billing country, and shipping country. If present, this is a
     value in the range 0.01 to 99."""
 
-    cvv_result: Optional[float]
+    cvv_result: float | None
     """The risk associated with the CVV result. If present, this is a value
     in the range 0.01 to 99."""
 
-    device: Optional[float]
+    device: float | None
     """The risk associated with the device. If present, this is a value in the
     range 0.01 to 99."""
 
-    email_address: Optional[float]
+    email_address: float | None
     """The risk associated with the particular email address. If present, this
     is a value in the range 0.01 to 99."""
 
-    email_domain: Optional[float]
+    email_domain: float | None
     """The general risk associated with the email domain. If present, this is a
     value in the range 0.01 to 99."""
 
-    email_local_part: Optional[float]
+    email_local_part: float | None
     """The risk associated with the email address local part (the part of the
     email address before the @ symbol). If present, this is a value in the
     range 0.01 to 99."""
 
-    email_tenure: Optional[float]
+    email_tenure: float | None
     """The risk associated with the issuer ID number on the email domain. If
     present, this is a value in the range 0.01 to 99.
 
@@ -649,7 +653,7 @@ class Subscores(_Serializable):
         :py:attr:`minfraud.models.Subscores.email_address`
     """
 
-    ip_tenure: Optional[float]
+    ip_tenure: float | None
     """The risk associated with the issuer ID number on the IP address. If
     present, this is a value in the range 0.01 to 99.
 
@@ -662,55 +666,55 @@ class Subscores(_Serializable):
         :py:attr:`minfraud.models.Score.risk_score`
     """
 
-    issuer_id_number: Optional[float]
+    issuer_id_number: float | None
     """The risk associated with the particular issuer ID number (IIN) given the
     billing location and the history of usage of the IIN on your account and
     shop ID. If present, this is a value in the range 0.01 to 99."""
 
-    order_amount: Optional[float]
+    order_amount: float | None
     """The risk associated with the particular order amount for your account
     and shop ID. If present, this is a value in the range 0.01 to 99."""
 
-    phone_number: Optional[float]
+    phone_number: float | None
     """The risk associated with the particular phone number. If present, this
     is a value in the range 0.01 to 99."""
 
-    shipping_address: Optional[float]
+    shipping_address: float | None
     """The risk associated with the shipping address. If present, this is a
     value in the range 0.01 to 99."""
 
-    shipping_address_distance_to_ip_location: Optional[float]
+    shipping_address_distance_to_ip_location: float | None
     """The risk associated with the distance between the shipping address and
     the location for the given IP address. If present, this is a value in
     the range 0.01 to 99."""
 
-    time_of_day: Optional[float]
+    time_of_day: float | None
     """The risk associated with the local time of day of the transaction in the
     IP address location. If present, this is a value in the range 0.01 to 99."""
 
     def __init__(
         self,
         *,
-        avs_result: Optional[float] = None,
-        billing_address: Optional[float] = None,
-        billing_address_distance_to_ip_location: Optional[float] = None,
-        browser: Optional[float] = None,
-        chargeback: Optional[float] = None,
-        country: Optional[float] = None,
-        country_mismatch: Optional[float] = None,
-        cvv_result: Optional[float] = None,
-        device: Optional[float] = None,
-        email_address: Optional[float] = None,
-        email_domain: Optional[float] = None,
-        email_local_part: Optional[float] = None,
-        email_tenure: Optional[float] = None,
-        ip_tenure: Optional[float] = None,
-        issuer_id_number: Optional[float] = None,
-        order_amount: Optional[float] = None,
-        phone_number: Optional[float] = None,
-        shipping_address: Optional[float] = None,
-        shipping_address_distance_to_ip_location: Optional[float] = None,
-        time_of_day: Optional[float] = None,
+        avs_result: float | None = None,
+        billing_address: float | None = None,
+        billing_address_distance_to_ip_location: float | None = None,
+        browser: float | None = None,
+        chargeback: float | None = None,
+        country: float | None = None,
+        country_mismatch: float | None = None,
+        cvv_result: float | None = None,
+        device: float | None = None,
+        email_address: float | None = None,
+        email_domain: float | None = None,
+        email_local_part: float | None = None,
+        email_tenure: float | None = None,
+        ip_tenure: float | None = None,
+        issuer_id_number: float | None = None,
+        order_amount: float | None = None,
+        phone_number: float | None = None,
+        shipping_address: float | None = None,
+        shipping_address_distance_to_ip_location: float | None = None,
+        time_of_day: float | None = None,
         **_,
     ) -> None:
         """Initialize a Subscores instance."""
@@ -748,9 +752,9 @@ class Reason(_Serializable):
 
     See the `risk reasons documentation <https://dev.maxmind.com/minfraud/api-documentation/responses/#schema--response--risk-score-reason--multiplier-reason>`_
     for the current list of reason codes.
-    """  # pylint:disable=line-too-long # noqa: E501
+    """  # pylint:disable=line-too-long
 
-    code: Optional[str]
+    code: str | None
     """This value is a machine-readable code identifying the reason.
 
     Although more codes_ may be added in the future, the current codes are:
@@ -815,7 +819,7 @@ class Reason(_Serializable):
     /#schema--response--risk-score-reason--multiplier-reason
     """
 
-    reason: Optional[str]
+    reason: str | None
     """This property provides a human-readable explanation of the
     reason. The text may change at any time and should not be matched
     against."""
@@ -823,8 +827,8 @@ class Reason(_Serializable):
     def __init__(
         self,
         *,
-        code: Optional[str] = None,
-        reason: Optional[str] = None,
+        code: str | None = None,
+        reason: str | None = None,
         **_,
     ) -> None:
         """Initialize a Reason instance."""
@@ -849,7 +853,7 @@ class RiskScoreReason(_Serializable):
         self,
         *,
         multiplier: float,
-        reasons: Optional[list] = None,
+        reasons: list | None = None,
         **_,
     ) -> None:
         """Initialize a RiskScoreReason instance."""
@@ -942,23 +946,23 @@ class Factors(_Serializable):
         self,
         locales: Sequence[str],
         *,
-        billing_address: Optional[dict] = None,
-        billing_phone: Optional[dict] = None,
-        credit_card: Optional[dict] = None,
-        disposition: Optional[dict] = None,
+        billing_address: dict | None = None,
+        billing_phone: dict | None = None,
+        credit_card: dict | None = None,
+        disposition: dict | None = None,
         funds_remaining: float,
-        device: Optional[dict] = None,
-        email: Optional[dict] = None,
+        device: dict | None = None,
+        email: dict | None = None,
         # pylint:disable=redefined-builtin
         id: str,
-        ip_address: Optional[dict] = None,
+        ip_address: dict | None = None,
         queries_remaining: int,
         risk_score: float,
-        shipping_address: Optional[dict] = None,
-        shipping_phone: Optional[dict] = None,
-        subscores: Optional[dict] = None,
-        warnings: Optional[list[dict]] = None,
-        risk_score_reasons: Optional[list[dict]] = None,
+        shipping_address: dict | None = None,
+        shipping_phone: dict | None = None,
+        subscores: dict | None = None,
+        warnings: list[dict] | None = None,
+        risk_score_reasons: list[dict] | None = None,
         **_,
     ) -> None:
         """Initialize a Factors instance."""
@@ -1051,21 +1055,21 @@ class Insights(_Serializable):
         self,
         locales: Sequence[str],
         *,
-        billing_address: Optional[dict] = None,
-        billing_phone: Optional[dict] = None,
-        credit_card: Optional[dict] = None,
-        device: Optional[dict] = None,
-        disposition: Optional[dict] = None,
-        email: Optional[dict] = None,
+        billing_address: dict | None = None,
+        billing_phone: dict | None = None,
+        credit_card: dict | None = None,
+        device: dict | None = None,
+        disposition: dict | None = None,
+        email: dict | None = None,
         funds_remaining: float,
         # pylint:disable=redefined-builtin
         id: str,
-        ip_address: Optional[dict] = None,
+        ip_address: dict | None = None,
         queries_remaining: int,
         risk_score: float,
-        shipping_address: Optional[dict] = None,
-        shipping_phone: Optional[dict] = None,
-        warnings: Optional[list[dict]] = None,
+        shipping_address: dict | None = None,
+        shipping_phone: dict | None = None,
+        warnings: list[dict] | None = None,
         **_,
     ) -> None:
         """Initialize an Insights instance."""
@@ -1124,14 +1128,14 @@ class Score(_Serializable):
     def __init__(
         self,
         *,
-        disposition: Optional[dict] = None,
+        disposition: dict | None = None,
         funds_remaining: float,
         # pylint:disable=redefined-builtin
         id: str,
-        ip_address: Optional[dict] = None,
+        ip_address: dict | None = None,
         queries_remaining: int,
         risk_score: float,
-        warnings: Optional[list[dict]] = None,
+        warnings: list[dict] | None = None,
         **_,
     ) -> None:
         """Initialize a Score instance."""

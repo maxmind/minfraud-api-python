@@ -7,6 +7,8 @@ that may break any direct use of it.
 
 """
 
+from __future__ import annotations
+
 import ipaddress
 import re
 import urllib.parse
@@ -59,7 +61,7 @@ _telephone_country_code = Any(
 _subdivision_iso_code = All(str, Match(r"^[0-9A-Z]{1,4}$"))
 
 
-def _ip_address(s: Optional[str]) -> str:
+def _ip_address(s: str | None) -> str:
     # ipaddress accepts numeric IPs, which we don't want.
     if isinstance(s, str) and not re.match(r"^\d+$", s):
         return str(ipaddress.ip_address(s))
@@ -378,7 +380,7 @@ validate_transaction = Schema(
 )
 
 
-def _maxmind_id(s: Optional[str]) -> str:
+def _maxmind_id(s: str | None) -> str:
     if isinstance(s, str) and len(s) == 8:
         return s
     raise ValueError
@@ -404,7 +406,7 @@ def _non_empty_uuid(s: str) -> str:
     return s
 
 
-def _transaction_id(s: Optional[str]) -> str:
+def _transaction_id(s: str | None) -> str:
     if isinstance(s, str) and len(s) > 0:
         return s
     raise ValueError

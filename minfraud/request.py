@@ -5,11 +5,13 @@ that may break any direct use of it.
 
 """
 
+from __future__ import annotations
+
 import hashlib
 import re
 import unicodedata
 import warnings
-from typing import Any, Optional
+from typing import Any
 
 from voluptuous import MultipleInvalid
 
@@ -299,7 +301,7 @@ def prepare_transaction(
     return cleaned_request
 
 
-def _copy_and_clean(data: Any) -> Any:
+def _copy_and_clean(data: Any) -> Any:  # noqa: ANN401
     """Create a copy of the data structure with Nones removed."""
     if isinstance(data, dict):
         return {k: _copy_and_clean(v) for (k, v) in data.items() if v is not None}
@@ -358,7 +360,7 @@ def _clean_domain(domain: str) -> str:
     return _EQUIVALENT_DOMAINS.get(domain, domain)
 
 
-def _clean_email(address: str) -> tuple[Optional[str], Optional[str]]:
+def _clean_email(address: str) -> tuple[str | None, str | None]:
     address = address.lower().strip()
 
     at_idx = address.rfind("@")
