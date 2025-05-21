@@ -19,7 +19,7 @@ class _Serializable:
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict:  # noqa: C901
         """Return a dict of the object suitable for serialization."""
         result = {}
         for key, value in self.__dict__.items():
@@ -96,7 +96,7 @@ class GeoIP2Location(geoip2.records.Location):
     `RFC 3339 <https://tools.ietf.org/html/rfc3339>`_. For instance, the
     local time in Boston might be returned as 2015-04-27T19:17:24-04:00."""
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs) -> None:  # noqa: ANN002
         """Initialize a GeoIP2Location instance."""
         self.local_time = kwargs.get("local_time")
         super().__init__(*args, **kwargs)

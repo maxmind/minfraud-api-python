@@ -14,7 +14,6 @@ import re
 import urllib.parse
 import uuid
 from decimal import Decimal
-from typing import Optional
 
 from email_validator import validate_email
 from voluptuous import (

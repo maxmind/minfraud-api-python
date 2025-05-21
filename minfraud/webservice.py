@@ -164,7 +164,7 @@ class BaseClient:
             )
         return HTTPError(
             "Error response contains JSON but it does not "
-            + f"specify code or error keys: {raw_body}",
+            f"specify code or error keys: {raw_body}",
             status,
             uri,
             raw_body,
@@ -232,7 +232,7 @@ class AsyncClient(BaseClient):
     _existing_session: aiohttp.ClientSession
     _proxy: str | None
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         account_id: int,
         license_key: str,
@@ -267,8 +267,8 @@ class AsyncClient(BaseClient):
     async def factors(
         self,
         transaction: dict[str, Any],
-        validate: bool = True,
-        hash_email: bool = False,
+        validate: bool = True,  # noqa: FBT001, FBT002
+        hash_email: bool = False,  # noqa: FBT001, FBT002
     ) -> Factors:
         """Query Factors endpoint with transaction data.
 
@@ -306,8 +306,8 @@ class AsyncClient(BaseClient):
     async def insights(
         self,
         transaction: dict[str, Any],
-        validate: bool = True,
-        hash_email: bool = False,
+        validate: bool = True,  # noqa: FBT001, FBT002
+        hash_email: bool = False,  # noqa: FBT001, FBT002
     ) -> Insights:
         """Query Insights endpoint with transaction data.
 
@@ -345,8 +345,8 @@ class AsyncClient(BaseClient):
     async def score(
         self,
         transaction: dict[str, Any],
-        validate: bool = True,
-        hash_email: bool = False,
+        validate: bool = True,  # noqa: FBT001, FBT002
+        hash_email: bool = False,  # noqa: FBT001, FBT002
     ) -> Score:
         """Query Score endpoint with transaction data.
 
@@ -384,7 +384,7 @@ class AsyncClient(BaseClient):
     async def report(
         self,
         report: dict[str, str | None],
-        validate: bool = True,
+        validate: bool = True,  # noqa: FBT001, FBT002
     ) -> None:
         """Send a transaction report to the Report Transaction endpoint.
 
@@ -418,8 +418,8 @@ class AsyncClient(BaseClient):
         uri: str,
         model_class: Callable,
         request: dict[str, Any],
-        validate: bool,
-        hash_email: bool,
+        validate: bool,  # noqa: FBT001
+        hash_email: bool,  # noqa: FBT001
     ) -> Score | Factors | Insights:
         """Send request and create response object."""
         prepared_request = prepare_transaction(request, validate, hash_email)
@@ -476,7 +476,7 @@ class Client(BaseClient):
     _proxies: dict[str, str] | None
     _session: requests.Session
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         account_id: int,
         license_key: str,
@@ -525,8 +525,8 @@ class Client(BaseClient):
     def factors(
         self,
         transaction: dict[str, Any],
-        validate: bool = True,
-        hash_email: bool = False,
+        validate: bool = True,  # noqa: FBT001, FBT002
+        hash_email: bool = False,  # noqa: FBT001, FBT002
     ) -> Factors:
         """Query Factors endpoint with transaction data.
 
@@ -564,8 +564,8 @@ class Client(BaseClient):
     def insights(
         self,
         transaction: dict[str, Any],
-        validate: bool = True,
-        hash_email: bool = False,
+        validate: bool = True,  # noqa: FBT001, FBT002
+        hash_email: bool = False,  # noqa: FBT001, FBT002
     ) -> Insights:
         """Query Insights endpoint with transaction data.
 
@@ -603,8 +603,8 @@ class Client(BaseClient):
     def score(
         self,
         transaction: dict[str, Any],
-        validate: bool = True,
-        hash_email: bool = False,
+        validate: bool = True,  # noqa: FBT001, FBT002
+        hash_email: bool = False,  # noqa: FBT001, FBT002
     ) -> Score:
         """Query Score endpoint with transaction data.
 
@@ -639,7 +639,11 @@ class Client(BaseClient):
             ),
         )
 
-    def report(self, report: dict[str, str | None], validate: bool = True) -> None:
+    def report(
+        self,
+        report: dict[str, str | None],
+        validate: bool = True,  # noqa: FBT001, FBT002
+    ) -> None:
         """Send a transaction report to the Report Transaction endpoint.
 
         :param report: A dictionary containing the transaction report to be sent
@@ -672,8 +676,8 @@ class Client(BaseClient):
         uri: str,
         model_class: Callable,
         request: dict[str, Any],
-        validate: bool,
-        hash_email: bool,
+        validate: bool,  # noqa: FBT001
+        hash_email: bool,  # noqa: FBT001
     ) -> Score | Factors | Insights:
         """Send request and create response object."""
         prepared_request = prepare_transaction(request, validate, hash_email)

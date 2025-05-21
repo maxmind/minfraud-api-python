@@ -29,9 +29,9 @@ class ValidationBase(unittest.TestCase):
         except MultipleInvalid as e:
             self.fail(f"MultipleInvalid {e.msg} thrown for {transaction}")
 
-    def check_transaction_str_type(self, object: str, key: str) -> None:
-        self.check_transaction({object: {key: "string"}})
-        self.check_invalid_transaction({object: {key: 12}})
+    def check_transaction_str_type(self, obj: str, key: str) -> None:
+        self.check_transaction({obj: {key: "string"}})
+        self.check_invalid_transaction({obj: {key: 12}})
 
     def check_positive_number(self, f: Callable) -> None:
         for good in (1, 1.1, Decimal("1.1")):
@@ -39,11 +39,11 @@ class ValidationBase(unittest.TestCase):
         for bad in ("1.2", "1", -1, -1.1, 0):
             self.check_invalid_transaction(f(bad))
 
-    def check_bool(self, object: str, key: str) -> None:
+    def check_bool(self, obj: str, key: str) -> None:
         for good in (True, False):
-            self.check_transaction({object: {key: good}})
+            self.check_transaction({obj: {key: good}})
         for bad in ("", 0, "True"):
-            self.check_invalid_transaction({object: {key: bad}})
+            self.check_invalid_transaction({obj: {key: bad}})
 
     def setup_report(self, report: dict[str, Any]) -> None:
         if "ip_address" not in report:

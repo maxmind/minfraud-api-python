@@ -64,8 +64,17 @@ ignore = [
     # Skip type annotation on **_
     "ANN003",
 
+    # Redundant as the formatter handles missing trailing commas.
+    "COM812",
+
     # documenting magic methods
     "D105",
+
+    # Conflicts with D211
+    "D203",
+
+    # Conflicts with D212
+    "D213",
 
     # Magic numbers for HTTP status codes seem ok most of the time.
     "PLR2004",
@@ -80,7 +89,7 @@ ignorelist = ["id"]
 
 [tool.ruff.lint.per-file-ignores]
 "docs/*" = ["ALL"]
-"minfraud/models,.py" = [ "D107", "PLR0913" ]
+"minfraud/models.py" = [ "PLR0913" ]
 "tests/*" = ["ANN201", "D"]
 
 [tool.setuptools.package-data]

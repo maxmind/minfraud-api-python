@@ -266,7 +266,10 @@ _YAHOO_DOMAINS = {
 }
 
 
-def prepare_report(request: dict[str, Any], validate: bool) -> dict[str, Any]:
+def prepare_report(
+    request: dict[str, Any],
+    validate: bool,  # noqa: FBT001
+) -> dict[str, Any]:
     """Validate and prepare minFraud report."""
     cleaned_request = _copy_and_clean(request)
     if validate:
@@ -280,8 +283,8 @@ def prepare_report(request: dict[str, Any], validate: bool) -> dict[str, Any]:
 
 def prepare_transaction(
     request: dict[str, Any],
-    validate: bool,
-    hash_email: bool,
+    validate: bool,  # noqa: FBT001
+    hash_email: bool,  # noqa: FBT001
 ) -> dict[str, Any]:
     """Validate and prepare minFraud transaction."""
     cleaned_request = _copy_and_clean(request)
@@ -340,7 +343,7 @@ def maybe_hash_email(transaction: dict[str, Any]) -> None:
     if domain != "" and "domain" not in email:
         email["domain"] = domain
 
-    email["address"] = hashlib.md5(address.encode("UTF-8")).hexdigest()
+    email["address"] = hashlib.md5(address.encode("UTF-8")).hexdigest()  # noqa: S324
 
 
 def _clean_domain(domain: str) -> str:
