@@ -84,10 +84,7 @@ class GeoIP2Location(geoip2.records.Location):
     In addition to the attributes provided by ``geoip2.records.Location``,
     this class provides the local_time attribute.
 
-    Parent:
     """
-
-    __doc__ += geoip2.records.Location.__doc__  # type: ignore
 
     local_time: Optional[str]
     """The date and time of the transaction in the time
