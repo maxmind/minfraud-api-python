@@ -150,11 +150,13 @@ class TestModels(unittest.TestCase):
             risk_reasons=[
                 {
                     "code": "ANONYMOUS_IP",
-                    "reason": "The IP address belongs to an anonymous network. See /ip_address/traits for more details.",
+                    "reason": "The IP address belongs to an anonymous network. "
+                    "See /ip_address/traits for more details.",
                 },
                 {
                     "code": "MINFRAUD_NETWORK_ACTIVITY",
-                    "reason": "Suspicious activity has been seen on this IP address across minFraud customers.",
+                    "reason": "Suspicious activity has been seen on this IP address "
+                    "across minFraud customers.",
                 },
             ],
             traits={
@@ -187,13 +189,15 @@ class TestModels(unittest.TestCase):
 
         self.assertEqual("ANONYMOUS_IP", address.risk_reasons[0].code)
         self.assertEqual(
-            "The IP address belongs to an anonymous network. See /ip_address/traits for more details.",
+            "The IP address belongs to an anonymous network. "
+            "See /ip_address/traits for more details.",
             address.risk_reasons[0].reason,
         )
 
         self.assertEqual("MINFRAUD_NETWORK_ACTIVITY", address.risk_reasons[1].code)
         self.assertEqual(
-            "Suspicious activity has been seen on this IP address across minFraud customers.",
+            "Suspicious activity has been seen on this IP address "
+            "across minFraud customers.",
             address.risk_reasons[1].reason,
         )
 

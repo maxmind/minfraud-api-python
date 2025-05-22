@@ -7,12 +7,13 @@ that may break any direct use of it.
 
 """
 
+from __future__ import annotations
+
 import ipaddress
 import re
 import urllib.parse
 import uuid
 from decimal import Decimal
-from typing import Optional
 
 from email_validator import validate_email
 from voluptuous import (
@@ -27,12 +28,6 @@ from voluptuous import (
     Schema,
 )
 from voluptuous.error import UrlInvalid
-
-# Pylint doesn't like the private function type naming for the callable
-# objects below. Given the consistent use of them, the current names seem
-# preferable to blindly following pylint.
-#
-# pylint: disable=invalid-name,undefined-variable
 
 _any_number = Any(float, int, Decimal)
 
@@ -59,7 +54,7 @@ _telephone_country_code = Any(
 _subdivision_iso_code = All(str, Match(r"^[0-9A-Z]{1,4}$"))
 
 
-def _ip_address(s: Optional[str]) -> str:
+def _ip_address(s: str | None) -> str:
     # ipaddress accepts numeric IPs, which we don't want.
     if isinstance(s, str) and not re.match(r"^\d+$", s):
         return str(ipaddress.ip_address(s))
@@ -378,7 +373,7 @@ validate_transaction = Schema(
 )
 
 
-def _maxmind_id(s: Optional[str]) -> str:
+def _maxmind_id(s: str | None) -> str:
     if isinstance(s, str) and len(s) == 8:
         return s
     raise ValueError
@@ -404,7 +399,7 @@ def _non_empty_uuid(s: str) -> str:
     return s
 
 
-def _transaction_id(s: Optional[str]) -> str:
+def _transaction_id(s: str | None) -> str:
     if isinstance(s, str) and len(s) > 0:
         return s
     raise ValueError
@@ -423,7 +418,7 @@ _validate_report_schema = Schema(
 )
 
 
-def _validate_at_least_one_identifier_field(report) -> bool:
+def _validate_at_least_one_identifier_field(report: dict) -> bool:
     optional_fields = ["ip_address", "maxmind_id", "minfraud_id", "transaction_id"]
     if not any(field in report for field in optional_fields):
         # We return MultipleInvalid instead of ValueError to be consistent with what
@@ -442,7 +437,7 @@ def _validate_at_least_one_identifier_field(report) -> bool:
     return True
 
 
-def validate_report(report) -> bool:
+def validate_report(report: dict) -> bool:
     """Validate minFraud Transaction Report fields."""
     _validate_report_schema(report)
     _validate_at_least_one_identifier_field(report)

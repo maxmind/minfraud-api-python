@@ -45,16 +45,19 @@ class BaseTest(unittest.TestCase):
             "abcdef123456",
             host=f"{self.httpserver.host}:{self.httpserver.port}",
         )
-        test_dir = os.path.join(os.path.dirname(__file__), "data")
-        with builtins.open(
-            os.path.join(test_dir, self.request_file),
+        test_dir = os.path.join(  # noqa: PTH118
+            os.path.dirname(__file__),  # noqa: PTH120
+            "data",
+        )
+        with builtins.open(  # noqa: PTH123
+            os.path.join(test_dir, self.request_file),  # noqa: PTH118
             encoding="utf-8",
         ) as file:
             content = file.read()
         self.full_request = json.loads(content)
 
-        with builtins.open(
-            os.path.join(test_dir, self.response_file),
+        with builtins.open(  # noqa: PTH123
+            os.path.join(test_dir, self.response_file),  # noqa: PTH118
             encoding="utf-8",
         ) as file:
             self.response = file.read()
@@ -146,7 +149,9 @@ class BaseTest(unittest.TestCase):
             content_type = (
                 "application/json"
                 if self.type == "report"
-                else "application/vnd.maxmind.com-error+json; charset=UTF-8; version=2.0"
+                else (
+                    "application/vnd.maxmind.com-error+json; charset=UTF-8; version=2.0"
+                )
             )
         self.httpserver.expect_request(uri, method="POST").respond_with_data(
             text,
@@ -175,7 +180,10 @@ class BaseTest(unittest.TestCase):
         status = 204 if self.type == "report" else 200
         self.httpserver.expect_request(uri, method="POST").respond_with_data(
             response,
-            content_type=f"application/vnd.maxmind.com-minfraud-{self.type}+json; charset=UTF-8; version=2.0",
+            content_type=(
+                f"application/vnd.maxmind.com-minfraud-{self.type}+json; "
+                "charset=UTF-8; version=2.0"
+            ),
             status=status,
         )
         if client is None:
@@ -183,7 +191,7 @@ class BaseTest(unittest.TestCase):
 
         return self.run_client(getattr(client, self.type)(request))
 
-    def run_client(self, v):
+    def run_client(self, v):  # noqa: ANN001
         return v
 
     def test_named_constructor_args(self) -> None:
@@ -193,15 +201,15 @@ class BaseTest(unittest.TestCase):
             self.client_class(account_id=id, license_key=key),
             self.client_class(account_id=id, license_key=key),
         ):
-            self.assertEqual(client._account_id, str(id))
-            self.assertEqual(client._license_key, key)
+            self.assertEqual(client._account_id, str(id))  # noqa: SLF001
+            self.assertEqual(client._license_key, key)  # noqa: SLF001
 
     def test_missing_constructor_args(self) -> None:
         with self.assertRaises(TypeError):
             self.client_class(license_key="1234567890ab")  # type: ignore[call-arg]
 
         with self.assertRaises(TypeError):
-            self.client_class("47")  # type: ignore
+            self.client_class("47")  # type: ignore[arg-type,call-arg]
 
 
 class BaseTransactionTest(BaseTest):
@@ -256,7 +264,10 @@ class BaseTransactionTest(BaseTest):
             },
         ).respond_with_data(
             self.response,
-            content_type=f"application/vnd.maxmind.com-minfraud-{self.type}+json; charset=UTF-8; version=2.0",
+            content_type=(
+                f"application/vnd.maxmind.com-minfraud-{self.type}+json; "
+                "charset=UTF-8; version=2.0"
+            ),
             status=200,
         )
 
@@ -317,8 +328,7 @@ class BaseTransactionTest(BaseTest):
     def test_200_with_no_body(self) -> None:
         with self.assertRaisesRegex(
             MinFraudError,
-            "Received a 200 response but could not decode the response as"
-            " JSON: b?'?'?",
+            "Received a 200 response but could not decode the response as JSON: b?'?'?",
         ):
             self.create_success(text="")
 
@@ -386,11 +396,11 @@ class AsyncBase(unittest.TestCase):
         super().setUp()
 
     def tearDown(self) -> None:
-        self._loop.run_until_complete(self.client.close())  # type: ignore
+        self._loop.run_until_complete(self.client.close())  # type: ignore[attr-defined]
         self._loop.close()
         super().tearDown()
 
-    def run_client(self, v):
+    def run_client(self, v):  # noqa: ANN001
         return self._loop.run_until_complete(v)
 
 

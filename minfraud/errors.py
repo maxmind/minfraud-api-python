@@ -1,6 +1,6 @@
 """Typed errors thrown by this library."""
 
-from typing import Optional
+from __future__ import annotations
 
 
 class MinFraudError(RuntimeError):
@@ -22,21 +22,21 @@ class HTTPError(MinFraudError):
     :py:exc:`MinFraudError` and adds attributes of its own.
     """
 
-    http_status: Optional[int]
+    http_status: int | None
     """The HTTP status code returned"""
 
-    uri: Optional[str]
+    uri: str | None
     """The URI queried"""
 
-    decoded_content: Optional[str]
+    decoded_content: str | None
     """The decoded response content"""
 
     def __init__(
         self,
         message: str,
-        http_status: Optional[int] = None,
-        uri: Optional[str] = None,
-        decoded_content: Optional[str] = None,
+        http_status: int | None = None,
+        uri: str | None = None,
+        decoded_content: str | None = None,
     ) -> None:
         """Initialize an HTTPError instance."""
         super().__init__(message)
