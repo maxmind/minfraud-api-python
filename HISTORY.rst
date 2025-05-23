@@ -3,7 +3,7 @@
 History
 -------
 
-3.1.0
+3.1.0 (2025-05-23)
 ++++++++++++++++++
 
 * Added support for the ``/billing_phone/matches_postal`` and
