@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from typing import TYPE_CHECKING
 
 import geoip2.models
@@ -17,6 +18,10 @@ class _Serializable:
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
+
+    def __hash__(self) -> int:
+        # This is not particularly efficient, but I don't expect it to be used much.
+        return hash(json.dumps(self.to_dict(), sort_keys=True))
 
     def to_dict(self) -> dict:  # noqa: C901
         """Return a dict of the object suitable for serialization."""
