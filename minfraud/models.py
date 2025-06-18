@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from typing import TYPE_CHECKING
 
 import geoip2.models
@@ -17,6 +18,10 @@ class _Serializable:
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
+
+    def __hash__(self) -> int:
+        # This is not particularly efficient, but I don't expect it to be used much.
+        return hash(json.dumps(self.to_dict(), sort_keys=True))
 
     def to_dict(self) -> dict:  # noqa: C901
         """Return a dict of the object suitable for serialization."""
@@ -322,9 +327,9 @@ class Email(_Serializable):
         self,
         domain: dict | None = None,
         first_seen: str | None = None,
-        is_disposable: bool | None = None,
-        is_free: bool | None = None,
-        is_high_risk: bool | None = None,
+        is_disposable: bool | None = None,  # noqa: FBT001
+        is_free: bool | None = None,  # noqa: FBT001
+        is_high_risk: bool | None = None,  # noqa: FBT001
     ) -> None:
         """Initialize an Email instance."""
         self.domain = EmailDomain(**(domain or {}))
@@ -376,10 +381,10 @@ class CreditCard(_Serializable):
         issuer: dict | None = None,
         country: str | None = None,
         brand: str | None = None,
-        is_business: bool | None = None,
-        is_issued_in_billing_address_country: bool | None = None,
-        is_prepaid: bool | None = None,
-        is_virtual: bool | None = None,
+        is_business: bool | None = None,  # noqa: FBT001
+        is_issued_in_billing_address_country: bool | None = None,  # noqa: FBT001
+        is_prepaid: bool | None = None,  # noqa: FBT001
+        is_virtual: bool | None = None,  # noqa: FBT001
         type: str | None = None,  # noqa: A002
     ) -> None:
         """Initialize a CreditCard instance."""
