@@ -322,9 +322,9 @@ class Email(_Serializable):
         self,
         domain: dict | None = None,
         first_seen: str | None = None,
-        is_disposable: bool | None = None,
-        is_free: bool | None = None,
-        is_high_risk: bool | None = None,
+        is_disposable: bool | None = None,  # noqa: FBT001
+        is_free: bool | None = None,  # noqa: FBT001
+        is_high_risk: bool | None = None,  # noqa: FBT001
     ) -> None:
         """Initialize an Email instance."""
         self.domain = EmailDomain(**(domain or {}))
@@ -376,10 +376,10 @@ class CreditCard(_Serializable):
         issuer: dict | None = None,
         country: str | None = None,
         brand: str | None = None,
-        is_business: bool | None = None,
-        is_issued_in_billing_address_country: bool | None = None,
-        is_prepaid: bool | None = None,
-        is_virtual: bool | None = None,
+        is_business: bool | None = None,  # noqa: FBT001
+        is_issued_in_billing_address_country: bool | None = None,  # noqa: FBT001
+        is_prepaid: bool | None = None,  # noqa: FBT001
+        is_virtual: bool | None = None,  # noqa: FBT001
         type: str | None = None,  # noqa: A002
     ) -> None:
         """Initialize a CreditCard instance."""

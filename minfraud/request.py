@@ -354,7 +354,6 @@ def _clean_domain(domain: str) -> str:
 
     idx = domain.rfind(".")
     if idx != -1:
-        # flake8: noqa: E203
         tld = domain[idx + 1 :]
         if typo_tld := _TYPO_TLDS.get(tld):
             domain = domain[:idx] + "." + typo_tld
@@ -370,7 +369,6 @@ def _clean_email(address: str) -> tuple[str | None, str | None]:
     if at_idx == -1:
         return None, None
 
-    # flake8: noqa: E203
     domain = _clean_domain(address[at_idx + 1 :])
     local_part = address[:at_idx]
 
