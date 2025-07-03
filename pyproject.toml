@@ -16,6 +16,7 @@ dependencies = [
 requires-python = ">=3.9"
 readme = "README.rst"
 license = "Apache-2.0"
+license-files = ["LICENSE"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Web Environment",
@@ -50,11 +51,18 @@ Documentation = "https://minfraud.readthedocs.org/"
 "Issue Tracker" = "https://github.com/maxmind/minfraud-api-python/issues"
 
 [build-system]
-requires = [
-    "setuptools>=77.0.3",
-    "setuptools-scm",
+requires = ["uv_build>=0.7.19,<0.8.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+source-include = [
+    "HISTORY.rst",
+    "README.rst",
+    "LICENSE",
+    "docs/html",
+    "examples/*.py",
+    "tests/*.py",
 ]
-build-backend = "setuptools.build_meta"
 
 [tool.ruff.lint]
 select = ["ALL"]
@@ -87,11 +95,8 @@ ignorelist = ["id"]
 
 [tool.ruff.lint.per-file-ignores]
 "docs/*" = ["ALL"]
-"minfraud/models.py" = [ "PLR0913" ]
+"src/minfraud/models.py" = [ "PLR0913" ]
 "tests/*" = ["ANN201", "D"]
-
-[tool.setuptools.package-data]
-minfraud = ["py.typed"]
 
 [tool.tox]
 env_list = [
@@ -120,7 +125,7 @@ dependency_groups = [
     "lint",
 ]
 commands = [
-    ["mypy", "minfraud", "tests"],
+    ["mypy", "src", "tests"],
     ["ruff", "check"],
     ["ruff", "format", "--check", "--diff", "."],
 ]
