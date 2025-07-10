@@ -8,6 +8,7 @@ History
 
 * Setuptools has been replaced with the uv build backend for building the
   package.
+* Added ``securepay`` to the ``/payment/processor`` validation.
 
 3.1.0 (2025-05-23)
 ++++++++++++++++++

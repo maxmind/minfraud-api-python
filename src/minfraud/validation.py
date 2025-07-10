@@ -231,6 +231,7 @@ _payment_processor = In(
         "rewardspay",
         "safecharge",
         "sagepay",
+        "securepay",
         "securetrading",
         "shopify_payments",
         "simplify_commerce",
