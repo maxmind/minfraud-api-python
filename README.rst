@@ -210,6 +210,7 @@ Score, Insights and Factors Example
     >>>     'payment': {
     >>>         'decline_code': 'invalid number',
     >>>         'was_authorized': False,
+    >>>         'method': 'card',
     >>>         'processor': 'stripe'
     >>>     },
     >>>     'shopping_cart': [{

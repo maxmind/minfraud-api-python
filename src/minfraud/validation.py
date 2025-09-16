@@ -98,6 +98,21 @@ _shipping_address = _address.copy()
 
 _shipping_address["delivery_speed"] = _delivery_speed
 
+_payment_method = In(
+    [
+        "bank_debit",
+        "bank_redirect",
+        "bank_transfer",
+        "buy_now_pay_later",
+        "card",
+        "crypto",
+        "digital_wallet",
+        "gift_card",
+        "real_time_payment",
+        "rewards",
+    ],
+)
+
 _payment_processor = In(
     [
         "adyen",
@@ -320,6 +335,7 @@ validate_transaction = Schema(
         },
         "billing": _address,
         "payment": {
+            "method": _payment_method,
             "processor": _payment_processor,
             "was_authorized": bool,
             "decline_code": str,

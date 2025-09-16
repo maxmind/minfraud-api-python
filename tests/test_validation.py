@@ -378,6 +378,23 @@ class TestOrder(ValidationBase, unittest.TestCase):
 
 
 class TestPayment(ValidationBase, unittest.TestCase):
+    def test_method(self) -> None:
+        for good in (
+            "bank_debit",
+            "bank_redirect",
+            "bank_transfer",
+            "buy_now_pay_later",
+            "card",
+            "crypto",
+            "digital_wallet",
+            "gift_card",
+            "real_time_payment",
+            "rewards",
+        ):
+            self.check_transaction({"payment": {"method": good}})
+        for bad in ("bad", 1, ""):
+            self.check_invalid_transaction({"payment": {"method": bad}})
+
     def test_processor(self) -> None:
         for good in ("adyen", "stripe"):
             self.check_transaction({"payment": {"processor": good}})
