@@ -308,6 +308,12 @@ class TestEmail(ValidationBase, unittest.TestCase):
 
 
 class TestEvent(ValidationBase, unittest.TestCase):
+    def test_party(self) -> None:
+        for good in ("agent", "customer"):
+            self.check_transaction({"event": {"party": good}})
+        for bad in ("bad", 1, ""):
+            self.check_invalid_transaction({"event": {"party": bad}})
+
     def test_transaction(self) -> None:
         self.check_transaction_str_type("event", "transaction_id")
 

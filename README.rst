@@ -156,6 +156,7 @@ Score, Insights and Factors Example
     >>>         'user_agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.89 Safari/537.36'
     >>>     },
     >>>     'event': {
+    >>>         'party': 'customer',
     >>>         'shop_id': 's2123',
     >>>         'type': 'purchase',
     >>>         'transaction_id': 'txn3134133',

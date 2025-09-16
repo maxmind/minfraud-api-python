@@ -11,6 +11,8 @@ History
 * Added ``securepay`` to the ``/payment/processor`` validation.
 * Added ``credit_application`` and ``fund_transfer`` to the ``/event/type``
   validation.
+* Added the input ``/event/party``. This is the party submitting the
+  transaction.
 
 3.1.0 (2025-05-23)
 ++++++++++++++++++

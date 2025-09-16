@@ -281,6 +281,8 @@ _rfc3339_datetime = Match(
 )
 
 
+_event_party = In(["agent", "customer"])
+
 _event_type = In(
     [
         "account_creation",
@@ -348,6 +350,7 @@ validate_transaction = Schema(
             "domain": _hostname,
         },
         "event": {
+            "party": _event_party,
             "shop_id": str,
             "time": _rfc3339_datetime,
             "type": _event_type,
