@@ -6,7 +6,7 @@ import json
 import os
 import unittest
 from functools import partial
-from typing import TYPE_CHECKING, Any, Callable, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import pytest
 
@@ -23,6 +23,8 @@ from minfraud.models import Factors, Insights, Score
 from minfraud.webservice import AsyncClient, Client
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from pytest_httpserver import HTTPServer
 
 minfraud.webservice._SCHEME = "http"  # noqa: SLF001

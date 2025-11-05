@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import geoip2.models
 import geoip2.records
@@ -23,7 +23,7 @@ class _Serializable:
         # This is not particularly efficient, but I don't expect it to be used much.
         return hash(json.dumps(self.to_dict(), sort_keys=True))
 
-    def to_dict(self) -> dict:  # noqa: C901
+    def to_dict(self) -> dict[str, Any]:  # noqa: C901
         """Return a dict of the object suitable for serialization."""
         result = {}
         for key, value in self.__dict__.items():
@@ -100,7 +100,7 @@ class GeoIP2Location(geoip2.records.Location):
     `RFC 3339 <https://tools.ietf.org/html/rfc3339>`_. For instance, the
     local time in Boston might be returned as 2015-04-27T19:17:24-04:00."""
 
-    def __init__(self, *args, **kwargs) -> None:  # noqa: ANN002
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initialize a GeoIP2Location instance."""
         self.local_time = kwargs.get("local_time")
         super().__init__(*args, **kwargs)
@@ -131,11 +131,11 @@ class IPAddress(geoip2.models.Insights):
         self,
         locales: Sequence[str] | None,
         *,
-        country: dict | None = None,
-        location: dict | None = None,
+        country: dict[str, Any] | None = None,
+        location: dict[str, Any] | None = None,
         risk: float | None = None,
-        risk_reasons: list[dict] | None = None,
-        **kwargs,
+        risk_reasons: list[dict[str, Any]] | None = None,
+        **kwargs: Any,
     ) -> None:
         """Initialize an IPAddress instance."""
         # For raw attribute
@@ -161,7 +161,7 @@ class ScoreIPAddress(_Serializable):
     """This field contains the risk associated with the IP address. The value
     ranges from 0.01 to 99. A higher score indicates a higher risk."""
 
-    def __init__(self, *, risk: float | None = None, **_) -> None:
+    def __init__(self, *, risk: float | None = None, **_: Any) -> None:
         """Initialize a ScoreIPAddress instance."""
         self.risk = risk
 
@@ -197,7 +197,7 @@ class Issuer(_Serializable):
         matches_provided_name: bool | None = None,
         phone_number: str | None = None,
         matches_provided_phone_number: bool | None = None,
-        **_,
+        **_: Any,
     ) -> None:
         """Initialize an Issuer instance."""
         self.name = name
@@ -239,7 +239,7 @@ class Device(_Serializable):
         id: str | None = None,
         last_seen: str | None = None,
         local_time: str | None = None,
-        **_,
+        **_: Any,
     ) -> None:
         """Initialize a Device instance."""
         self.confidence = confidence
@@ -277,7 +277,7 @@ class Disposition(_Serializable):
         action: str | None = None,
         reason: str | None = None,
         rule_label: str | None = None,
-        **_,
+        **_: Any,
     ) -> None:
         """Initialize a Disposition instance."""
         self.action = action
@@ -293,7 +293,7 @@ class EmailDomain(_Serializable):
     was first seen by MaxMind. This is expressed using the ISO 8601 date
     format."""
 
-    def __init__(self, *, first_seen: str | None = None, **_) -> None:
+    def __init__(self, *, first_seen: str | None = None, **_: Any) -> None:
         """Initialize an EmailDomain instance."""
         self.first_seen = first_seen
 
@@ -325,7 +325,7 @@ class Email(_Serializable):
 
     def __init__(
         self,
-        domain: dict | None = None,
+        domain: dict[str, Any] | None = None,
         first_seen: str | None = None,
         is_disposable: bool | None = None,  # noqa: FBT001
         is_free: bool | None = None,  # noqa: FBT001
@@ -378,7 +378,7 @@ class CreditCard(_Serializable):
 
     def __init__(
         self,
-        issuer: dict | None = None,
+        issuer: dict[str, Any] | None = None,
         country: str | None = None,
         brand: str | None = None,
         is_business: bool | None = None,  # noqa: FBT001
@@ -432,7 +432,7 @@ class BillingAddress(_Serializable):
         longitude: float | None = None,
         distance_to_ip_location: int | None = None,
         is_in_ip_country: bool | None = None,
-        **_,
+        **_: Any,
     ) -> None:
         """Initialize a BillingAddress instance."""
         self.is_postal_in_city = is_postal_in_city
@@ -487,7 +487,7 @@ class ShippingAddress(_Serializable):
         is_in_ip_country: bool | None = None,
         is_high_risk: bool | None = None,
         distance_to_billing_address: int | None = None,
-        **_,
+        **_: Any,
     ) -> None:
         """Initialize a ShippingAddress instance."""
         self.is_postal_in_city = is_postal_in_city
@@ -538,7 +538,7 @@ class Phone(_Serializable):
         matches_postal: bool | None = None,
         network_operator: str | None = None,
         number_type: str | None = None,
-        **_,
+        **_: Any,
     ) -> None:
         """Initialize a Phone instance."""
         self.country = country
@@ -573,7 +573,7 @@ class ServiceWarning(_Serializable):
         code: str | None = None,
         warning: str | None = None,
         input_pointer: str | None = None,
-        **_,
+        **_: Any,
     ) -> None:
         """Initialize a ServiceWarning instance."""
         self.code = code
@@ -717,7 +717,7 @@ class Subscores(_Serializable):
         shipping_address: float | None = None,
         shipping_address_distance_to_ip_location: float | None = None,
         time_of_day: float | None = None,
-        **_,
+        **_: Any,
     ) -> None:
         """Initialize a Subscores instance."""
         self.avs_result = avs_result
@@ -831,7 +831,7 @@ class Reason(_Serializable):
         *,
         code: str | None = None,
         reason: str | None = None,
-        **_,
+        **_: Any,
     ) -> None:
         """Initialize a Reason instance."""
         self.code = code
@@ -855,8 +855,8 @@ class RiskScoreReason(_Serializable):
         self,
         *,
         multiplier: float,
-        reasons: list | None = None,
-        **_,
+        reasons: list[dict[str, Any]] | None = None,
+        **_: Any,
     ) -> None:
         """Initialize a RiskScoreReason instance."""
         self.multiplier = multiplier
@@ -948,23 +948,23 @@ class Factors(_Serializable):
         self,
         locales: Sequence[str],
         *,
-        billing_address: dict | None = None,
-        billing_phone: dict | None = None,
-        credit_card: dict | None = None,
-        disposition: dict | None = None,
+        billing_address: dict[str, Any] | None = None,
+        billing_phone: dict[str, Any] | None = None,
+        credit_card: dict[str, Any] | None = None,
+        disposition: dict[str, Any] | None = None,
         funds_remaining: float,
-        device: dict | None = None,
-        email: dict | None = None,
+        device: dict[str, Any] | None = None,
+        email: dict[str, Any] | None = None,
         id: str,
-        ip_address: dict | None = None,
+        ip_address: dict[str, Any] | None = None,
         queries_remaining: int,
         risk_score: float,
-        shipping_address: dict | None = None,
-        shipping_phone: dict | None = None,
-        subscores: dict | None = None,
-        warnings: list[dict] | None = None,
-        risk_score_reasons: list[dict] | None = None,
-        **_,
+        shipping_address: dict[str, Any] | None = None,
+        shipping_phone: dict[str, Any] | None = None,
+        subscores: dict[str, Any] | None = None,
+        warnings: list[dict[str, Any]] | None = None,
+        risk_score_reasons: list[dict[str, Any]] | None = None,
+        **_: Any,
     ) -> None:
         """Initialize a Factors instance."""
         self.billing_address = BillingAddress(**(billing_address or {}))
@@ -1056,21 +1056,21 @@ class Insights(_Serializable):
         self,
         locales: Sequence[str],
         *,
-        billing_address: dict | None = None,
-        billing_phone: dict | None = None,
-        credit_card: dict | None = None,
-        device: dict | None = None,
-        disposition: dict | None = None,
-        email: dict | None = None,
+        billing_address: dict[str, Any] | None = None,
+        billing_phone: dict[str, Any] | None = None,
+        credit_card: dict[str, Any] | None = None,
+        device: dict[str, Any] | None = None,
+        disposition: dict[str, Any] | None = None,
+        email: dict[str, Any] | None = None,
         funds_remaining: float,
         id: str,
-        ip_address: dict | None = None,
+        ip_address: dict[str, Any] | None = None,
         queries_remaining: int,
         risk_score: float,
-        shipping_address: dict | None = None,
-        shipping_phone: dict | None = None,
-        warnings: list[dict] | None = None,
-        **_,
+        shipping_address: dict[str, Any] | None = None,
+        shipping_phone: dict[str, Any] | None = None,
+        warnings: list[dict[str, Any]] | None = None,
+        **_: Any,
     ) -> None:
         """Initialize an Insights instance."""
         self.billing_address = BillingAddress(**(billing_address or {}))
@@ -1128,14 +1128,14 @@ class Score(_Serializable):
     def __init__(
         self,
         *,
-        disposition: dict | None = None,
+        disposition: dict[str, Any] | None = None,
         funds_remaining: float,
         id: str,
-        ip_address: dict | None = None,
+        ip_address: dict[str, Any] | None = None,
         queries_remaining: int,
         risk_score: float,
-        warnings: list[dict] | None = None,
-        **_,
+        warnings: list[dict[str, Any]] | None = None,
+        **_: Any,
     ) -> None:
         """Initialize a Score instance."""
         self.disposition = Disposition(**(disposition or {}))

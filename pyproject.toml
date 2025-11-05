@@ -67,9 +67,6 @@ source-include = [
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
-    # Skip type annotation on **_
-    "ANN003",
-
     # Redundant as the formatter handles missing trailing commas.
     "COM812",
 
@@ -95,7 +92,8 @@ ignorelist = ["id"]
 
 [tool.ruff.lint.per-file-ignores]
 "docs/*" = ["ALL"]
-"src/minfraud/models.py" = [ "PLR0913" ]
+"src/minfraud/models.py" = ["ANN401", "PLR0913"]
+"src/minfraud/webservice.py" = ["ANN401"]
 "tests/*" = ["ANN201", "D"]
 
 [tool.tox]

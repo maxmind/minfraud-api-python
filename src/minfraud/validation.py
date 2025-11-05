@@ -14,6 +14,7 @@ import re
 import urllib.parse
 import uuid
 from decimal import Decimal
+from typing import Any as AnyType
 
 from email_validator import validate_email
 from voluptuous import (
@@ -327,7 +328,7 @@ def _uri(s: str) -> str:
     return s
 
 
-validate_transaction = Schema(
+validate_transaction: Schema = Schema(
     {
         "account": {
             "user_id": str,
@@ -459,7 +460,7 @@ def _validate_at_least_one_identifier_field(report: dict) -> bool:
     return True
 
 
-def validate_report(report: dict) -> bool:
+def validate_report(report: dict[str, AnyType]) -> bool:
     """Validate minFraud Transaction Report fields."""
     _validate_report_schema(report)
     _validate_at_least_one_identifier_field(report)
