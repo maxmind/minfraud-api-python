@@ -2,11 +2,14 @@ from __future__ import annotations
 
 import unittest
 from decimal import Decimal
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any
 
 from voluptuous import MultipleInvalid
 
 from minfraud.validation import validate_report, validate_transaction
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class ValidationBase(unittest.TestCase):

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from functools import partial
-from typing import TYPE_CHECKING, Any, Callable, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import aiohttp
 import aiohttp.http
@@ -26,7 +26,7 @@ from .version import __version__
 if TYPE_CHECKING:
     import sys
     import types
-    from collections.abc import Sequence
+    from collections.abc import Callable, Sequence
 
     from requests.models import Response
 
@@ -78,7 +78,7 @@ class BaseClient:
         self,
         raw_body: str,
         uri: str,
-        model_class: Callable,
+        model_class: Callable[..., Score | Factors | Insights],
     ) -> Score | Factors | Insights:
         """Handle successful response."""
         try:
