@@ -311,6 +311,7 @@ _event_type = In(
         "purchase",
         "recurring_purchase",
         "referral",
+        "sim_swap",
         "survey",
     ],
 )
