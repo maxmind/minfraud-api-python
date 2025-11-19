@@ -10,6 +10,7 @@ from minfraud.models import (
     Disposition,
     Email,
     EmailDomain,
+    EmailDomainVisit,
     Factors,
     GeoIP2Location,
     Insights,
@@ -108,6 +109,18 @@ class TestModels(unittest.TestCase):
         self.assertEqual("default", disposition.reason)
         self.assertEqual("custom rule label", disposition.rule_label)
 
+    def test_email_domain_visit(self) -> None:
+        last_visited_on = "2024-01-15"
+        visit = EmailDomainVisit(
+            status="live",
+            last_visited_on=last_visited_on,
+            has_redirect=True,
+        )
+
+        self.assertEqual("live", visit.status)
+        self.assertEqual(last_visited_on, visit.last_visited_on)
+        self.assertEqual(True, visit.has_redirect)
+
     def test_email(self) -> None:
         first_seen = "2016-01-01"
         email = Email(
@@ -124,11 +137,26 @@ class TestModels(unittest.TestCase):
 
     def test_email_domain(self) -> None:
         first_seen = "2016-01-01"
+        last_visited_on = "2024-01-15"
         domain = EmailDomain(
             first_seen=first_seen,
+            classification="business",
+            risk=1.23,
+            volume=37000,
+            visit={
+                "status": "live",
+                "last_visited_on": last_visited_on,
+                "has_redirect": False,
+            },
         )
 
         self.assertEqual(first_seen, domain.first_seen)
+        self.assertEqual("business", domain.classification)
+        self.assertEqual(1.23, domain.risk)
+        self.assertEqual(37000, domain.volume)
+        self.assertEqual("live", domain.visit.status)
+        self.assertEqual(last_visited_on, domain.visit.last_visited_on)
+        self.assertEqual(False, domain.visit.has_redirect)
 
     def test_geoip2_location(self) -> None:
         time = "2015-04-19T12:59:23-01:00"
@@ -357,7 +385,20 @@ class TestModels(unittest.TestCase):
                 "type": "debit",
             },
             "device": {"id": "b643d445-18b2-4b9d-bad4-c9c4366e402a"},
-            "email": {"domain": {"first_seen": "2014-02-23"}, "is_free": True},
+            "email": {
+                "domain": {
+                    "first_seen": "2014-02-23",
+                    "classification": "business",
+                    "risk": 1.23,
+                    "volume": 37000,
+                    "visit": {
+                        "status": "live",
+                        "last_visited_on": "2024-01-15",
+                        "has_redirect": False,
+                    },
+                },
+                "is_free": True,
+            },
             "shipping_address": {"is_in_ip_country": True},
             "shipping_phone": {"is_voip": True},
             "billing_address": {"is_in_ip_country": True},
@@ -412,6 +453,12 @@ class TestModels(unittest.TestCase):
         self.assertEqual("reject", insights.disposition.action)
         self.assertEqual(True, insights.email.is_free)
         self.assertEqual("2014-02-23", insights.email.domain.first_seen)
+        self.assertEqual("business", insights.email.domain.classification)
+        self.assertEqual(1.23, insights.email.domain.risk)
+        self.assertEqual(37000, insights.email.domain.volume)
+        self.assertEqual("live", insights.email.domain.visit.status)
+        self.assertEqual("2024-01-15", insights.email.domain.visit.last_visited_on)
+        self.assertEqual(False, insights.email.domain.visit.has_redirect)
         self.assertEqual(True, insights.shipping_phone.is_voip)
         self.assertEqual(True, insights.shipping_address.is_in_ip_country)
         self.assertEqual(True, insights.billing_address.is_in_ip_country)

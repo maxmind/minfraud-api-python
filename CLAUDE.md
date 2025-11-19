@@ -318,7 +318,7 @@ When adding email normalization rules to `request.py`:
 
 Always update `HISTORY.rst` for user-facing changes.
 
-**Important**: Do not add a date to changelog entries until release time. Version numbers are added but without dates.
+**Important**: Do not add a date to changelog entries until release time. A version number without a date indicates an unreleased version. Only add the date when the version is actually released.
 
 Format:
 ```rst
