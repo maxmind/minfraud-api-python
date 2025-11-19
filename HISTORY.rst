@@ -17,6 +17,17 @@ History
   transaction.
 * Added the input ``/payment/method``. This is the payment method associated
   with the transaction.
+* Added new ``EmailDomainVisit`` model class with ``status``,
+  ``last_visited_on``, and ``has_redirect`` attributes. This class provides
+  information from automated visits to email domains.
+* Added new attributes to ``minfraud.models.EmailDomain``:
+  * ``classification`` - A classification of the email domain (``business``,
+    ``education``, ``government``, or ``isp_email``).
+  * ``risk`` - The risk associated with the domain (0.01 to 99).
+  * ``volume`` - Activity on the email domain across the minFraud network,
+    expressed in sightings per million (0.001 to 1,000,000).
+  * ``visit`` - An ``EmailDomainVisit`` object containing information from
+    an automated visit to the email domain.
 
 3.1.0 (2025-05-23)
 ++++++++++++++++++

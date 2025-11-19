@@ -285,6 +285,39 @@ class Disposition(_Serializable):
         self.rule_label = rule_label
 
 
+class EmailDomainVisit(_Serializable):
+    """Information from an automated visit to the email domain."""
+
+    status: str | None
+    """A classification of the status of the domain based on an automated visit.
+    This will be one of the following values: ``live``, ``dns_error``,
+    ``network_error``, ``http_error``, ``parked``, or ``pre_development``.
+    Additional values may be added in the future."""
+
+    last_visited_on: str | None
+    """A date string (e.g. 2019-01-01) to identify the date when the automated
+    visit to the domain was completed. This is expressed using the ISO 8601 date
+    format YYYY-MM-DD."""
+
+    has_redirect: bool | None
+    """This is ``True`` if the domain in the request has redirects (configured
+    to automatically send visitors to another URL). Otherwise the key is omitted.
+    When ``True``, the ``status`` corresponds to the final redirected domain."""
+
+    def __init__(
+        self,
+        *,
+        status: str | None = None,
+        last_visited_on: str | None = None,
+        has_redirect: bool | None = None,
+        **_: Any,
+    ) -> None:
+        """Initialize an EmailDomainVisit instance."""
+        self.status = status
+        self.last_visited_on = last_visited_on
+        self.has_redirect = has_redirect
+
+
 class EmailDomain(_Serializable):
     """Information about the email domain passed in the request."""
 
@@ -293,9 +326,42 @@ class EmailDomain(_Serializable):
     was first seen by MaxMind. This is expressed using the ISO 8601 date
     format."""
 
-    def __init__(self, *, first_seen: str | None = None, **_: Any) -> None:
+    classification: str | None
+    """A classification of the domain. This will be one of the following values:
+    ``business``, ``education``, ``government``, or ``isp_email``. Additional
+    values may be added in the future."""
+
+    risk: float | None
+    """This field contains the risk associated with the domain. The value ranges
+    from 0.01 to 99. A higher score indicates higher risk."""
+
+    volume: float | None
+    """This field indicates the activity on an email domain across the minFraud
+    network, expressed in sightings per million. The value ranges from 0.001 to
+    1,000,000. Values are rounded to 2 significant figures."""
+
+    visit: EmailDomainVisit
+    """An object containing information from an automated visit to the email
+    domain. This object may be populated after an automated visit has been
+    completed. For newly sighted domains, the visit information may take some
+    time to appear. Visit information is limited to low-volume domains only."""
+
+    def __init__(
+        self,
+        *,
+        first_seen: str | None = None,
+        classification: str | None = None,
+        risk: float | None = None,
+        volume: float | None = None,
+        visit: dict[str, Any] | None = None,
+        **_: Any,
+    ) -> None:
         """Initialize an EmailDomain instance."""
         self.first_seen = first_seen
+        self.classification = classification
+        self.risk = risk
+        self.volume = volume
+        self.visit = EmailDomainVisit(**(visit or {}))
 
 
 class Email(_Serializable):

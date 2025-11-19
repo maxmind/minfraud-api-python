@@ -150,7 +150,15 @@
   },
   "email": {
     "domain": {
-      "first_seen": "2014-02-23"
+      "first_seen": "2014-02-23",
+      "classification": "business",
+      "risk": 1.23,
+      "volume": 37000,
+      "visit": {
+        "status": "live",
+        "last_visited_on": "2024-01-15",
+        "has_redirect": false
+      }
     },
     "first_seen": "2017-01-02",
     "is_disposable": true,
