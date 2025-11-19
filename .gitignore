@@ -71,3 +71,6 @@ MANIFEST
 
 /t.py
 /test*.py
+
+# Claude Code
+.claude
