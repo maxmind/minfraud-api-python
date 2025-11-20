@@ -37,6 +37,7 @@ classifiers = [
 dev = [
     "pytest>=8.3.5",
     "pytest-httpserver>=1.0.10",
+    "tox-uv>=1.29.0",
 ]
 lint = [
     "mypy>=1.15.0",
