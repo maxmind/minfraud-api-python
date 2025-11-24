@@ -306,11 +306,6 @@ For asynchronous reporting:
     >>>
     >>> asyncio.run(report())
 
-Requirements
-------------
-
-Python 3.9 or greater is required. Older versions are not supported.
-
 Versioning
 ----------
 
