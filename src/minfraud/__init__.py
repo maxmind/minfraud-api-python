@@ -10,5 +10,3 @@ from .errors import (
 )
 from .version import __version__
 from .webservice import AsyncClient, Client
-
-__author__ = "Gregory Oschwald"
