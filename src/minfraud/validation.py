@@ -126,6 +126,7 @@ _payment_processor = In(
         "aps_payments",
         "authorizenet",
         "balanced",
+        "banquest",
         "beanstream",
         "bluepay",
         "bluesnap",
@@ -257,6 +258,7 @@ _payment_processor = In(
         "solidtrust_pay",
         "sps_decidir",
         "stripe",
+        "summit_payments",
         "synapsefi",
         "systempay",
         "telerecargas",
@@ -276,6 +278,7 @@ _payment_processor = In(
         "windcave",
         "wirecard",
         "worldpay",
+        "yaadpay",
     ],
 )
 
