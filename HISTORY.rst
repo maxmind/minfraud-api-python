@@ -6,6 +6,8 @@ History
 3.3.0
 ++++++++++++++++++
 
+* Added ``banquest``, ``summit_payments``, and ``yaadpay`` to the
+  ``/payment/processor`` validation.
 * The version is now retrieved from package metadata at runtime using
   ``importlib.metadata``. This reduces the chance of version inconsistencies
   during releases.
