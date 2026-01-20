@@ -19,6 +19,17 @@
         "reason": "Suspicious activity has been seen on this IP address across minFraud customers."
       }
     ],
+    "anonymizer": {
+      "confidence": 99,
+      "is_anonymous": true,
+      "is_anonymous_vpn": true,
+      "is_hosting_provider": true,
+      "is_public_proxy": true,
+      "is_residential_proxy": true,
+      "is_tor_exit_node": true,
+      "network_last_seen": "2025-01-15",
+      "provider_name": "TestVPN"
+    },
     "city": {
       "confidence": 42,
       "geoname_id": 2643743,

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 import unittest
 from typing import Any
 
@@ -187,6 +188,16 @@ class TestModels(unittest.TestCase):
                     "across minFraud customers.",
                 },
             ],
+            anonymizer={
+                "confidence": 99,
+                "is_anonymous": True,
+                "is_anonymous_vpn": True,
+                "is_hosting_provider": True,
+                "is_public_proxy": True,
+                "is_tor_exit_node": True,
+                "network_last_seen": "2025-01-15",
+                "provider_name": "TestVPN",
+            },
             traits={
                 "is_anonymous": True,
                 "is_anonymous_proxy": True,
@@ -214,6 +225,18 @@ class TestModels(unittest.TestCase):
         self.assertEqual(True, address.traits.is_tor_exit_node)
         self.assertEqual("310", address.traits.mobile_country_code)
         self.assertEqual("004", address.traits.mobile_network_code)
+
+        # Test anonymizer attribute
+        self.assertEqual(99, address.anonymizer.confidence)
+        self.assertEqual(True, address.anonymizer.is_anonymous)
+        self.assertEqual(True, address.anonymizer.is_anonymous_vpn)
+        self.assertEqual(True, address.anonymizer.is_hosting_provider)
+        self.assertEqual(True, address.anonymizer.is_public_proxy)
+        self.assertEqual(True, address.anonymizer.is_tor_exit_node)
+        self.assertEqual(
+            datetime.date(2025, 1, 15), address.anonymizer.network_last_seen
+        )
+        self.assertEqual("TestVPN", address.anonymizer.provider_name)
 
         self.assertEqual("ANONYMOUS_IP", address.risk_reasons[0].code)
         self.assertEqual(
