@@ -291,6 +291,9 @@ class TestDevice(ValidationBase, unittest.TestCase):
                 {"device": {"ip_address": "4.4.4.4", "session_age": invalid}},
             )
 
+    def test_tracking_token(self) -> None:
+        self.check_transaction_str_type("device", "tracking_token")
+
 
 class TestEmail(ValidationBase, unittest.TestCase):
     def test_address(self) -> None:
