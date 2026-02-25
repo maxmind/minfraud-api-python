@@ -364,6 +364,7 @@ validate_transaction: Schema = Schema(
             "ip_address": _ip_address,
             "session_age": All(_any_number, Range(min=0)),
             "session_id": str,
+            "tracking_token": str,
             "user_agent": str,
         },
         "email": {
