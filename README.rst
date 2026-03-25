@@ -232,7 +232,9 @@ Score, Insights and Factors Example
     >>>         'subaffiliate_id': 'saf42',
     >>>         'discount_code': 'FIRST',
     >>>         'currency': 'USD',
-    >>>         'amount': 323.21
+    >>>         'amount': 323.21,
+    >>>         'is_gift': True,
+    >>>         'has_gift_message': True
     >>>      },
     >>>     'custom_inputs': {
     >>>         'section': 'news',
