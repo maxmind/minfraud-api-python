@@ -408,7 +408,7 @@ def _maxmind_id(s: str | None) -> str:
     raise ValueError
 
 
-_tag = In(["chargeback", "not_fraud", "spam_or_abuse", "suspected_fraud"])
+_tag = In(["chargeback", "clear", "not_fraud", "spam_or_abuse", "suspected_fraud"])
 
 
 def _uuid(s: str) -> str:

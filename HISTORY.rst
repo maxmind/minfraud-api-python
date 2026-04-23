@@ -12,6 +12,8 @@ History
   linking.
 * Added ``banquest``, ``fat_zebra``, ``summit_payments``, and ``yaadpay`` to
   the ``/payment/processor`` validation.
+* Added ``clear`` to the valid values for the ``tag`` parameter on the
+  Report Transaction API.
 * The version is now retrieved from package metadata at runtime using
   ``importlib.metadata``. This reduces the chance of version inconsistencies
   during releases.

@@ -470,7 +470,13 @@ class TestReport(ValidationBase):
             self.check_report_str_type(key)
 
     def test_tag(self) -> None:
-        for good in ("chargeback", "not_fraud", "spam_or_abuse", "suspected_fraud"):
+        for good in (
+            "chargeback",
+            "clear",
+            "not_fraud",
+            "spam_or_abuse",
+            "suspected_fraud",
+        ):
             self.check_report({"tag": good})
         for bad in ("risky_business", "", None):
             self.check_invalid_report({"tag": bad})
