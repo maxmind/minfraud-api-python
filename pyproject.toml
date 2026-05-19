@@ -42,7 +42,6 @@ dev = [
 lint = [
     "mypy>=1.15.0",
     "ruff>=0.11.6",
-    "types-requests>=2.32.0.20250328",
 ]
 
 [project.urls]
