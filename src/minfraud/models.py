@@ -107,7 +107,7 @@ class GeoIP2Location(geoip2.records.Location):
 
 
 class IPAddress(geoip2.models.Insights):
-    """Model for minFraud and GeoIP2 data about the IP address.
+    """Model for minFraud and GeoIP data about the IP address.
 
     This class inherits from :py:class:`geoip2.models.Insights`. In addition
     to the attributes provided by that class, it provides the ``risk`` and
@@ -966,7 +966,7 @@ class Factors(_Serializable):
     easily identify a particular request."""
 
     ip_address: IPAddress
-    """A :class:`.IPAddress` object containing GeoIP2 and
+    """A :class:`.IPAddress` object containing GeoIP and
     minFraud Insights information about the IP address."""
 
     queries_remaining: int
@@ -1090,7 +1090,7 @@ class Insights(_Serializable):
     easily identify a particular request."""
 
     ip_address: IPAddress
-    """A :class:`.IPAddress` object containing GeoIP2 and
+    """A :class:`.IPAddress` object containing GeoIP and
     minFraud Insights information about the IP address."""
 
     queries_remaining: int
