@@ -107,7 +107,7 @@ class GeoIP2Location(geoip2.records.Location):
 
 
 class IPAddress(geoip2.models.Insights):
-    """Model for minFraud and GeoIP2 data about the IP address.
+    """Model for minFraud and GeoIP data about the IP address.
 
     This class inherits from :py:class:`geoip2.models.Insights`. In addition
     to the attributes provided by that class, it provides the ``risk`` and

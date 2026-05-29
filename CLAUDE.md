@@ -87,7 +87,7 @@ All response models in `models.py` inherit from `_Serializable` which provides:
 
 **Component Models:**
 - `ScoreIPAddress` - Simple IP risk info for Score
-- `IPAddress` extends `geoip2.models.Insights` - Full GeoIP2 data plus minFraud risk
+- `IPAddress` extends `geoip2.models.Insights` - Full GeoIP data plus minFraud risk
 - `CreditCard`, `Device`, `Email`, `EmailDomain`, `Phone` - Transaction component data
 - `BillingAddress`, `ShippingAddress` - Address information
 - `Disposition` - Custom rules disposition
@@ -148,7 +148,7 @@ minFraud models extend GeoIP2 models:
 - `IPAddress` extends `geoip2.models.Insights` - Adds `risk` and `risk_reasons`
 - `GeoIP2Location` extends `geoip2.records.Location` - Adds `local_time`
 
-This allows minFraud responses to include full GeoIP2 data (city, country, ISP, etc.) alongside fraud data.
+This allows minFraud responses to include full GeoIP data (city, country, ISP, etc.) alongside fraud data.
 
 ## Testing Conventions
 
