@@ -142,9 +142,9 @@ Clients handle HTTP status codes:
 - 500-599: Raised as `HTTPError` with status and body
 - Success (200): Response JSON parsed into model objects
 
-#### 7. **GeoIP2 Integration**
+#### 7. **GeoIP Integration**
 
-minFraud models extend GeoIP2 models:
+minFraud models extend GeoIP models:
 - `IPAddress` extends `geoip2.models.Insights` - Adds `risk` and `risk_reasons`
 - `GeoIP2Location` extends `geoip2.records.Location` - Adds `local_time`
 

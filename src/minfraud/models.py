@@ -966,7 +966,7 @@ class Factors(_Serializable):
     easily identify a particular request."""
 
     ip_address: IPAddress
-    """A :class:`.IPAddress` object containing GeoIP2 and
+    """A :class:`.IPAddress` object containing GeoIP and
     minFraud Insights information about the IP address."""
 
     queries_remaining: int
@@ -1090,7 +1090,7 @@ class Insights(_Serializable):
     easily identify a particular request."""
 
     ip_address: IPAddress
-    """A :class:`.IPAddress` object containing GeoIP2 and
+    """A :class:`.IPAddress` object containing GeoIP and
     minFraud Insights information about the IP address."""
 
     queries_remaining: int
