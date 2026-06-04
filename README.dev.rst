@@ -11,4 +11,4 @@ Steps for doing a release:
    release script.
 7. Run ``dev-bin/release.sh`` and follow the prompts.
 8. Verify the release on `GitHub <https://github.com/maxmind/minfraud-api-python/releases>`_
-   and `PyPI <https://pypi.python.org/pypi/minfraud>`_.
+   and `PyPI <https://pypi.org/project/minfraud/>`_.

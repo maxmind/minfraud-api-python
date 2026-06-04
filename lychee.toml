@@ -24,6 +24,12 @@ accept = ["100..=103", "200..=299", "403", "429", "500..=599", "999"]
 exclude = [
     # GitHub blob URLs with line-number fragments (not parseable as page anchors)
     '^https://github\.com/[^/]+/[^/]+/blob/[0-9a-fA-F]+/.+#L\d+$',
+    # dev.maxmind.com API docs are a JS-rendered single-page app, so its in-page
+    # anchors (e.g. response-schema fragments) aren't present in the static HTML
+    # lychee fetches. The pages themselves are verified without the fragment.
+    '^https://dev\.maxmind\.com/minfraud/api-documentation/responses/.*#',
+    # referrer_uri example value in a docstring/doctest (not a documentation link)
+    '^http://www\.amazon\.com/$',
     # Live / auth-gated MaxMind endpoints: appear as code string literals or
     # require login, so they can't be verified by an anonymous request.
     '^https://geoip\.maxmind\.com',

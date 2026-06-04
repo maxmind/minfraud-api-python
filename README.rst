@@ -8,7 +8,7 @@ Description
 This package provides an API for the `MaxMind minFraud Score, Insights, and
 Factors web services <https://dev.maxmind.com/minfraud/>`_ as well as the
 `Report Transaction web service
-<https://dev.maxmind.com/minfraud/report-a-transaction?lang=en>`_.
+<https://dev.maxmind.com/minfraud/report-a-transaction/?lang=en>`_.
 
 Installation
 ------------
@@ -30,7 +30,7 @@ Documentation
 -------------
 
 Complete API documentation is available on `Read the Docs
-<https://minfraud.readthedocs.io/>`_.
+<https://minfraud.readthedocs.io/en/latest/>`_.
 
 Usage
 -----
@@ -79,7 +79,7 @@ The Score web service is called with the ``score()`` method:
 Each of these methods takes a dictionary representing the transaction to be sent
 to the web service. The structure of this dictionary should be in `the format
 specified in the REST API documentation
-<https://dev.maxmind.com/minfraud/api-documentation/requests?lang=en>`__.
+<https://dev.maxmind.com/minfraud/api-documentation/requests/?lang=en>`__.
 All fields are optional.
 
 Report Transactions Usage
@@ -97,7 +97,7 @@ Report Transaction web service is called with the ``report()`` method:
 The method takes a dictionary representing the report to be sent to the web
 service. The structure of this dictionary should be in `the format specified
 in the REST API documentation
-<https://dev.maxmind.com/minfraud/report-a-transaction?lang=en>`__. The
+<https://dev.maxmind.com/minfraud/report-a-transaction/?lang=en>`__. The
 required fields are ``tag`` and one or more of the following: ``ip_address``,
 ``maxmind_id``, ``minfraud_id``, ``transaction_id``.
 
@@ -134,7 +134,7 @@ The possible errors are:
 Additionally, ``score``, ``insights`` and ``factors`` may also raise:
 
 * ``minfraud.InsufficientFundsError`` - This will be raised when `your
-  account <https://www.maxmind.com/en/account>`_ is out of funds.
+  account <https://www.maxmind.com/en/accounts/current/people/current>`_ is out of funds.
 
 Examples
 --------
@@ -322,7 +322,7 @@ Please report all issues with this code using the `GitHub issue tracker
 <https://github.com/maxmind/minfraud-api-python/issues>`_.
 
 If you are having an issue with a MaxMind service that is not specific to the
-client API, please contact `MaxMind support <https://www.maxmind.com/en/support>`_
+client API, please contact `MaxMind support <https://support.maxmind.com/knowledge-base>`_
 for assistance.
 
 Copyright and License

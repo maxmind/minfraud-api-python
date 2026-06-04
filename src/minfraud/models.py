@@ -97,7 +97,7 @@ class GeoIP2Location(geoip2.records.Location):
     local_time: str | None
     """The date and time of the transaction in the time
     zone associated with the IP address. The value is formatted according to
-    `RFC 3339 <https://tools.ietf.org/html/rfc3339>`_. For instance, the
+    `RFC 3339 <https://datatracker.ietf.org/doc/html/rfc3339>`_. For instance, the
     local time in Boston might be returned as 2015-04-27T19:17:24-04:00."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -211,7 +211,7 @@ class Device(_Serializable):
 
     In order to receive device output from minFraud Insights or minFraud
     Factors, you must be using the `Device Tracking Add-on
-    <https://dev.maxmind.com/minfraud/track-devices?lang=en>`_.
+    <https://dev.maxmind.com/minfraud/track-devices/?lang=en>`_.
     """
 
     confidence: float | None
@@ -620,7 +620,7 @@ class ServiceWarning(_Serializable):
     code: str | None
     """This value is a machine-readable code identifying the
     warning. See the `response warnings documentation
-    <https://dev.maxmind.com/minfraud/api-documentation/responses?lang=en#schema--response--warning>`_
+    <https://dev.maxmind.com/minfraud/api-documentation/responses/?lang=en#schema--response--warning>`_
     for the current list of of warning codes."""
 
     warning: str | None
