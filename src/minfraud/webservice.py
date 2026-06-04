@@ -388,9 +388,9 @@ class AsyncClient(BaseClient):
         """Send a transaction report to the Report Transaction endpoint.
 
         :param report: A dictionary containing the transaction report to be sent
-          to the Report Transations web service as specified in the `REST API`
+          to the Report Transations web service as specified in the `REST API
           documentation
-          <https://dev.maxmind.com/minfraud/report-a-transaction/?lang=en>_.
+          <https://dev.maxmind.com/minfraud/report-a-transaction/?lang=en>`_.
         :type report: dict
         :param validate: If set to false, validation of the report dictionary
           will be disabled. This validation helps ensure that your request is
@@ -652,9 +652,9 @@ class Client(BaseClient):
         """Send a transaction report to the Report Transaction endpoint.
 
         :param report: A dictionary containing the transaction report to be sent
-          to the Report Transations web service as specified in the `REST API`
+          to the Report Transations web service as specified in the `REST API
           documentation
-          <https://dev.maxmind.com/minfraud/report-a-transaction/?lang=en>_.
+          <https://dev.maxmind.com/minfraud/report-a-transaction/?lang=en>`_.
         :type report: dict
         :param validate: If set to false, validation of the report dictionary
           will be disabled. This validation helps ensure that your request is
