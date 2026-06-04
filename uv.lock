@@ -742,7 +742,7 @@ lint = [
 
 [package.metadata]
 requires-dist = [
-    { name = "aiohttp", specifier = ">=3.6.2,<4.0.0" },
+    { name = "aiohttp", specifier = ">=3.14.0,<4.0.0" },
     { name = "email-validator", specifier = ">=2.0.0,<3.0.0" },
     { name = "geoip2", specifier = ">=5.2.0,<6.0.0" },
     { name = "requests", specifier = ">=2.24.0,<3.0.0" },

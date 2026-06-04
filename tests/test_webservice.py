@@ -237,6 +237,17 @@ class BaseTransactionTest(BaseTest):
             self.assertEqual("004", model.ip_address.traits.mobile_network_code)
             self.assertEqual("ANONYMOUS_IP", model.ip_address.risk_reasons[0].code)
 
+    def test_authorization_header(self) -> None:
+        # Credentials must be sent via the Authorization header rather than the
+        # deprecated aiohttp BasicAuth / auth= parameter. The expected value is
+        # base64("42:abcdef123456").
+        self.create_success()
+        request, _ = self.httpserver.log[-1]
+        self.assertEqual(
+            "Basic NDI6YWJjZGVmMTIzNDU2",
+            request.headers.get("Authorization"),
+        )
+
     def test_200_on_request_with_nones(self) -> None:
         model = self.create_success(
             request={
