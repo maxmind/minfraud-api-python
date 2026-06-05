@@ -429,7 +429,7 @@ uv run tox
 
 ## Additional Resources
 
-- [API Documentation](https://minfraud.readthedocs.io/)
+- [API Documentation](https://minfraud.readthedocs.io/en/latest/)
 - [minFraud Web Services Docs](https://dev.maxmind.com/minfraud/)
-- [Report Transaction API](https://dev.maxmind.com/minfraud/report-a-transaction)
+- [Report Transaction API](https://dev.maxmind.com/minfraud/report-a-transaction/)
 - GitHub Issues: https://github.com/maxmind/minfraud-api-python/issues
