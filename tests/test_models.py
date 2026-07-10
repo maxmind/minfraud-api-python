@@ -197,6 +197,11 @@ class TestModels(unittest.TestCase):
                 "is_tor_exit_node": True,
                 "network_last_seen": "2025-01-15",
                 "provider_name": "TestVPN",
+                "residential": {
+                    "confidence": 82,
+                    "network_last_seen": "2026-05-11",
+                    "provider_name": "quickshift",
+                },
             },
             traits={
                 "is_anonymous": True,
@@ -237,6 +242,14 @@ class TestModels(unittest.TestCase):
             datetime.date(2025, 1, 15), address.anonymizer.network_last_seen
         )
         self.assertEqual("TestVPN", address.anonymizer.provider_name)
+
+        # Test anonymizer.residential attribute
+        self.assertEqual(82, address.anonymizer.residential.confidence)
+        self.assertEqual(
+            datetime.date(2026, 5, 11),
+            address.anonymizer.residential.network_last_seen,
+        )
+        self.assertEqual("quickshift", address.anonymizer.residential.provider_name)
 
         self.assertEqual("ANONYMOUS_IP", address.risk_reasons[0].code)
         self.assertEqual(
