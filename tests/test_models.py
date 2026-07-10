@@ -197,6 +197,11 @@ class TestModels(unittest.TestCase):
                 "is_tor_exit_node": True,
                 "network_last_seen": "2025-01-15",
                 "provider_name": "TestVPN",
+                "residential": {
+                    "confidence": 82,
+                    "network_last_seen": "2026-05-11",
+                    "provider_name": "quickshift",
+                },
             },
             traits={
                 "is_anonymous": True,
@@ -238,6 +243,25 @@ class TestModels(unittest.TestCase):
         )
         self.assertEqual("TestVPN", address.anonymizer.provider_name)
 
+        # Test anonymizer.residential attribute
+        self.assertEqual(82, address.anonymizer.residential.confidence)
+        self.assertEqual(
+            datetime.date(2026, 5, 11),
+            address.anonymizer.residential.network_last_seen,
+        )
+        self.assertEqual("quickshift", address.anonymizer.residential.provider_name)
+
+        # Test to_dict() serialization of anonymizer.residential. The date
+        # is serialized in its ISO 8601 format.
+        self.assertEqual(
+            {
+                "confidence": 82,
+                "network_last_seen": "2026-05-11",
+                "provider_name": "quickshift",
+            },
+            address.to_dict()["anonymizer"]["residential"],
+        )
+
         self.assertEqual("ANONYMOUS_IP", address.risk_reasons[0].code)
         self.assertEqual(
             "The IP address belongs to an anonymous network. "
@@ -251,6 +275,23 @@ class TestModels(unittest.TestCase):
             "across minFraud customers.",
             address.risk_reasons[1].reason,
         )
+
+    def test_ip_address_anonymizer_without_residential(self) -> None:
+        address = IPAddress(
+            ["en"],
+            anonymizer={
+                "is_anonymous": True,
+                "provider_name": "TestVPN",
+            },
+        )
+
+        self.assertIsNone(address.anonymizer.residential.confidence)
+        self.assertIsNone(address.anonymizer.residential.network_last_seen)
+        self.assertIsNone(address.anonymizer.residential.provider_name)
+
+        # Empty nested records are skipped during serialization, so there
+        # should be no residential key.
+        self.assertNotIn("residential", address.to_dict()["anonymizer"])
 
     def test_empty_address(self) -> None:
         address = IPAddress([])

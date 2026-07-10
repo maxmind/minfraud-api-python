@@ -236,6 +236,14 @@ class BaseTransactionTest(BaseTest):
             self.assertEqual("310", model.ip_address.traits.mobile_country_code)
             self.assertEqual("004", model.ip_address.traits.mobile_network_code)
             self.assertEqual("ANONYMOUS_IP", model.ip_address.risk_reasons[0].code)
+            self.assertEqual(
+                82,
+                model.ip_address.anonymizer.residential.confidence,
+            )
+            self.assertEqual(
+                "quickshift",
+                model.ip_address.anonymizer.residential.provider_name,
+            )
 
     def test_authorization_header(self) -> None:
         # Credentials must be sent via the Authorization header rather than the
