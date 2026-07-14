@@ -100,7 +100,7 @@ class GeoIP2Location(geoip2.records.Location):
     `RFC 3339 <https://datatracker.ietf.org/doc/html/rfc3339>`_. For instance, the
     local time in Boston might be returned as 2015-04-27T19:17:24-04:00."""
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
         """Initialize a GeoIP2Location instance."""
         self.local_time = kwargs.get("local_time")
         super().__init__(*args, **kwargs)
@@ -135,7 +135,7 @@ class IPAddress(geoip2.models.Insights):
         location: dict[str, Any] | None = None,
         risk: float | None = None,
         risk_reasons: list[dict[str, Any]] | None = None,
-        **kwargs: Any,
+        **kwargs: Any,  # noqa: ANN401
     ) -> None:
         """Initialize an IPAddress instance."""
         # For raw attribute
@@ -161,7 +161,7 @@ class ScoreIPAddress(_Serializable):
     """This field contains the risk associated with the IP address. The value
     ranges from 0.01 to 99. A higher score indicates a higher risk."""
 
-    def __init__(self, *, risk: float | None = None, **_: Any) -> None:
+    def __init__(self, *, risk: float | None = None, **_: object) -> None:
         """Initialize a ScoreIPAddress instance."""
         self.risk = risk
 
@@ -197,7 +197,7 @@ class Issuer(_Serializable):
         matches_provided_name: bool | None = None,
         phone_number: str | None = None,
         matches_provided_phone_number: bool | None = None,
-        **_: Any,
+        **_: object,
     ) -> None:
         """Initialize an Issuer instance."""
         self.name = name
@@ -239,7 +239,7 @@ class Device(_Serializable):
         id: str | None = None,
         last_seen: str | None = None,
         local_time: str | None = None,
-        **_: Any,
+        **_: object,
     ) -> None:
         """Initialize a Device instance."""
         self.confidence = confidence
@@ -277,7 +277,7 @@ class Disposition(_Serializable):
         action: str | None = None,
         reason: str | None = None,
         rule_label: str | None = None,
-        **_: Any,
+        **_: object,
     ) -> None:
         """Initialize a Disposition instance."""
         self.action = action
@@ -310,7 +310,7 @@ class EmailDomainVisit(_Serializable):
         status: str | None = None,
         last_visited_on: str | None = None,
         has_redirect: bool | None = None,
-        **_: Any,
+        **_: object,
     ) -> None:
         """Initialize an EmailDomainVisit instance."""
         self.status = status
@@ -354,7 +354,7 @@ class EmailDomain(_Serializable):
         risk: float | None = None,
         volume: float | None = None,
         visit: dict[str, Any] | None = None,
-        **_: Any,
+        **_: object,
     ) -> None:
         """Initialize an EmailDomain instance."""
         self.first_seen = first_seen
@@ -498,7 +498,7 @@ class BillingAddress(_Serializable):
         longitude: float | None = None,
         distance_to_ip_location: int | None = None,
         is_in_ip_country: bool | None = None,
-        **_: Any,
+        **_: object,
     ) -> None:
         """Initialize a BillingAddress instance."""
         self.is_postal_in_city = is_postal_in_city
@@ -553,7 +553,7 @@ class ShippingAddress(_Serializable):
         is_in_ip_country: bool | None = None,
         is_high_risk: bool | None = None,
         distance_to_billing_address: int | None = None,
-        **_: Any,
+        **_: object,
     ) -> None:
         """Initialize a ShippingAddress instance."""
         self.is_postal_in_city = is_postal_in_city
@@ -604,7 +604,7 @@ class Phone(_Serializable):
         matches_postal: bool | None = None,
         network_operator: str | None = None,
         number_type: str | None = None,
-        **_: Any,
+        **_: object,
     ) -> None:
         """Initialize a Phone instance."""
         self.country = country
@@ -639,7 +639,7 @@ class ServiceWarning(_Serializable):
         code: str | None = None,
         warning: str | None = None,
         input_pointer: str | None = None,
-        **_: Any,
+        **_: object,
     ) -> None:
         """Initialize a ServiceWarning instance."""
         self.code = code
@@ -783,7 +783,7 @@ class Subscores(_Serializable):
         shipping_address: float | None = None,
         shipping_address_distance_to_ip_location: float | None = None,
         time_of_day: float | None = None,
-        **_: Any,
+        **_: object,
     ) -> None:
         """Initialize a Subscores instance."""
         self.avs_result = avs_result
@@ -897,7 +897,7 @@ class Reason(_Serializable):
         *,
         code: str | None = None,
         reason: str | None = None,
-        **_: Any,
+        **_: object,
     ) -> None:
         """Initialize a Reason instance."""
         self.code = code
@@ -922,7 +922,7 @@ class RiskScoreReason(_Serializable):
         *,
         multiplier: float,
         reasons: list[dict[str, Any]] | None = None,
-        **_: Any,
+        **_: object,
     ) -> None:
         """Initialize a RiskScoreReason instance."""
         self.multiplier = multiplier
@@ -1030,7 +1030,7 @@ class Factors(_Serializable):
         subscores: dict[str, Any] | None = None,
         warnings: list[dict[str, Any]] | None = None,
         risk_score_reasons: list[dict[str, Any]] | None = None,
-        **_: Any,
+        **_: object,
     ) -> None:
         """Initialize a Factors instance."""
         self.billing_address = BillingAddress(**(billing_address or {}))
@@ -1136,7 +1136,7 @@ class Insights(_Serializable):
         shipping_address: dict[str, Any] | None = None,
         shipping_phone: dict[str, Any] | None = None,
         warnings: list[dict[str, Any]] | None = None,
-        **_: Any,
+        **_: object,
     ) -> None:
         """Initialize an Insights instance."""
         self.billing_address = BillingAddress(**(billing_address or {}))
@@ -1201,7 +1201,7 @@ class Score(_Serializable):
         queries_remaining: int,
         risk_score: float,
         warnings: list[dict[str, Any]] | None = None,
-        **_: Any,
+        **_: object,
     ) -> None:
         """Initialize a Score instance."""
         self.disposition = Disposition(**(disposition or {}))
