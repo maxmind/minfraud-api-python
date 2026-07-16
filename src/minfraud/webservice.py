@@ -256,7 +256,7 @@ class AsyncClient(BaseClient):
         :type timeout: float
         :param proxy: The URL of an HTTP proxy to use. It may optionally include
           a basic auth username and password, e.g.,
-          ``http://username:password@host:port``.
+          ``http://<username>:<password>@<host>:<port>``.
         :return: Client object
         :rtype: Client
         """
@@ -510,7 +510,7 @@ class Client(BaseClient):
           60.
         :param proxy: The URL of an HTTP proxy to use. It may optionally include
           a basic auth username and password, e.g.,
-          ``http://username:password@host:port``.
+          ``http://<username>:<password>@<host>:<port>``.
         :type timeout: float
         :return: Client object
         :rtype: Client
