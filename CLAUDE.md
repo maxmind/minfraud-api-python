@@ -105,13 +105,13 @@ def __init__(
     field_name: str | None = None,
     is_flag: bool | None = None,
     # ... other keyword-only parameters
-    **_: Any,  # ignore unknown keys
+    **_: object,  # ignore unknown keys
 ) -> None:
 ```
 
 Key points:
 - Use `*` to enforce keyword-only arguments
-- Accept `**_: Any` to ignore unknown keys from the API (forward compatibility)
+- Accept `**_: object` to ignore unknown keys from the API (forward compatibility)
 - Use `| None = None` for optional parameters
 - Boolean fields can be `None` if not provided by API
 
@@ -252,7 +252,7 @@ def test_email(self) -> None:
        *,
        new_field: str | None = None,
        # ... other params
-       **_: Any,
+       **_: object,
    ) -> None:
    ```
 
@@ -281,7 +281,7 @@ When creating a new model class:
 2. **Follow the constructor pattern** from existing models
 3. **Use type hints** for all attributes
 4. **Use keyword-only arguments** with `*` separator
-5. **Accept `**_: Any`** to ignore unknown API keys
+5. **Accept `**_: object`** to ignore unknown API keys
 6. **Provide comprehensive docstrings** for all attributes
 7. **Add corresponding tests** with full coverage
 
@@ -376,7 +376,7 @@ Adding required parameters breaks existing code.
 - Always add new parameters as optional with defaults
 - Use keyword-only arguments (after `*`)
 - Never add required positional parameters to existing constructors
-- Use `**_: Any` to silently accept unknown parameters from API
+- Use `**_: object` to silently accept unknown parameters from API
 
 ## Code Style Requirements
 
