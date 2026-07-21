@@ -3,7 +3,7 @@
 History
 -------
 
-3.3.0
+3.3.0 (2026-07-21)
 ++++++++++++++++++
 
 * Added ``tracking_token`` to the ``/device`` request object. This is the
