@@ -117,6 +117,7 @@ _FASTMAIL_DOMAINS = {
     "fastemailer.com",
     "fastest.cc",
     "fastimap.com",
+    "fastmail.ca",
     "fastmail.cn",
     "fastmail.co.uk",
     "fastmail.com",
@@ -210,6 +211,7 @@ _FASTMAIL_DOMAINS = {
 }
 
 _YAHOO_DOMAINS = {
+    "myyahoo.com",
     "y7mail.com",
     "yahoo.at",
     "yahoo.be",
