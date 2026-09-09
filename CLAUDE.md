@@ -297,12 +297,14 @@ When the minFraud API adds new input fields or values:
 Example:
 ```python
 # Adding a new payment processor
-_payment_processor = In([
-    "stripe",
-    "braintree",
-    # ... existing processors
-    "new_processor",  # New addition
-])
+_payment_processor = In(
+    [
+        "stripe",
+        "braintree",
+        # ... existing processors
+        "new_processor",  # New addition
+    ]
+)
 ```
 
 ### Email Normalization
