@@ -70,6 +70,9 @@ ignore = [
     # Redundant as the formatter handles missing trailing commas.
     "COM812",
 
+    # We do not want a copyright header on every file.
+    "CPY001",
+
     # documenting magic methods
     "D105",
 
@@ -92,7 +95,7 @@ ignorelist = ["id"]
 
 [tool.ruff.lint.per-file-ignores]
 "docs/*" = ["ALL"]
-"src/minfraud/models.py" = ["PLR0913"]
+"src/minfraud/models.py" = ["PLR0913", "PLR0917"]
 "tests/*" = ["ANN201", "D"]
 
 [tool.tox]
