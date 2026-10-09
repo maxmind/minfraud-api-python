@@ -10,6 +10,9 @@ History
   ``phone_was_verification_successful``, and ``phone_verification_time``
   inputs to the ``/billing`` request object. They describe the most recent
   verification of the billing phone number.
+* Added the ``was_verification_successful`` and ``verification_time`` inputs
+  to the ``/email`` request object. They describe the most recent
+  verification of the email address.
 
 3.3.0 (2026-07-21)
 ++++++++++++++++++

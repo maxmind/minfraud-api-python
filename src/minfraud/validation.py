@@ -379,6 +379,8 @@ validate_transaction: Schema = Schema(
         "email": {
             "address": _email_or_md5,
             "domain": _hostname,
+            "verification_time": _rfc3339_datetime,
+            "was_verification_successful": bool,
         },
         "event": {
             "party": _event_party,
