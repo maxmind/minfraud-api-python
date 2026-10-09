@@ -79,7 +79,14 @@ def _hostname(hostname: str) -> str:
     raise ValueError
 
 
+_rfc3339_datetime = Match(
+    r"(?a)\A\d{4}-\d{2}-\d{2}[Tt]\d{2}:\d{2}:\d{2}(\.\d+)?(?:[Zz]|[+-]\d{2}:\d{2})\Z",
+)
+
+
 _delivery_speed = In(["same_day", "overnight", "expedited", "standard"])
+
+_phone_verification_method = In(["delivered_code", "network", "other"])
 
 _address = {
     "address": str,
@@ -91,6 +98,9 @@ _address = {
     "last_name": str,
     "phone_country_code": _telephone_country_code,
     "phone_number": str,
+    "phone_verification_method": _phone_verification_method,
+    "phone_verification_time": _rfc3339_datetime,
+    "phone_was_verification_successful": bool,
     "postal": str,
     "region": _subdivision_iso_code,
 }
@@ -294,11 +304,6 @@ def _credit_card_token(s: str) -> str:
     if re.match("^[\x21-\x7e]{1,255}$", s) and not re.match("^[0-9]{1,19}$", s):
         return s
     raise ValueError
-
-
-_rfc3339_datetime = Match(
-    r"(?a)\A\d{4}-\d{2}-\d{2}[Tt]\d{2}:\d{2}:\d{2}(\.\d+)?(?:[Zz]|[+-]\d{2}:\d{2})\Z",
-)
 
 
 _event_party = In(["agent", "customer"])

@@ -140,6 +140,25 @@ class AddressBase(ValidationBase):
         for invalid in ("", "12345", "U"):
             self.check_invalid_transaction({self.type: {"phone_country_code": invalid}})
 
+    def test_phone_verification_method(self) -> None:
+        for good in ("delivered_code", "network", "other"):
+            self.check_transaction({self.type: {"phone_verification_method": good}})
+        for bad in ("sms", 1, ""):
+            self.check_invalid_transaction(
+                {self.type: {"phone_verification_method": bad}},
+            )
+
+    def test_phone_was_verification_successful(self) -> None:
+        self.check_bool(self.type, "phone_was_verification_successful")
+
+    def test_phone_verification_time(self) -> None:
+        for good in ("2015-05-08T16:07:56+00:00", "2015-05-08T16:07:56Z"):
+            self.check_transaction({self.type: {"phone_verification_time": good}})
+        for bad in ("2015-05-08T16:07:56", "2015-05-08 16:07:56Z"):
+            self.check_invalid_transaction(
+                {self.type: {"phone_verification_time": bad}},
+            )
+
 
 class TestBillingAddress(AddressBase):
     type = "billing"
