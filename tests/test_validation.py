@@ -339,6 +339,15 @@ class TestEmail(ValidationBase, unittest.TestCase):
         for bad in ("bad ", " bad.com"):
             self.check_invalid_transaction({"email": {"domain": bad}})
 
+    def test_was_verification_successful(self) -> None:
+        self.check_bool("email", "was_verification_successful")
+
+    def test_verification_time(self) -> None:
+        for good in ("2015-05-08T16:07:56+00:00", "2015-05-08T16:07:56Z"):
+            self.check_transaction({"email": {"verification_time": good}})
+        for bad in ("2015-05-08T16:07:56", "2015-05-08 16:07:56Z"):
+            self.check_invalid_transaction({"email": {"verification_time": bad}})
+
 
 class TestEvent(ValidationBase, unittest.TestCase):
     def test_party(self) -> None:
