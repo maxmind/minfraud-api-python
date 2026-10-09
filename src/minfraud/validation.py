@@ -79,6 +79,11 @@ def _hostname(hostname: str) -> str:
     raise ValueError
 
 
+_rfc3339_datetime = Match(
+    r"(?a)\A\d{4}-\d{2}-\d{2}[Tt]\d{2}:\d{2}:\d{2}(\.\d+)?(?:[Zz]|[+-]\d{2}:\d{2})\Z",
+)
+
+
 _delivery_speed = In(["same_day", "overnight", "expedited", "standard"])
 
 _address = {
@@ -98,6 +103,14 @@ _address = {
 _shipping_address = _address.copy()
 
 _shipping_address["delivery_speed"] = _delivery_speed
+
+_phone_verification_method = In(["delivered_code", "network", "other"])
+
+_billing_address = _address.copy()
+
+_billing_address["phone_verification_method"] = _phone_verification_method
+_billing_address["phone_verification_time"] = _rfc3339_datetime
+_billing_address["phone_was_verification_successful"] = bool
 
 _payment_method = In(
     [
@@ -296,11 +309,6 @@ def _credit_card_token(s: str) -> str:
     raise ValueError
 
 
-_rfc3339_datetime = Match(
-    r"(?a)\A\d{4}-\d{2}-\d{2}[Tt]\d{2}:\d{2}:\d{2}(\.\d+)?(?:[Zz]|[+-]\d{2}:\d{2})\Z",
-)
-
-
 _event_party = In(["agent", "customer"])
 
 _event_type = In(
@@ -339,7 +347,7 @@ validate_transaction: Schema = Schema(
             "user_id": str,
             "username_md5": _md5,
         },
-        "billing": _address,
+        "billing": _billing_address,
         "payment": {
             "method": _payment_method,
             "processor": _payment_processor,

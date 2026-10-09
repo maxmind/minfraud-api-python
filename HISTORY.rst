@@ -3,6 +3,14 @@
 History
 -------
 
+3.4.0
+++++++++++++++++++
+
+* Added the ``phone_verification_method``,
+  ``phone_was_verification_successful``, and ``phone_verification_time``
+  inputs to the ``/billing`` request object. They describe the most recent
+  verification of the billing phone number.
+
 3.3.0 (2026-07-21)
 ++++++++++++++++++
 

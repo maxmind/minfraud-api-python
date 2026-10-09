@@ -144,9 +144,36 @@ class AddressBase(ValidationBase):
 class TestBillingAddress(AddressBase):
     type = "billing"
 
+    def test_phone_verification_method(self) -> None:
+        for good in ("delivered_code", "network", "other"):
+            self.check_transaction({"billing": {"phone_verification_method": good}})
+        for bad in ("sms", 1, ""):
+            self.check_invalid_transaction(
+                {"billing": {"phone_verification_method": bad}},
+            )
+
+    def test_phone_was_verification_successful(self) -> None:
+        self.check_bool("billing", "phone_was_verification_successful")
+
+    def test_phone_verification_time(self) -> None:
+        for good in ("2015-05-08T16:07:56+00:00", "2015-05-08T16:07:56Z"):
+            self.check_transaction({"billing": {"phone_verification_time": good}})
+        for bad in ("2015-05-08T16:07:56", "2015-05-08 16:07:56Z"):
+            self.check_invalid_transaction(
+                {"billing": {"phone_verification_time": bad}},
+            )
+
 
 class TestShippingAddress(AddressBase):
     type = "shipping"
+
+    def test_billing_only_phone_verification_inputs(self) -> None:
+        for key, value in (
+            ("phone_verification_method", "network"),
+            ("phone_verification_time", "2015-05-08T16:07:56Z"),
+            ("phone_was_verification_successful", True),
+        ):
+            self.check_invalid_transaction({"shipping": {key: value}})
 
     def test_delivery_speed(self) -> None:
         for speed in ("same_day", "overnight", "expedited", "standard"):

@@ -183,6 +183,9 @@ Score, Insights and Factors Example
     >>>         'postal': '06510',
     >>>         'phone_country_code': '1',
     >>>         'phone_number': '123-456-7890',
+    >>>         'phone_verification_method': 'delivered_code',
+    >>>         'phone_verification_time': '2026-10-01T14:30:00Z',
+    >>>         'phone_was_verification_successful': True,
     >>>     },
     >>>     'shipping': {
     >>>         'first_name': 'John',
