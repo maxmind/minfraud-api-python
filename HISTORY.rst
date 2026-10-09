@@ -10,6 +10,9 @@ History
   ``phone_was_verification_successful``, and ``phone_verification_time``
   inputs to the ``/billing`` and ``/shipping`` request objects. They describe
   the most recent verification of the phone number.
+* Added the ``verification_time`` and ``was_verification_successful`` inputs
+  to the ``/email`` request object. They describe the most recent
+  verification of the email address.
 * The RFC 3339 check on ``/event/time`` and ``phone_verification_time`` now
   rejects more values that the web service rejects, such as February 30,
   hour 24, an offset of 24 hours or more, and a lowercase ``t`` or ``z``.
