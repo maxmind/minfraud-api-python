@@ -11,6 +11,31 @@ from minfraud.validation import validate_report, validate_transaction
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+GOOD_TIMES = (
+    "2015-05-08T16:07:56+00:00",
+    "2015-05-08T16:07:56Z",
+    "2026-10-01T14:30:00Z",
+    "2026-10-01T14:30:00.123456789Z",
+    "2026-10-01T14:30:00+23:59",
+    "2024-02-29T00:00:00-05:00",
+)
+
+BAD_TIMES = (
+    "2015-05-08T16:07:56",
+    "2015-05-08 16:07:56Z",
+    "2026-02-30T25:61:61Z",
+    "2026-13-45T10:00:00Z",
+    "0000-00-00T00:00:00Z",
+    "2026-10-01T14:30:00+24:00",
+    "2026-10-01T14:30:00+99:99",
+    "2026-10-01T24:00:00Z",
+    "2026-10-01T14:30:60Z",
+    "2026-10-01t14:30:00Z",
+    "2026-10-01T14:30:00z",
+    "2026-10-01T14:30:00+25:00",
+    "2026-10-01T14:30:00+05:60",
+)
+
 
 class ValidationBase(unittest.TestCase):
     def setup_transaction(self, transaction: dict[str, Any]) -> None:
@@ -152,9 +177,9 @@ class AddressBase(ValidationBase):
         self.check_bool(self.type, "phone_was_verification_successful")
 
     def test_phone_verification_time(self) -> None:
-        for good in ("2015-05-08T16:07:56+00:00", "2015-05-08T16:07:56Z"):
+        for good in GOOD_TIMES:
             self.check_transaction({self.type: {"phone_verification_time": good}})
-        for bad in ("2015-05-08T16:07:56", "2015-05-08 16:07:56Z"):
+        for bad in BAD_TIMES:
             self.check_invalid_transaction(
                 {self.type: {"phone_verification_time": bad}},
             )
@@ -346,9 +371,9 @@ class TestEvent(ValidationBase, unittest.TestCase):
         self.check_transaction_str_type("event", "shop_id")
 
     def test_time(self) -> None:
-        for good in ("2015-05-08T16:07:56+00:00", "2015-05-08T16:07:56Z"):
+        for good in GOOD_TIMES:
             self.check_transaction({"event": {"time": good}})
-        for bad in ("2015-05-08T16:07:56", "2015-05-08 16:07:56Z"):
+        for bad in BAD_TIMES:
             self.check_invalid_transaction({"event": {"time": bad}})
 
     def test_type(self) -> None:

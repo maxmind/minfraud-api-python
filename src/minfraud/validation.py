@@ -13,6 +13,7 @@ import ipaddress
 import re
 import urllib.parse
 import uuid
+from datetime import datetime
 from decimal import Decimal
 from typing import Any as AnyType
 
@@ -79,8 +80,19 @@ def _hostname(hostname: str) -> str:
     raise ValueError
 
 
-_rfc3339_datetime = Match(
-    r"(?a)\A\d{4}-\d{2}-\d{2}[Tt]\d{2}:\d{2}:\d{2}(\.\d+)?(?:[Zz]|[+-]\d{2}:\d{2})\Z",
+def _datetime_exists(s: str) -> str:
+    # Reject impossible values such as Feb 30 or 24:00. The regex already
+    # checked the fraction and the offset, so parse only the part before them.
+    datetime.strptime(s[:19], "%Y-%m-%dT%H:%M:%S")  # noqa: DTZ007
+    return s
+
+
+_rfc3339_datetime = All(
+    Match(
+        r"(?a)\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?"
+        r"(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)\Z",
+    ),
+    _datetime_exists,
 )
 
 
