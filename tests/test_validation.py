@@ -395,6 +395,13 @@ class TestEvent(ValidationBase, unittest.TestCase):
         for bad in NON_STRING_TIMES:
             self.check_invalid_transaction({"event": {"time": bad}})
 
+    def test_time_impossible_date_message(self) -> None:
+        transaction: dict[str, Any] = {"event": {"time": "2026-02-30T10:00:00Z"}}
+        self.setup_transaction(transaction)
+        with self.assertRaises(MultipleInvalid) as cm:
+            validate_transaction(transaction)
+        self.assertEqual(cm.exception.errors[0].msg, "invalid date or time")
+
     def test_type(self) -> None:
         for good in (
             "account_creation",

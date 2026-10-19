@@ -22,6 +22,7 @@ from voluptuous import (
     All,
     Any,
     In,
+    Invalid,
     Match,
     MultipleInvalid,
     Range,
@@ -83,7 +84,11 @@ def _hostname(hostname: str) -> str:
 def _datetime_exists(s: str) -> str:
     # Reject impossible values such as Feb 30 or 24:00. The regex already
     # checked the fraction and the offset, so parse only the part before them.
-    datetime.strptime(s[:19], "%Y-%m-%dT%H:%M:%S")  # noqa: DTZ007
+    try:
+        datetime.strptime(s[:19], "%Y-%m-%dT%H:%M:%S")  # noqa: DTZ007
+    except ValueError as e:
+        msg = "invalid date or time"
+        raise Invalid(msg) from e
     return s
 
 
