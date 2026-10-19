@@ -11,9 +11,8 @@ History
   inputs to the ``/billing`` and ``/shipping`` request objects. They describe
   the most recent verification of the phone number.
 * The RFC 3339 check on ``/event/time`` and ``phone_verification_time`` now
-  rejects the same values as the web service. It rejects impossible dates
-  and times, such as February 30 or 24:00, a lowercase ``t`` or ``z``, and
-  an offset of 24 hours or more.
+  rejects more values that the web service rejects, such as February 30,
+  hour 24, an offset of 24 hours or more, and a lowercase ``t`` or ``z``.
 
 3.3.0 (2026-07-21)
 ++++++++++++++++++
