@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import unittest
+from datetime import datetime, timezone
 from decimal import Decimal
 from typing import TYPE_CHECKING, Any
 
@@ -34,6 +35,14 @@ BAD_TIMES = (
     "2026-10-01T14:30:00z",
     "2026-10-01T14:30:00+25:00",
     "2026-10-01T14:30:00+05:60",
+    "2026-02-30T10:00:00Z",
+    "2025-02-29T00:00:00Z",
+    "2026-04-31T00:00:00Z",
+)
+
+NON_STRING_TIMES = (
+    1,
+    datetime(2026, 10, 1, 14, 30, tzinfo=timezone.utc),
 )
 
 
@@ -180,6 +189,12 @@ class AddressBase(ValidationBase):
         for good in GOOD_TIMES:
             self.check_transaction({self.type: {"phone_verification_time": good}})
         for bad in BAD_TIMES:
+            self.check_invalid_transaction(
+                {self.type: {"phone_verification_time": bad}},
+            )
+
+    def test_phone_verification_time_not_string(self) -> None:
+        for bad in NON_STRING_TIMES:
             self.check_invalid_transaction(
                 {self.type: {"phone_verification_time": bad}},
             )
@@ -374,6 +389,10 @@ class TestEvent(ValidationBase, unittest.TestCase):
         for good in GOOD_TIMES:
             self.check_transaction({"event": {"time": good}})
         for bad in BAD_TIMES:
+            self.check_invalid_transaction({"event": {"time": bad}})
+
+    def test_time_not_string(self) -> None:
+        for bad in NON_STRING_TIMES:
             self.check_invalid_transaction({"event": {"time": bad}})
 
     def test_type(self) -> None:
