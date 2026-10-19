@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import datetime
+import datetime as dt
 import unittest
 from typing import Any
 
@@ -238,15 +238,13 @@ class TestModels(unittest.TestCase):
         self.assertEqual(True, address.anonymizer.is_hosting_provider)
         self.assertEqual(True, address.anonymizer.is_public_proxy)
         self.assertEqual(True, address.anonymizer.is_tor_exit_node)
-        self.assertEqual(
-            datetime.date(2025, 1, 15), address.anonymizer.network_last_seen
-        )
+        self.assertEqual(dt.date(2025, 1, 15), address.anonymizer.network_last_seen)
         self.assertEqual("TestVPN", address.anonymizer.provider_name)
 
         # Test anonymizer.residential attribute
         self.assertEqual(82, address.anonymizer.residential.confidence)
         self.assertEqual(
-            datetime.date(2026, 5, 11),
+            dt.date(2026, 5, 11),
             address.anonymizer.residential.network_last_seen,
         )
         self.assertEqual("quickshift", address.anonymizer.residential.provider_name)
