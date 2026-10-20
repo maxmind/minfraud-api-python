@@ -13,6 +13,7 @@ import ipaddress
 import re
 import urllib.parse
 import uuid
+from datetime import datetime
 from decimal import Decimal
 from typing import Any as AnyType
 
@@ -21,6 +22,7 @@ from voluptuous import (
     All,
     Any,
     In,
+    Invalid,
     Match,
     MultipleInvalid,
     Range,
@@ -79,7 +81,29 @@ def _hostname(hostname: str) -> str:
     raise ValueError
 
 
+def _datetime_exists(s: str) -> str:
+    # Reject impossible values such as Feb 30 or 24:00. The regex already
+    # checked the fraction and the offset, so parse only the part before them.
+    try:
+        datetime.strptime(s[:19], "%Y-%m-%dT%H:%M:%S")  # noqa: DTZ007
+    except ValueError as e:
+        msg = "invalid date or time"
+        raise Invalid(msg) from e
+    return s
+
+
+_rfc3339_datetime = All(
+    Match(
+        r"(?a)\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?"
+        r"(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)\Z",
+    ),
+    _datetime_exists,
+)
+
+
 _delivery_speed = In(["same_day", "overnight", "expedited", "standard"])
+
+_phone_verification_method = In(["delivered_code", "network", "other"])
 
 _address = {
     "address": str,
@@ -91,6 +115,9 @@ _address = {
     "last_name": str,
     "phone_country_code": _telephone_country_code,
     "phone_number": str,
+    "phone_verification_method": _phone_verification_method,
+    "phone_verification_time": _rfc3339_datetime,
+    "phone_was_verification_successful": bool,
     "postal": str,
     "region": _subdivision_iso_code,
 }
@@ -294,11 +321,6 @@ def _credit_card_token(s: str) -> str:
     if re.match("^[\x21-\x7e]{1,255}$", s) and not re.match("^[0-9]{1,19}$", s):
         return s
     raise ValueError
-
-
-_rfc3339_datetime = Match(
-    r"(?a)\A\d{4}-\d{2}-\d{2}[Tt]\d{2}:\d{2}:\d{2}(\.\d+)?(?:[Zz]|[+-]\d{2}:\d{2})\Z",
-)
 
 
 _event_party = In(["agent", "customer"])

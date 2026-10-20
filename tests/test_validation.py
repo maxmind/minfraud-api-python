@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import unittest
+from datetime import datetime, timezone
 from decimal import Decimal
 from typing import TYPE_CHECKING, Any
 
@@ -10,6 +11,39 @@ from minfraud.validation import validate_report, validate_transaction
 
 if TYPE_CHECKING:
     from collections.abc import Callable
+
+GOOD_TIMES = (
+    "2015-05-08T16:07:56+00:00",
+    "2015-05-08T16:07:56Z",
+    "2026-10-01T14:30:00Z",
+    "2026-10-01T14:30:00.123456789Z",
+    "2026-10-01T14:30:00+23:59",
+    "2024-02-29T00:00:00-05:00",
+)
+
+BAD_TIMES = (
+    "2015-05-08T16:07:56",
+    "2015-05-08 16:07:56Z",
+    "2026-02-30T25:61:61Z",
+    "2026-13-45T10:00:00Z",
+    "0000-00-00T00:00:00Z",
+    "2026-10-01T14:30:00+24:00",
+    "2026-10-01T14:30:00+99:99",
+    "2026-10-01T24:00:00Z",
+    "2026-10-01T14:30:60Z",
+    "2026-10-01t14:30:00Z",
+    "2026-10-01T14:30:00z",
+    "2026-10-01T14:30:00+25:00",
+    "2026-10-01T14:30:00+05:60",
+    "2026-02-30T10:00:00Z",
+    "2025-02-29T00:00:00Z",
+    "2026-04-31T00:00:00Z",
+)
+
+NON_STRING_TIMES = (
+    1,
+    datetime(2026, 10, 1, 14, 30, tzinfo=timezone.utc),
+)
 
 
 class ValidationBase(unittest.TestCase):
@@ -139,6 +173,31 @@ class AddressBase(ValidationBase):
             self.check_transaction({self.type: {"phone_country_code": code}})
         for invalid in ("", "12345", "U"):
             self.check_invalid_transaction({self.type: {"phone_country_code": invalid}})
+
+    def test_phone_verification_method(self) -> None:
+        for good in ("delivered_code", "network", "other"):
+            self.check_transaction({self.type: {"phone_verification_method": good}})
+        for bad in ("sms", 1, ""):
+            self.check_invalid_transaction(
+                {self.type: {"phone_verification_method": bad}},
+            )
+
+    def test_phone_was_verification_successful(self) -> None:
+        self.check_bool(self.type, "phone_was_verification_successful")
+
+    def test_phone_verification_time(self) -> None:
+        for good in GOOD_TIMES:
+            self.check_transaction({self.type: {"phone_verification_time": good}})
+        for bad in BAD_TIMES:
+            self.check_invalid_transaction(
+                {self.type: {"phone_verification_time": bad}},
+            )
+
+    def test_phone_verification_time_not_string(self) -> None:
+        for bad in NON_STRING_TIMES:
+            self.check_invalid_transaction(
+                {self.type: {"phone_verification_time": bad}},
+            )
 
 
 class TestBillingAddress(AddressBase):
@@ -327,10 +386,21 @@ class TestEvent(ValidationBase, unittest.TestCase):
         self.check_transaction_str_type("event", "shop_id")
 
     def test_time(self) -> None:
-        for good in ("2015-05-08T16:07:56+00:00", "2015-05-08T16:07:56Z"):
+        for good in GOOD_TIMES:
             self.check_transaction({"event": {"time": good}})
-        for bad in ("2015-05-08T16:07:56", "2015-05-08 16:07:56Z"):
+        for bad in BAD_TIMES:
             self.check_invalid_transaction({"event": {"time": bad}})
+
+    def test_time_not_string(self) -> None:
+        for bad in NON_STRING_TIMES:
+            self.check_invalid_transaction({"event": {"time": bad}})
+
+    def test_time_impossible_date_message(self) -> None:
+        transaction: dict[str, Any] = {"event": {"time": "2026-02-30T10:00:00Z"}}
+        self.setup_transaction(transaction)
+        with self.assertRaises(MultipleInvalid) as cm:
+            validate_transaction(transaction)
+        self.assertEqual(cm.exception.errors[0].msg, "invalid date or time")
 
     def test_type(self) -> None:
         for good in (
