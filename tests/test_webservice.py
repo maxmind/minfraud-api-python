@@ -281,6 +281,8 @@ class BaseTransactionTest(BaseTest):
                 "email": {
                     "address": "977577b140bfb7c516e4746204fbdb01",
                     "domain": "maxmind.com",
+                    "verification_time": "2026-10-01T14:25:00Z",
+                    "was_verification_successful": False,
                 },
             },
         ).respond_with_data(
@@ -292,7 +294,13 @@ class BaseTransactionTest(BaseTest):
             status=200,
         )
 
-        request = {"email": {"address": "Test+ignore@maxmind.com"}}
+        request = {
+            "email": {
+                "address": "Test+ignore@maxmind.com",
+                "verification_time": "2026-10-01T14:25:00Z",
+                "was_verification_successful": False,
+            },
+        }
         self.run_client(getattr(self.client, self.type)(request, hash_email=True))
 
     # This was fixed in https://github.com/maxmind/minfraud-api-python/pull/78

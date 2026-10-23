@@ -169,7 +169,9 @@ Score, Insights and Factors Example
     >>>     },
     >>>     'email': {
     >>>         'address': '977577b140bfb7c516e4746204fbdb01',
-    >>>         'domain': 'maxmind.com'
+    >>>         'domain': 'maxmind.com',
+    >>>         'verification_time': '2026-10-01T14:25:00Z',
+    >>>         'was_verification_successful': True,
     >>>     },
     >>>     'billing': {
     >>>         'first_name': 'Jane',
