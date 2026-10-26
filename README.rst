@@ -161,7 +161,7 @@ Score, Insights and Factors Example
     >>>         'shop_id': 's2123',
     >>>         'type': 'purchase',
     >>>         'transaction_id': 'txn3134133',
-    >>>         'time': '2014-04-12T23:20:50.052+00:00'
+    >>>         'time': '2026-10-05T23:20:50.052+00:00'
     >>>     },
     >>>     'account': {
     >>>         'user_id': '3132',
