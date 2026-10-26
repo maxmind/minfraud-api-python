@@ -82,6 +82,12 @@ class ValidationBase(unittest.TestCase):
         for bad in ("", 0, "True"):
             self.check_invalid_transaction({obj: {key: bad}})
 
+    def check_rfc3339_time(self, obj: str, key: str) -> None:
+        for good in GOOD_TIMES:
+            self.check_transaction({obj: {key: good}})
+        for bad in BAD_TIMES + NON_STRING_TIMES:
+            self.check_invalid_transaction({obj: {key: bad}})
+
     def setup_report(self, report: dict[str, Any]) -> None:
         if "ip_address" not in report:
             report["ip_address"] = "1.2.3.4"
@@ -186,18 +192,7 @@ class AddressBase(ValidationBase):
         self.check_bool(self.type, "phone_was_verification_successful")
 
     def test_phone_verification_time(self) -> None:
-        for good in GOOD_TIMES:
-            self.check_transaction({self.type: {"phone_verification_time": good}})
-        for bad in BAD_TIMES:
-            self.check_invalid_transaction(
-                {self.type: {"phone_verification_time": bad}},
-            )
-
-    def test_phone_verification_time_not_string(self) -> None:
-        for bad in NON_STRING_TIMES:
-            self.check_invalid_transaction(
-                {self.type: {"phone_verification_time": bad}},
-            )
+        self.check_rfc3339_time(self.type, "phone_verification_time")
 
 
 class TestBillingAddress(AddressBase):
@@ -372,14 +367,7 @@ class TestEmail(ValidationBase, unittest.TestCase):
             self.check_invalid_transaction({"email": {"domain": bad}})
 
     def test_verification_time(self) -> None:
-        for good in GOOD_TIMES:
-            self.check_transaction({"email": {"verification_time": good}})
-        for bad in BAD_TIMES:
-            self.check_invalid_transaction({"email": {"verification_time": bad}})
-
-    def test_verification_time_not_string(self) -> None:
-        for bad in NON_STRING_TIMES:
-            self.check_invalid_transaction({"email": {"verification_time": bad}})
+        self.check_rfc3339_time("email", "verification_time")
 
     def test_was_verification_successful(self) -> None:
         self.check_bool("email", "was_verification_successful")
@@ -399,14 +387,7 @@ class TestEvent(ValidationBase, unittest.TestCase):
         self.check_transaction_str_type("event", "shop_id")
 
     def test_time(self) -> None:
-        for good in GOOD_TIMES:
-            self.check_transaction({"event": {"time": good}})
-        for bad in BAD_TIMES:
-            self.check_invalid_transaction({"event": {"time": bad}})
-
-    def test_time_not_string(self) -> None:
-        for bad in NON_STRING_TIMES:
-            self.check_invalid_transaction({"event": {"time": bad}})
+        self.check_rfc3339_time("event", "time")
 
     def test_time_impossible_date_message(self) -> None:
         transaction: dict[str, Any] = {"event": {"time": "2026-02-30T10:00:00Z"}}
