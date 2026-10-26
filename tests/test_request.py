@@ -64,6 +64,24 @@ class TestRequest(unittest.TestCase):
                 },
             },
             {
+                "name": "verification inputs kept",
+                "input": {
+                    "email": {
+                        "address": "test@maxmind.com",
+                        "verification_time": "2026-10-01T14:25:00Z",
+                        "was_verification_successful": False,
+                    },
+                },
+                "expected": {
+                    "email": {
+                        "address": "977577b140bfb7c516e4746204fbdb01",
+                        "domain": "maxmind.com",
+                        "verification_time": "2026-10-01T14:25:00Z",
+                        "was_verification_successful": False,
+                    },
+                },
+            },
+            {
                 "name": "uppercase and alias",
                 "input": {"email": {"address": "Test+ignored@MaxMind.com"}},
                 "expected": {
