@@ -16,6 +16,7 @@ History
 * The RFC 3339 check on ``/event/time`` and ``phone_verification_time`` now
   rejects more values that the web service rejects, such as February 30,
   hour 24, an offset of 24 hours or more, and a lowercase ``t`` or ``z``.
+* Added ``ryft`` to the ``/payment/processor`` validation.
 
 3.3.0 (2026-07-21)
 ++++++++++++++++++

@@ -274,6 +274,7 @@ _payment_processor = In(
         "rede",
         "redpagos",
         "rewardspay",
+        "ryft",
         "safecharge",
         "sagepay",
         "securepay",
