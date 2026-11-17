@@ -17,6 +17,7 @@ History
   rejects more values that the web service rejects, such as February 30,
   hour 24, an offset of 24 hours or more, and a lowercase ``t`` or ``z``.
 * Added ``ryft`` to the ``/payment/processor`` validation.
+* The minimum version of ``geoip2`` is now 5.4.0.
 
 3.3.0 (2026-07-21)
 ++++++++++++++++++
