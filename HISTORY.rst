@@ -3,7 +3,7 @@
 History
 -------
 
-3.4.0
+3.4.0 (2026-11-18)
 ++++++++++++++++++
 
 * Added the ``phone_verification_method``,
