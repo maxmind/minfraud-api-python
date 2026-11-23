@@ -202,7 +202,6 @@ Score, Insights and Factors Example
     >>>         'phone_country_code': '1',
     >>>         'phone_number': '123-456-0000',
     >>>         'phone_verification_method': 'network',
-    >>>         'phone_verification_time': '2026-10-01T14:35:00Z',
     >>>         'phone_was_verification_successful': False,
     >>>         'delivery_speed': 'same_day',
     >>>     },
