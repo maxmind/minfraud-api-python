@@ -291,13 +291,13 @@ For synchronous reporting:
 
     >>> from minfraud import Client
     >>>
-    >>> with Client(42, 'licensekey') as client
+    >>> with Client(42, 'licensekey') as client:
     >>>     transaction_report = {
     >>>         'ip_address': '152.216.7.110',
     >>>         'tag': 'chargeback',
     >>>         'minfraud_id': '2c69df73-01c0-45a5-b218-ed85f40b17aa',
-    >>>      }
-    >>>      client.report(transaction_report)
+    >>>     }
+    >>>     client.report(transaction_report)
 
 For asynchronous reporting:
 
@@ -307,13 +307,13 @@ For asynchronous reporting:
     >>> from minfraud import AsyncClient
     >>>
     >>> async def report():
-    >>>     async with AsyncClient(42, 'licensekey') as client
+    >>>     async with AsyncClient(42, 'licensekey') as client:
     >>>         transaction_report = {
     >>>             'ip_address': '152.216.7.110',
     >>>             'tag': 'chargeback',
     >>>             'minfraud_id': '2c69df73-01c0-45a5-b218-ed85f40b17aa',
-    >>>          }
-    >>>          await async_client.report(transaction_report)
+    >>>         }
+    >>>         await client.report(transaction_report)
     >>>
     >>> asyncio.run(report())
 
