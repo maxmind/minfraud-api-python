@@ -125,7 +125,7 @@ The possible errors are:
   rejects the request as invalid for another reason, such as a reserved IP
   address. It is also raised if validation of the request before it is sent to
   the server fails.
-* ``minfraud.HttpError`` - This will be raised when an unexpected HTTP
+* ``minfraud.HTTPError`` - This will be raised when an unexpected HTTP
   error occurs such as a firewall interfering with the request to the server.
 * ``minfraud.MinFraudError`` - This will be raised when some other error
   occurs such as unexpected content from the server. This also serves as the
