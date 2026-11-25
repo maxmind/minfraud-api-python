@@ -125,7 +125,7 @@ The possible errors are:
   rejects the request as invalid for another reason, such as a reserved IP
   address. It is also raised if validation of the request before it is sent to
   the server fails.
-* ``minfraud.HttpError`` - This will be raised when an unexpected HTTP
+* ``minfraud.HTTPError`` - This will be raised when an unexpected HTTP
   error occurs such as a firewall interfering with the request to the server.
 * ``minfraud.MinFraudError`` - This will be raised when some other error
   occurs such as unexpected content from the server. This also serves as the
@@ -202,7 +202,6 @@ Score, Insights and Factors Example
     >>>         'phone_country_code': '1',
     >>>         'phone_number': '123-456-0000',
     >>>         'phone_verification_method': 'network',
-    >>>         'phone_verification_time': '2026-10-01T14:35:00Z',
     >>>         'phone_was_verification_successful': False,
     >>>         'delivery_speed': 'same_day',
     >>>     },
@@ -292,13 +291,13 @@ For synchronous reporting:
 
     >>> from minfraud import Client
     >>>
-    >>> with Client(42, 'licensekey') as client
+    >>> with Client(42, 'licensekey') as client:
     >>>     transaction_report = {
     >>>         'ip_address': '152.216.7.110',
     >>>         'tag': 'chargeback',
     >>>         'minfraud_id': '2c69df73-01c0-45a5-b218-ed85f40b17aa',
-    >>>      }
-    >>>      client.report(transaction_report)
+    >>>     }
+    >>>     client.report(transaction_report)
 
 For asynchronous reporting:
 
@@ -308,13 +307,13 @@ For asynchronous reporting:
     >>> from minfraud import AsyncClient
     >>>
     >>> async def report():
-    >>>     async with AsyncClient(42, 'licensekey') as client
+    >>>     async with AsyncClient(42, 'licensekey') as client:
     >>>         transaction_report = {
     >>>             'ip_address': '152.216.7.110',
     >>>             'tag': 'chargeback',
     >>>             'minfraud_id': '2c69df73-01c0-45a5-b218-ed85f40b17aa',
-    >>>          }
-    >>>          await async_client.report(transaction_report)
+    >>>         }
+    >>>         await client.report(transaction_report)
     >>>
     >>> asyncio.run(report())
 
